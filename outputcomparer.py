@@ -1,6 +1,7 @@
 from braidalgo import generate_unmatched_words_with_degs
 from khtfilegenerator import knotinfo_string_to_integer_array
 import os.path
+import pickle
 
 #idea: generate dictionaries from both programs with keys being integer pairs (hdeg,qdeg) and values being positive integers (#number of generator of that deg)
 
@@ -101,7 +102,7 @@ def main():
     DMT_cell_amounts=0
     kht_cell_amounts=0
 
-    testamount=200
+    testamount=100
     testcount=0
 
     while True:
@@ -116,25 +117,30 @@ def main():
             break
 
         braid_name=line[0]
-
-        #resume the computation of 12 string 
-        #if not(braid_name[0]=="1" and braid_name[1]=="2"):
-        #    continue
-
-
         ki_braid=knotinfo_string_to_integer_array(line[1].strip())
         ks_braid=integer_array_to_knotscape_string(ki_braid)
 
+        
+        print(braid_name)
+        
+        #Load or calculate unmatched cells of the braid 
+        unmatched_words=None
+        unmatched_words_path='khtfiles/'+braid_name+'/unmatched_words.pkl'
+        if os.path.exists(unmatched_words_path):
+            with open(unmatched_words_path, 'rb') as file:
+                unmatched_words = pickle.load(file)
+        else:      
+            unmatched_words=generate_unmatched_words_with_degs(ks_braid)
+            with open(unmatched_words_path, 'wb') as file:
+                pickle.dump(unmatched_words, file)
 
-        #Calculate unmatched cells of the braid and reformat them into a dictionary
-        unmatched_words=generate_unmatched_words_with_degs(ks_braid)
+        #Reformat the DMT-calculated data into a dictionary
         DMT_degs=unmatched_words_with_degs_into_degs_dictionary(unmatched_words)
 
-        #Try to recover the unmatched cells from previously calculated file
+        #Recover the cells calculated by kht++ from a file and read them into a dictionary
         two_string_braid=True
         if max(max(ki_braid), -min(ki_braid))>1:
             two_string_braid=False
-
 
         cx_file_path="khtfiles/"+braid_name+"/cx-c2"
         khtpp_degs=None
@@ -143,7 +149,9 @@ def main():
         elif not two_string_braid:
             print("did not find cx-c2 file and the tangle has more than 4 outputs")
 
-        print(braid_name)
+
+        #Compare the two dictionaries
+
         if not two_string_braid:
             #DMT_degs.popitem()  
             #khtpp_degs.popitem()
@@ -154,6 +162,8 @@ def main():
             DMT_cell_amounts+=dictionary_size(DMT_degs)
             kht_cell_amounts+=dictionary_size(khtpp_degs)
             
+
+            #Alert if unwanted things happen    
             if len(kht_minus_DMT)>0:
                 print("")
                 print("DMT")
@@ -194,6 +204,8 @@ def main():
         #print(ks_braid)
         #print(unmatched_words)
     
+
+    #Print some results
     print(DMT_cell_amounts)
     print(kht_cell_amounts)
     print(DMT_cell_amounts/kht_cell_amounts)
