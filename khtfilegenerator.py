@@ -1,9 +1,16 @@
 
-import subprocess
+#import subprocess
+import os
+import subprocess, sys
 
 def parse_string_to_array(input_string):
     # Remove the curly braces and split the string by semicolons
-    cleaned_string = input_string.strip("{}")
+    #print(input_string)
+    #cleaned_string = input_string.strip("[]")    
+    cleaned_string = input_string.strip("[{}]")
+    #print(cleaned_string)
+    cleaned_string = cleaned_string.split("};{")
+    cleaned_string = cleaned_string[0]
     elements = cleaned_string.split(";")
 
     # Convert each element to an integer
@@ -16,9 +23,9 @@ def convert_numbers(numbers):
     result = []
     for n in numbers:
         if n > 0:
-            result.append(f"x{n}")
+            result.append(f"x{n-1}")
         else:
-            result.append(f"y{abs(n)}")
+            result.append(f"y{abs(n)-1}")
     return result
 
 def generate_output(arr, num_repeats):
@@ -43,10 +50,10 @@ def generate_output(arr, num_repeats):
     output_string = f"{arr_string}\n,{ones_string}"
     return output_string
 
-
+"""
 
 def run_external_program(program_path, input_string):
-    """
+    
     Runs an external program as a subprocess, passing the input string to it.
 
     Args:
@@ -55,7 +62,7 @@ def run_external_program(program_path, input_string):
 
     Returns:
         str: Output from the external program.
-    """
+    
     try:
         # Run the external program as a subprocess
         result = subprocess.run(
@@ -71,21 +78,55 @@ def run_external_program(program_path, input_string):
         # Handle any errors (e.g., non-zero exit code)
         return f"Error executing {program_path}: {e.stderr}"
 
+"""
 
+
+
+
+
+folder_name = "khtfiles"
+try:
+    os.mkdir(folder_name)
+    print(f"Directory '{folder_name}' created!")
+except FileExistsError:
+    print(f"Directory '{folder_name}' already exists")    
 
 
 f=open("knotinfodb.csv", "r")
+
 f.readline() #discard 1st line
 
-line=f.readline().split(",")
-braid=line[1].strip()
-braid=parse_string_to_array(braid)
 
-stringarray=convert_numbers(braid)
+testamount=20
 
-number_of_strands=max([max(braid), -min(braid)])+1
+while True:
 
-khtstring=generate_output(stringarray,number_of_strands)
+    line=f.readline().split(",")
+    if len(line)==1:
+        #print("asd")
+        break
+    #print(line)
+    braid=line[1].strip()
+    braid=parse_string_to_array(braid)
+    print(line[0])
+
+    testamount=testamount+1
+    if testamount==20:
+        break
+
+    stringarray=convert_numbers(braid)
+
+    number_of_strands=max([max(braid), -min(braid)])+1
+
+    khtstring=generate_output(stringarray,number_of_strands)
+
+    file_path = os.path.join(folder_name, line[0].strip()+'.kht')
+    with open(file_path, 'w', encoding='utf-8') as asd:
+        asd.write(khtstring)
+    #try to run kht here
+
+    subprocess.run(["../kht/khtpp/./kht++", "/khtfiles/"+line[0]])
+
 
 
 
@@ -98,5 +139,5 @@ khtstring=generate_output(stringarray,number_of_strands)
 
 
 
-print(khtstring)
+#print(khtstring)
 
