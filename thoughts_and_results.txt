@@ -1,0 +1,21 @@
+Validity/Acyclicity
+
+I ran the algorithm on the knots up to 11 crossings (11 included) and found that no cell of kht:s output was not contained my outputs. 
+
+
+Minimality/effectiveness of the cancellation
+
+I ran the algorithm for the first 200 knots of the database and on the number of cells I got the following result:
+
+number of cells outputted by my code 49514
+number of cells outputted by kht++ 47502
+the fraction of the above 1.0423561113216286
+
+It is expected that I should get more cells since I am "using" Z coefficients whereas kht++ is using Z/2Z. Thus kht allows for further cancellations.
+
+
+Performance:
+
+My performance is ok but not great. It seems faster that kht++ but I do not calculate even half of the data so it is not a fair comparison.
+
+

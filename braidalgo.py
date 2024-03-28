@@ -486,32 +486,19 @@ def remove_L_u_matched_words_from_set(set_of_enh_words,braid_word,L,u):
 def generate_next_unmatched_words(set_of_enh_words, concatenated_braid_word):
     if(len(concatenated_braid_word)==1):
         return {"0","1"}
-
-
     new_words=generate_next_enhanced_words(set_of_enh_words,concatenated_braid_word)
     
-    u=len(concatenated_braid_word) -1 #CHEK THIS -1
+    u=len(concatenated_braid_word) -1
     
     for L in range(u,-1,-1):
         new_words=remove_L_u_matched_words_from_set(new_words,concatenated_braid_word,L,u)
-        
-    
     return new_words
     
 def generate_all_unmatched_words(braid_word):
     all_unmatched_words={}
-    #all_enh_words={}
-    
     for i in range(len(braid_word)):
         all_unmatched_words=generate_next_unmatched_words(all_unmatched_words,braid_word[:(i+1)])  
-        #all_enh_words=generate_next_enhanced_words(all_enh_words,braid_word[:(i+1)])  
-        
-        print(braid_word[:i+1]) #THIS WORKS AS A PROGRESS BAR 
-        #print(all_unmatched_words)  
-        
-        #print(all_enh_words)
-    
-        
+        #print(braid_word[:i+1]) #THIS WORKS AS A PROGRESS BAR 
     return all_unmatched_words
 
 
@@ -548,17 +535,25 @@ def qdeg_of_word(braid_word,enh_word):
     return deg+hdeg+num_of_pos_crossings-num_of_neg_crossings
    
 
-def add_degs_and_arrange_words(braid_word, set_of_enh_words):
+def add_degs(braid_word, set_of_enh_words):
     array_of_triples=[]
     for word in set_of_enh_words:
         triple=(word,hdeg_of_word(braid_word,word),qdeg_of_word(braid_word,word))
         array_of_triples.append(triple)
     
+    #sorted_tuples = sorted(array_of_triples, key=lambda x: x[1])
+    return array_of_triples
+
+def sort_by_hdeg(array_of_triples):
     sorted_tuples = sorted(array_of_triples, key=lambda x: x[1])
     return sorted_tuples
 
 
-   
+def generate_unmatched_words_with_degs(braid_word):
+    words=generate_all_unmatched_words(braid_word)
+    degwords=add_degs(braid_word,words)
+    return degwords
+
    
 
 def main():
@@ -593,7 +588,8 @@ def main():
     #print(matching_a_cell(sys.argv[1],"11101Y",5,5))
     braid=sys.argv[1]
     unmatched_words=generate_all_unmatched_words(braid)
-    arranged_unmatched_words=add_degs_and_arrange_words(braid,unmatched_words)
+    unmatched_words=add_degs(braid,unmatched_words)
+    arranged_unmatched_words=sort_by_hdeg(unmatched_words)
 
     for a in arranged_unmatched_words:
         print(a)
