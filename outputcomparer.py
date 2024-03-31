@@ -102,7 +102,7 @@ def main():
     DMT_cell_amounts=0
     kht_cell_amounts=0
 
-    testamount=100
+    testamount=100000
     testcount=0
 
     while True:
@@ -152,7 +152,7 @@ def main():
 
         #Compare the two dictionaries
 
-        if not two_string_braid:
+        if not (khtpp_degs==None):
             #DMT_degs.popitem()  
             #khtpp_degs.popitem()
             DMT_degs_copy=DMT_degs.copy()

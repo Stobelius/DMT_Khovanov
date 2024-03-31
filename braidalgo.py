@@ -459,15 +459,36 @@ def matching_a_cell(braid_word,enh_word,L,u):
     
     return (False,"")
 
+def differ_by_one_character(string1, string2):
+    # Check if the lengths are the same
+    if len(string1) != len(string2):
+        return False
+
+    # Initialize the count of differing characters
+    diff_count = 0
+
+    # Compare characters
+    for char1, char2 in zip(string1, string2):
+        if char1 != char2:
+            diff_count += 1
+            if diff_count > 1:
+                return False
+
+    # If exactly one differing character, return True
+    return diff_count == 1
+
+
 def remove_L_u_matched_words_from_set(set_of_enh_words,braid_word,L,u):
     remaining_words=set()
     #print(set_of_enh_words)
+    
     
     # A possible big time-improvement:
     # Check whether a matching could be possible by glancing at whether some unmatched cell with different L exist in set_of_enh_words.
     # In other words, do a prior quick check before running the slow matching_a_cell function
     while(len(set_of_enh_words)>0):
         word=set_of_enh_words.pop()
+
         potential_pair=matching_a_cell(braid_word,word,L,u)
         if(not potential_pair[0]):
             remaining_words.add(word)

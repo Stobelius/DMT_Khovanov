@@ -73,14 +73,15 @@ def main():
         #print(line)
         braid=line[1].strip()
         braid=knotinfo_string_to_integer_array(braid)
-        print(line[0])
-    
-    
+        braid_name=line[0].strip()
+        print(braid_name)
+
+  
         stringarray=convert_numbers_to_kht(braid)
         number_of_strands=max([max(braid), -min(braid)])+1
         khtstring=generate_output(stringarray,number_of_strands)
     
-        file_path = os.path.join(folder_name, line[0].strip()+'.kht')
+        file_path = os.path.join(folder_name, braid_name+'.kht')
         with open(file_path, 'w', encoding='utf-8') as asd:
             asd.write(khtstring)
         
