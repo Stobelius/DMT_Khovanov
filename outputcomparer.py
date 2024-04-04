@@ -153,11 +153,11 @@ def main():
         #Compare the two dictionaries
 
         if not (khtpp_degs==None):
-            #DMT_degs.popitem()  
-            #khtpp_degs.popitem()
+
             DMT_degs_copy=DMT_degs.copy()
             khtpp_degs_copy=khtpp_degs.copy()
             (DMT_minus_kht,kht_minus_DMT)=dictionary_difference(DMT_degs_copy,khtpp_degs_copy)
+
 
             DMT_cell_amounts+=dictionary_size(DMT_degs)
             kht_cell_amounts+=dictionary_size(khtpp_degs)

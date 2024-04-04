@@ -80,13 +80,24 @@ def main():
         stringarray=convert_numbers_to_kht(braid)
         number_of_strands=max([max(braid), -min(braid)])+1
         khtstring=generate_output(stringarray,number_of_strands)
-    
+
+
+
         file_path = os.path.join(folder_name, braid_name+'.kht')
+        
+        
+        cx_file_path="khtfiles/"+braid_name+"/cx-c2"
+        if os.path.exists(cx_file_path):
+            continue
+        
+        print("ASDSADDSA")
+        
         with open(file_path, 'w', encoding='utf-8') as asd:
             asd.write(khtstring)
         
         #run the kht++ program on the generated file
-        subprocess.run(["../kht/khtpp/./kht++", "/khtfiles/"+line[0]])
+        subprocess.run(["../kht/khtpp/./kht++", "/khtfiles/"+braid_name])
+
     
 
 
