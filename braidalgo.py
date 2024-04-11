@@ -301,7 +301,7 @@ def matching_a_cell(braid_word,enh_word,L,u):
             other_comp_h_d=comp1_high_dec
         else:
             #did not find isomorphism with u
-            return (False,"")
+            return (None)
             
         other_comp_is_loop=True
         if(other_comp_h_d[0]==-10):
@@ -319,22 +319,22 @@ def matching_a_cell(braid_word,enh_word,L,u):
             #split from non-loop
             if(not other_comp_is_loop):
                 matched = put_x_coding_to_char(prelim_word,u)           
-                return(True,matched)
+                return(matched)
             
             #split from higher loop
             if(u_comp_is_lower):
                 matched = put_x_coding_to_char(prelim_word,u)
-                return(True,matched)
+                return(matched)
             
             #split from lower loop with x (we do not allow for these as they will be matched away previously in the final recursive definition of M)
             if(orig_component_h_d[1]=="x"):
-                return(False,"")
+                return(None)
             
             #split from lower loop with y                
             matched = put_y_coding_to_char(prelim_word,other_comp_h_d[0])
             matched = put_x_coding_to_char(matched,u_comp_h_d[0])
             #print("wierd split up is found, one that I would expect to only see in reducible braids")
-            return(True,matched)
+            return(matched)
         
         #### look for rev-merge
         if(not enh_at_L_is_0_or_lowercase):
@@ -342,23 +342,23 @@ def matching_a_cell(braid_word,enh_word,L,u):
             #rev-merge from non-loop
             if(not other_comp_is_loop):
                 matched = put_y_coding_to_char(prelim_word,u)           
-                return(True,matched)
+                return(matched)
             
             #rev-merge from higher loop
             if(u_comp_is_lower):
                 matched = put_y_coding_to_char(prelim_word,u)
-                return(True,matched)
+                return(matched)
             
             #rev-merge from lower loop with y (we do not allow for these as they will be matched away previously in the final recursive definition of M)
             if(orig_component_h_d[1]=="y"):
-                return(False,"")
+                return(None)
             
             #rev-merge from lower loop with x                
             matched = put_x_coding_to_char(prelim_word,other_comp_h_d[0])
             matched = put_y_coding_to_char(matched,u_comp_h_d[0])
             #print("wierd revmerge up is found, one that I would expect to only see in reducible braids")
             #print(enh_word +"   "+ matched)
-            return(True,matched)
+            return(matched)
             
     ##### look for merge and rev-split here
     
@@ -371,7 +371,7 @@ def matching_a_cell(braid_word,enh_word,L,u):
         
         #find saddle morphism
         if((not component1_is_loop) and (not component2_is_loop)):
-            return (False, "")
+            return (None)
         
         comp1_high_dec=highest_and_decoration_of_component(component1,enh_word)
         comp2_high_dec=highest_and_decoration_of_component(component2,enh_word)
@@ -393,7 +393,7 @@ def matching_a_cell(braid_word,enh_word,L,u):
             other_comp_h_d=comp1_high_dec
         else:
             #did not find isomorphism with u
-            return (False,"")
+            return (None)
             
         other_comp_is_loop=True
         if(other_comp_h_d[0]==-10):
@@ -411,24 +411,24 @@ def matching_a_cell(braid_word,enh_word,L,u):
             if(not other_comp_is_loop):
                 matched = remove_xy_coding_from_char(enh_word,u)           
                 matched = replace_char(matched, L ,"1")
-                return(True,matched)
+                return(matched)
             
             ## merge to higher loop
             if(u_comp_is_lower):
                 matched = remove_xy_coding_from_char(enh_word,u)           
                 matched = replace_char(matched, L ,"1")
-                return(True,matched)
+                return(matched)
             
             ## merge to a lower loop with y (we do not allow for these as they will be matched away previously in the final recursive definition of M)
             if(other_comp_h_d[1]=="y"):
-                return (False,"")
+                return (None)
             
             ## merge to lower loop with x
             matched = remove_xy_coding_from_char(enh_word,other_comp_h_d[0])           
             matched = replace_char(matched, L ,"1")
             matched = put_x_coding_to_char(matched,u)
             #print("wierd merge-up is found, one that I would expect to only see in reducible braids")
-            return(True,matched)
+            return(matched)
                
         #look for rev-split
         if((not enh_at_L_is_0_or_lowercase) and u_comp_h_d[1]=="x"):
@@ -437,27 +437,26 @@ def matching_a_cell(braid_word,enh_word,L,u):
             if(not other_comp_is_loop):
                 matched = remove_xy_coding_from_char(enh_word,u)           
                 matched = replace_char(matched, L ,"0")
-                return(True,matched)
+                return(matched)
             
             ##rev-split to higher loop
             if(u_comp_is_lower):
                 matched = remove_xy_coding_from_char(enh_word,u)           
                 matched = replace_char(matched, L ,"0")
-                return(True,matched)
+                return(matched)
             
             ## rev-split to a lower loop with x (we do not allow for these as they will be matched away previously in the final recursive definition of M)
             if(other_comp_h_d[1]=="x"):
-                return (False,"")
+                return (None)
             
             ## rev-split to lower loop with y
             matched = remove_xy_coding_from_char(enh_word,other_comp_h_d[0])           
             matched = replace_char(matched, L ,"0")
             matched = put_y_coding_to_char(matched,u)
             #print("wierd rev-split is found, one that I would expect to only see in reducible braids")
-            return(True,matched)
+            return(matched)
     
-    
-    return (False,"")
+    return (None)
 
 
 
@@ -475,11 +474,11 @@ def remove_L_u_matched_words_from_set(set_of_enh_words,braid_word,L,u):
         word=set_of_enh_words.pop()
 
         potential_pair=matching_a_cell(braid_word,word,L,u)
-        if(not potential_pair[0]):
+        if(potential_pair==None):
             remaining_words.add(word)
             #print("adding word with no pair"+word)
-        elif(potential_pair[1] in set_of_enh_words):
-            set_of_enh_words.remove(potential_pair[1])
+        elif(potential_pair in set_of_enh_words):
+            set_of_enh_words.remove(potential_pair)
             #print("removing pair"+word+"   "+potential_pair[1])
         else:
             #print("adding word1 with no pair in the set"+word)
