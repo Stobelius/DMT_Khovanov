@@ -459,23 +459,8 @@ def matching_a_cell(braid_word,enh_word,L,u):
     
     return (False,"")
 
-def differ_by_one_character(string1, string2):
-    # Check if the lengths are the same
-    if len(string1) != len(string2):
-        return False
 
-    # Initialize the count of differing characters
-    diff_count = 0
 
-    # Compare characters
-    for char1, char2 in zip(string1, string2):
-        if char1 != char2:
-            diff_count += 1
-            if diff_count > 1:
-                return False
-
-    # If exactly one differing character, return True
-    return diff_count == 1
 
 
 def remove_L_u_matched_words_from_set(set_of_enh_words,braid_word,L,u):
@@ -514,12 +499,111 @@ def generate_next_unmatched_words(set_of_enh_words, concatenated_braid_word):
     for L in range(u,-1,-1):
         new_words=remove_L_u_matched_words_from_set(new_words,concatenated_braid_word,L,u)
     return new_words
+
+
+
+"""
+
+
+
+
+
+def potential_L_matchings_max_u(braid_word, enh_word):
+    #returns a set of potentials which can be reached with merge or rev-split
+    potentials=set()
+    if enh_word[len(enh_word)-1]=="0" or enh_word[len(enh_word)-1]=="1":
+        return potentials
+    if len(braid_word)==0 or len(braid_word)==1:
+        return potentials
+
+    
+    y_pos=len(braid_word) -1
+    if(y_pos==0):
+        return False    
+    x_pos=x_position_of_crossing(braid_word,y_pos)
+    
+    points_along_circle=array_of_positions_from_edge((x_pos,y_pos),(x_pos+1,y_pos),braid_word,enh_word)
+
+    print(points_along_circle)
+
+    for point in points_along_circle:
+        
+        x_of_crossing_at=x_position_of_crossing(braid_word,point[1])
+        if x_of_crossing_at==point[0]:
+            potentials.add(point[1])
+        if x_of_crossing_at==point[0]+1:
+            potentials.add(point[1])
+        
+        x_of_crossing_below=x_position_of_crossing(braid_word,point[1]-1)
+        if x_of_crossing_below==point[0]:
+            potentials.add(point[1]-1)
+        if x_of_crossing_below==point[0]+1:
+            potentials.add(point[1]-1)
+    
+    #Do x and y filtering here also
+    return potentials
+
+
+
+
+
+
+
+def generate_next_unmatched_words_v2(set_of_enh_words, concatenated_braid_word):
+    if(len(concatenated_braid_word)==1):
+        return {"0","1"}
+    new_words=generate_next_enhanced_words(set_of_enh_words,concatenated_braid_word)
+    new_word_pairs=set()
+
+    for word in new_words:
+        new_words.add(word,potential_L_matchings_max_u(concatenated_braid_word,word))
+
+
+    u=len(concatenated_braid_word) -1
+    
+    for L in range(u,-1,-1):
+        #for word_pair in new_word_pairs:
+            
+        
+        new_words=remove_L_u_matched_words_from_set(new_words,concatenated_braid_word,L,u)
+    return new_words
+
+
+
+
+
+
+
+"""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
 def generate_all_unmatched_words(braid_word):
     all_unmatched_words={}
     for i in range(len(braid_word)):
         all_unmatched_words=generate_next_unmatched_words(all_unmatched_words,braid_word[:(i+1)])  
-        #print(braid_word[:i+1]) #THIS WORKS AS A PROGRESS BAR 
+        print(braid_word[:i+1]) #THIS WORKS AS A PROGRESS BAR 
     return all_unmatched_words
 
 
@@ -615,6 +699,8 @@ def main():
     for a in arranged_unmatched_words:
         print(a)
 
+    
+   # print(potential_L_matchings_max_u(braid,"00001x"))
 
     #testset=generate_all_unmatched_words(braid)
     
