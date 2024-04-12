@@ -473,16 +473,12 @@ def remove_L_u_matched_words_from_set(set_of_enh_words,braid_word,L,u):
     while(len(set_of_enh_words)>0):
         word=set_of_enh_words.pop()
 
-        potential_pair=matching_a_cell(braid_word,word,L,u)
-        if(potential_pair==None):
+        potential_match=matching_a_cell(braid_word,word,L,u)
+        if(potential_match==None):
             remaining_words.add(word)
-            #print("adding word with no pair"+word)
-        elif(potential_pair in set_of_enh_words):
-            set_of_enh_words.remove(potential_pair)
-            #print("removing pair"+word+"   "+potential_pair[1])
+        elif(potential_match in set_of_enh_words):
+            set_of_enh_words.remove(potential_match)
         else:
-            #print("adding word1 with no pair in the set"+word)
-
             remaining_words.add(word)
             
     return remaining_words
@@ -496,24 +492,58 @@ def generate_next_unmatched_words(set_of_enh_words, concatenated_braid_word):
     u=len(concatenated_braid_word) -1
     
     for L in range(u,-1,-1):
+        #print(L)
         new_words=remove_L_u_matched_words_from_set(new_words,concatenated_braid_word,L,u)
     return new_words
 
 
 
+
+
+
+
+
+
+#Optimisation which did not make it faster here
 """
 
+def remove_L_u_matched_words_from_set_v2(set_of_enh_word_pairs,braid_word,L,u):
+    remaining_words=set()
+
+    filtered_pairs = set()
+
+    for pair in set_of_enh_word_pairs:
+        _, second_element = pair 
+        if L in second_element:
+            filtered_pairs.add(pair)
 
 
+    #Does not 
 
+    while(len(filtered_pairs)>0):
+        word=filtered_pairs.pop()
+
+        potential_match=matching_a_cell(braid_word,word[0],L,u)
+
+        if not (potential_match==None):
+            #match_inside_the_set=False
+            for pair in set_of_enh_word_pairs:
+                if potential_match==pair[0]:
+                    set_of_enh_word_pairs.remove(pair)
+                    set_of_enh_word_pairs.remove(word)
+                    match_inside_the_set=True
+                    #print("asd")
+                    break
+
+    return set_of_enh_word_pairs
 
 def potential_L_matchings_max_u(braid_word, enh_word):
     #returns a set of potentials which can be reached with merge or rev-split
     potentials=set()
     if enh_word[len(enh_word)-1]=="0" or enh_word[len(enh_word)-1]=="1":
-        return potentials
+        return frozenset(potentials)
     if len(braid_word)==0 or len(braid_word)==1:
-        return potentials
+        return frozenset(potentials)
 
     
     y_pos=len(braid_word) -1
@@ -523,7 +553,7 @@ def potential_L_matchings_max_u(braid_word, enh_word):
     
     points_along_circle=array_of_positions_from_edge((x_pos,y_pos),(x_pos+1,y_pos),braid_word,enh_word)
 
-    print(points_along_circle)
+    #print(points_along_circle)
 
     for point in points_along_circle:
         
@@ -540,11 +570,13 @@ def potential_L_matchings_max_u(braid_word, enh_word):
             potentials.add(point[1]-1)
     
     #Do x and y filtering here also
+    potentials=frozenset(potentials)
     return potentials
 
 
 
 
+#def generate next  unmatched words while removing L=u words
 
 
 
@@ -555,45 +587,31 @@ def generate_next_unmatched_words_v2(set_of_enh_words, concatenated_braid_word):
     new_word_pairs=set()
 
     for word in new_words:
-        new_words.add(word,potential_L_matchings_max_u(concatenated_braid_word,word))
+        word_pair=(word,potential_L_matchings_max_u(concatenated_braid_word,word))
+        #print(type(word_pair))
+        #print(word_pair[1])
+        #print(type(word_pair[1]))
+        new_word_pairs.add(word_pair)
 
 
     u=len(concatenated_braid_word) -1
     
     for L in range(u,-1,-1):
-        #for word_pair in new_word_pairs:
-            
         
-        new_words=remove_L_u_matched_words_from_set(new_words,concatenated_braid_word,L,u)
-    return new_words
+        new_word_pairs=remove_L_u_matched_words_from_set_v2(new_word_pairs,concatenated_braid_word,L,u)
 
+        #print(L)
+        #print(new_word_pairs)
+    
+    filtered_words=set()
 
+    for pair in new_word_pairs:
+        filtered_words.add(pair[0])
 
-
-
-
+    return filtered_words
 
 """
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#Optimisation which did not make it faster ends here
 
 
 
