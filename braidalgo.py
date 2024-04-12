@@ -1,6 +1,9 @@
 
 import sys
 
+
+################## Utilities for geomotry inside a single smoothing
+
 def number_of_strands(word):
     word=word.lower()
     alphabet_chars = [char for char in word if char.isalpha()]
@@ -138,14 +141,12 @@ def smoothing_of_last_crossing_created_loop(braid_word,enh_word):
     
     return False
 
-
+############## Generation of all enhanced words without matching
 
 def generate_next_enhanced_words(set_of_enh_words,concatenated_braid_word):
     
     if(len(set_of_enh_words)==0):
         return {"0","1"}
-    
-    
     
     appending_index=len(next(iter(set_of_enh_words)))-1
     
@@ -183,8 +184,7 @@ def generate_all_enhanced_words(braid_word):
     return all_enhanced_words
 
 
-
-
+################## String utilities for matching the cells
     
 def replace_char(string,index,char):
     changed=string[:index] + char + string[index+1:]
@@ -233,7 +233,7 @@ def highest_ycoord_of_loop(position_array):
     return maximum
 
 
-
+################ Matching a cell and generating all unmatched cells
 
 def matching_a_cell(braid_word,enh_word,L,u):
     
@@ -496,15 +496,17 @@ def generate_next_unmatched_words(set_of_enh_words, concatenated_braid_word):
         new_words=remove_L_u_matched_words_from_set(new_words,concatenated_braid_word,L,u)
     return new_words
 
+    
+def generate_all_unmatched_words(braid_word):
+    all_unmatched_words={}
+    for i in range(len(braid_word)):
+        all_unmatched_words=generate_next_unmatched_words(all_unmatched_words,braid_word[:(i+1)])  
+        print(braid_word[:i+1]) #THIS WORKS AS A PROGRESS BAR 
+    return all_unmatched_words
 
 
 
-
-
-
-
-
-#Optimisation which did not make it faster here
+####################### Optimisation which did not make it faster here
 """
 
 def remove_L_u_matched_words_from_set_v2(set_of_enh_word_pairs,braid_word,L,u):
@@ -611,18 +613,8 @@ def generate_next_unmatched_words_v2(set_of_enh_words, concatenated_braid_word):
     return filtered_words
 
 """
-#Optimisation which did not make it faster ends here
 
-
-
-    
-def generate_all_unmatched_words(braid_word):
-    all_unmatched_words={}
-    for i in range(len(braid_word)):
-        all_unmatched_words=generate_next_unmatched_words(all_unmatched_words,braid_word[:(i+1)])  
-        print(braid_word[:i+1]) #THIS WORKS AS A PROGRESS BAR 
-    return all_unmatched_words
-
+################## Homological and quantum degree on cells
 
 #conventions of hdeg and qdeg from https://arxiv.org/pdf/math/0606464.pdf
 def hdeg_of_word(braid_word,enh_word):
@@ -676,7 +668,44 @@ def generate_unmatched_words_with_degs(braid_word):
     degwords=add_degs(braid_word,words)
     return degwords
 
-   
+
+
+################### Finding paths between critical cells
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+################## Main, no functionality there so far 
 
 def main():
     if len(sys.argv) != 2:
