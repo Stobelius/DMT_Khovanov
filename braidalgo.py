@@ -206,7 +206,7 @@ def put_x_coding_to_char(enh_word,index):
     elif(enh_word[index]=="1" or enh_word[index]=="Y"):
         changed=enh_word[:index] + "X" + enh_word[index+1:]
         return changed
-    return changed
+    return enh_word
 
 def put_y_coding_to_char(enh_word,index):
     if(enh_word[index]=="0" or enh_word[index]=="x"):
@@ -215,7 +215,7 @@ def put_y_coding_to_char(enh_word,index):
     elif(enh_word[index]=="1" or enh_word[index]=="X"):
         changed=enh_word[:index] + "Y" + enh_word[index+1:]
         return changed
-    return changed
+    return enh_word
     
 
 def highest_and_decoration_of_component(position_array,enh_word):
@@ -672,10 +672,197 @@ def generate_unmatched_words_with_degs(braid_word):
 
 ################### Finding paths between critical cells
 
+def next_steps_up(braid_word,enh_word,previous_u):
+    #returns a list of pair (word, L)
+    #Also includes reversed arrows in the list, these need to be filtered separately
+    #At the moment, this works in the dotted Bar-Natan category
+    
+    words_up=[]
+
+    for L in range(0,previous_u,1):
+        if enh_word[L]=="1" or enh_word[L]=="X" or enh_word[L]=="Y":
+            continue
+        
+        Lx=x_position_of_crossing(braid_word,L)
+        Ly=L
+        L_is_vert=smoothing_northeast_is_Vert((Lx,Ly),braid_word,enh_word)
+        
+        
+        L_edge1=((Lx,Ly),(Lx+1,Ly))
+        L_edge2=((Lx,Ly+1),(Lx+1,Ly+1))
+        
+        if(not L_is_vert):
+            L_edge1=((Lx,Ly),(Lx,Ly+1))
+            L_edge2=((Lx+1,Ly),(Lx+1,Ly+1))
+        
+        component1=array_of_positions_from_edge(L_edge1[0],L_edge1[1],braid_word,enh_word)    
+        
+        component1_is_loop=False
+        if(component1[0]==component1[len(component1)-1]):
+                component1_is_loop=True
+        
+        two_components_exist=False
+        if(not(L_edge2[0] in component1)):
+            if(component1_is_loop):
+                two_components_exist=True    
+            else:
+                reverse_direction_comp1=array_of_positions_from_edge(L_edge1[1],L_edge1[0],braid_word,enh_word)
+                if(not(L_edge2[0] in reverse_direction_comp1)):
+                    two_components_exist=True
+        
+        # Generate merge-arrows up
+        if(two_components_exist):
+            component2=array_of_positions_from_edge(L_edge2[0],L_edge2[1],braid_word,enh_word)
+
+            component2_is_loop=False
+            if(component2[0]==component2[len(component2)-1]):
+                component2_is_loop=True
+
+            comp1_high_dec=highest_and_decoration_of_component(component1,enh_word)
+            comp2_high_dec=highest_and_decoration_of_component(component2,enh_word)
+
+            # Neither component is a loop
+            if((not component1_is_loop) and (not component2_is_loop)):
+                new_word=replace_char(enh_word,L,"1")
+                words_up.append((new_word,L))
+                continue
+
+            # Component 1 is a loop and component 2 is not
+            if component1_is_loop and (not component2_is_loop):
+                new_word=replace_char(enh_word,L,"1")
+                new_word=remove_xy_coding_from_char(new_word,comp1_high_dec[0])
+                words_up.append((new_word,L))
+                continue
+
+            # Component 2 is a loop and component 1 is not
+            if (not component1_is_loop) and component2_is_loop:
+                new_word=replace_char(enh_word,L,"1")
+                new_word=remove_xy_coding_from_char(new_word,comp2_high_dec[0])
+                words_up.append((new_word,L))
+                continue
+
+            # Both components are loops
+            if component1_is_loop and component2_is_loop:
+                
+                # Both components are marked with x
+                if comp1_high_dec[1]=="x" and comp2_high_dec[1]=="x":
+                    continue
+                
+                comp1_is_higher=True
+                if comp1_high_dec[0]<comp2_high_dec[0]:
+                    comp1_is_higher=False
+                                
+                
+                # Both components are marked with y
+                if comp1_high_dec[1]=="y" and comp2_high_dec[1]=="y":                  
+                    new_word=replace_char(enh_word,L,"1")
+                    if comp1_is_higher:
+                        new_word=remove_xy_coding_from_char(new_word,comp2_high_dec[0])
+                    else:
+                        new_word=remove_xy_coding_from_char(new_word,comp1_high_dec[0])
+                    
+                    words_up.append((new_word,L))
+                    continue
+                
+                #One component is marked x one is marked y
+                new_word=replace_char(enh_word,L,"1")
+                if comp1_is_higher:
+                    new_word=remove_xy_coding_from_char(new_word,comp2_high_dec[0])
+                    new_word=put_x_coding_to_char(new_word,comp1_high_dec[0])
+                else:
+                    new_word=remove_xy_coding_from_char(new_word,comp1_high_dec[0])
+                    new_word=put_x_coding_to_char(new_word,comp2_high_dec[0]) 
+                
+                words_up.append((new_word,L))
+                continue
+        
+        #Generate split arrows up
+
+        prelim_word=replace_char(enh_word, L ,"1")
+
+        prelim_comp1=array_of_positions_from_edge(L_edge1[0],L_edge2[0],braid_word,prelim_word)
+        prelim_comp2=array_of_positions_from_edge(L_edge1[1],L_edge2[1],braid_word,prelim_word)
+        
+        prelim_comp1_high_dec=highest_and_decoration_of_component(prelim_comp1,prelim_word)
+        prelim_comp2_high_dec=highest_and_decoration_of_component(prelim_comp2,prelim_word)
+        
+        prelim_comp1_is_loop=True
+        if prelim_comp1_high_dec[0]==-10:
+            prelim_comp1_is_loop=False
+        
+        prelim_comp2_is_loop=True
+        if prelim_comp2_high_dec[0]==-10:
+            prelim_comp2_is_loop=False
+        
+        #The split is from non-loop component
+        if not prelim_comp1_is_loop:
+            words_up.append((put_x_coding_to_char(prelim_word,prelim_comp2_high_dec[0]),L))
+            words_up.append((put_y_coding_to_char(prelim_word,prelim_comp2_high_dec[0]),L))
+            continue
+        
+        if not prelim_comp2_is_loop:
+            words_up.append((put_x_coding_to_char(prelim_word,prelim_comp1_high_dec[0]),L))
+            words_up.append((put_y_coding_to_char(prelim_word,prelim_comp1_high_dec[0]),L))
+            continue
+        
+        #The split is from a loop
+        prelim_comp1_is_higher=True
+        if prelim_comp1_high_dec[0]<prelim_comp2_high_dec[0]:
+            prelim_comp1_is_higher=False
+        
+        orig_component_h_d=highest_and_decoration_of_component(component1,enh_word)
+        
+        #The original loop had x coding
+        if orig_component_h_d[1]=="x":
+            prelim_word==put_x_coding_to_char(prelim_word,prelim_comp1_high_dec[0])
+            prelim_word==put_x_coding_to_char(prelim_word,prelim_comp2_high_dec[0])
+            words_up.append((prelim_word,L))
+            continue
+        
+        #The original loop had y coding
+        new_word1=put_x_coding_to_char(prelim_word,prelim_comp1_high_dec[0])
+        new_word1=put_y_coding_to_char(new_word1,prelim_comp2_high_dec[0])
+
+        new_word2=put_y_coding_to_char(prelim_word,prelim_comp1_high_dec[0])
+        new_word2=put_x_coding_to_char(new_word2,prelim_comp2_high_dec[0])
+        
+        words_up.append((new_word1,L))
+        words_up.append((new_word2,L))
+
+    return words_up
+    
+    
+    
 
 
 
 
+
+def next_step_down(braid_word,enh_word,previous_L,previous_u):
+    #returns -1 if unmatched cell is found
+
+    for u in range(previous_L,len(braid_word),1):
+        for L in range(u,-1,-1):
+            matching=matching_a_cell(braid_word,enh_word,L,u)
+            if(matching!= None):
+                if(hdeg_of_word(braid_word, enh_word)<hdeg_of_word(braid_word, matching)):
+                    return None
+                elif (L==previous_L) and (u==previous_u):
+                    return None
+                return (matching,L,u)
+    return -1
+
+
+
+
+#def qdeg_distance
+#if this is negative, then do not try pursuing the path
+
+#def ones_distance
+#number of ones difference, if this is negative, do not try pursuing the path
+#does only work for strictly positive braids
+
+#Some function which takes in the unmatched cells and splits them into pairs of vertices and acchiavable targets
 
 
 
@@ -746,6 +933,15 @@ def main():
         print(a)
 
     
+    all_words=generate_all_enhanced_words(braid)
+
+    for word in all_words:
+        print("")
+        print(word)
+        print(next_steps_up(braid,word,len(braid)))
+
+    #print(next_steps_up(braid,"110yxy",5))
+
    # print(potential_L_matchings_max_u(braid,"00001x"))
 
     #testset=generate_all_unmatched_words(braid)
