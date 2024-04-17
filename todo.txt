@@ -1,0 +1,13 @@
+Todo:
+
+fix match down
+get path finder without any distances working
+qdeg distance without connectivity
+
+
+ones distance for certain? positive braids
+
+speedup on finding critical cells. Generate new "next all cells" function which removes u=L cells as well as generates a global list of L:s needed to be considered
+
+
+ 

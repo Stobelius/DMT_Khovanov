@@ -1,5 +1,6 @@
 
 import sys
+from collections import deque
 
 
 ################## Utilities for geomotry inside a single smoothing
@@ -496,13 +497,20 @@ def generate_next_unmatched_words(set_of_enh_words, concatenated_braid_word):
         new_words=remove_L_u_matched_words_from_set(new_words,concatenated_braid_word,L,u)
     return new_words
 
-    
+#This is obsolate, since I will be using generate unmatched cell history in order to check paths    
 def generate_all_unmatched_words(braid_word):
     all_unmatched_words={}
     for i in range(len(braid_word)):
         all_unmatched_words=generate_next_unmatched_words(all_unmatched_words,braid_word[:(i+1)])  
         print(braid_word[:i+1]) #THIS WORKS AS A PROGRESS BAR 
     return all_unmatched_words
+
+def generate_unmatched_cell_history(braid_word):
+    history=[{}]
+    for i in range(len(braid_word)):
+        history.append(generate_next_unmatched_words(history[i],braid_word[:(i+1)]))  
+        print(braid_word[:i+1]) #THIS WORKS AS A PROGRESS BAR 
+    return history
 
 
 
@@ -677,9 +685,12 @@ def next_steps_up(braid_word,enh_word,previous_u):
     #Also includes reversed arrows in the list, these need to be filtered separately
     #At the moment, this works in the dotted Bar-Natan category
     
+    
     words_up=[]
 
-    for L in range(0,previous_u,1):
+
+    for L in range(0,min(len(enh_word),previous_u+1),1):
+        
         if enh_word[L]=="1" or enh_word[L]=="X" or enh_word[L]=="Y":
             continue
         
@@ -709,7 +720,8 @@ def next_steps_up(braid_word,enh_word,previous_u):
                 reverse_direction_comp1=array_of_positions_from_edge(L_edge1[1],L_edge1[0],braid_word,enh_word)
                 if(not(L_edge2[0] in reverse_direction_comp1)):
                     two_components_exist=True
-        
+
+  
         # Generate merge-arrows up
         if(two_components_exist):
             component2=array_of_positions_from_edge(L_edge2[0],L_edge2[1],braid_word,enh_word)
@@ -830,26 +842,58 @@ def next_steps_up(braid_word,enh_word,previous_u):
         words_up.append((new_word2,L))
 
     return words_up
+
+
+def prefers_back(braid_word,A,B,L,u,unmatched_cells_history):
+    #we assume that A prefers B with an (L,u) arrow. 
+    # The function returns True if B prefers A back and false, if not.
+
+    #print(A)
+    #print(B)
+    #print(L)
+    #print(u)
+
+
+    #print("cutted B "+ B[:(u)])
+    if not (B[:(u)] in unmatched_cells_history[u]):
+        return False
     
+    for current_L in range(u,L,-1):
+        matching=matching_a_cell(braid_word,B,current_L,u)
+        #print("")
+        #print(matching)
+        if  matching!= None:
+            return False
     
+
+    return True
     
-
-
-
-
-
-def next_step_down(braid_word,enh_word,previous_L,previous_u):
-    #returns -1 if unmatched cell is found
-
+#### This does not check if the current vertex is matched down
+def next_step_down(braid_word,enh_word,previous_L,unmatched_cells_history):
+    #returns -1 if unmatched cell is found. Returns -2, if the cell is matched upwards.
+    
     for u in range(previous_L,len(braid_word),1):
         for L in range(u,-1,-1):
             matching=matching_a_cell(braid_word,enh_word,L,u)
+            #print("word/matching")
+            #print(enh_word)
+            #print(matching)
+
             if(matching!= None):
-                if(hdeg_of_word(braid_word, enh_word)<hdeg_of_word(braid_word, matching)):
-                    return None
-                elif (L==previous_L) and (u==previous_u):
-                    return None
-                return (matching,L,u)
+                #print("hdegs")
+                #print(hdeg_of_word(braid_word, enh_word))
+                #print(hdeg_of_word(braid_word, matching))
+
+                #print("we are checking prefers back")
+                if prefers_back(braid_word,enh_word,matching,L,u,unmatched_cells_history):
+                    if(hdeg_of_word(braid_word, enh_word)<hdeg_of_word(braid_word, matching)):
+                        return -2
+                    return (matching,u)
+    if not enh_word in unmatched_cells_history[len(unmatched_cells_history)-1]:
+        print("something fishy")
+        print(enh_word)
+        print(previous_L)
+
     return -1
 
 
@@ -864,7 +908,45 @@ def next_step_down(braid_word,enh_word,previous_L,previous_u):
 
 #Some function which takes in the unmatched cells and splits them into pairs of vertices and acchiavable targets
 
+def zig_zag_paths_from(braid_word,enh_word,unmatched_cells_history):
+    paths_in_construction=deque()
+    paths_in_construction.append([(enh_word, len(braid_word))])
 
+    final_paths=[]
+
+    while len(paths_in_construction)>0:
+        path=paths_in_construction.pop()
+        last=path[len(path)-1]
+        #print("pathlength")
+        #print(len(path))
+        for step_L in next_steps_up(braid_word,last[0],last[1]):#len(braid_word)):#last[1]):# ##put here previous u
+            down=next_step_down(braid_word,step_L[0],step_L[1],unmatched_cells_history)
+            if down==-1:
+                added_path=path.copy()
+                added_path.append(step_L)
+                final_paths.append(added_path)
+                #print("addedpathlength")
+                #print(len(added_path))
+
+                #print("")
+                #print("asdadsdsadsa")
+                #print(added_path)
+                #print(len(final_paths))
+                #print(path)
+                #print("")
+            elif (down!= -2) and (down[0]!= last[0]):
+                added_path=path.copy()
+                added_path.append(step_L)
+                added_path.append(down)
+                paths_in_construction.append(added_path)
+        #print(len(paths_in_construction))
+        #print(paths_in_construction)
+    return final_paths
+
+            
+
+
+    
 
 
 
@@ -924,21 +1006,57 @@ def main():
     #print(matching_a_cell(sys.argv[1],"0000xy",3,5))
     
     #print(matching_a_cell(sys.argv[1],"11101Y",5,5))
-    braid=sys.argv[1]
-    unmatched_words=generate_all_unmatched_words(braid)
-    unmatched_words=add_degs(braid,unmatched_words)
-    arranged_unmatched_words=sort_by_hdeg(unmatched_words)
-
-    for a in arranged_unmatched_words:
-        print(a)
-
     
-    all_words=generate_all_enhanced_words(braid)
+    braid=sys.argv[1]
+    #unmatched_words=generate_all_unmatched_words(braid)
+    #arranged_unmatched_words=add_degs(braid,unmatched_words)
+    #arranged_unmatched_words=sort_by_hdeg(arranged_unmatched_words)
 
-    for word in all_words:
-        print("")
-        print(word)
-        print(next_steps_up(braid,word,len(braid)))
+    #for a in arranged_unmatched_words:
+    #    print(a)
+    
+    
+    history=generate_unmatched_cell_history(braid)
+    unmatched_words=history[len(history)-1]
+
+    #all_words=generate_all_enhanced_words(braid)
+
+    #for word in all_words:
+    #    print("")
+    #    print(word)
+    #    print(next_steps_up(braid,word,len(braid)))
+
+    #all_words=generate_all_enhanced_words(braid)
+
+    #for word in all_words:
+    #    print("")
+    #    print(word)
+    #    print("down")
+    #    print(next_step_down(braid,word,0,history))
+    #    print("up")
+    #    print(next_steps_up(braid,word,len(braid)))
+
+
+    #print(next_step_down(braid,"10x",0,history))
+
+    #print(history)
+
+    #print(unmatched_words)    
+   
+    for a in unmatched_words:
+       #print("muasdasd")
+        print(a)
+        #print(next_steps_up(braid,a,len(braid)))
+
+        print(len(zig_zag_paths_from(braid,a,history)))
+        #zig_zag_paths_from(braid,a,history)
+    
+    #asd=next_step_down(braid,"01",2)
+    #print(asd)
+    #
+    #print(history)
+
+    #print(history[len(history)-1]==unmatched_words)
 
     #print(next_steps_up(braid,"110yxy",5))
 
