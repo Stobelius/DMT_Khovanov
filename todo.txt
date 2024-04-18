@@ -1,9 +1,7 @@
 Todo:
 
-fix match down
-get path finder without any distances working
+Some more testing to convince that the path finder is working.
 qdeg distance without connectivity
-
 
 ones distance for certain? positive braids
 

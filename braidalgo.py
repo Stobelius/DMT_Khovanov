@@ -826,9 +826,16 @@ def next_steps_up(braid_word,enh_word,previous_u):
         
         #The original loop had x coding
         if orig_component_h_d[1]=="x":
-            prelim_word==put_x_coding_to_char(prelim_word,prelim_comp1_high_dec[0])
-            prelim_word==put_x_coding_to_char(prelim_word,prelim_comp2_high_dec[0])
+            #print(prelim_word)
+            prelim_word=put_x_coding_to_char(prelim_word,prelim_comp1_high_dec[0])
+            #print(prelim_word)
+            prelim_word=put_x_coding_to_char(prelim_word,prelim_comp2_high_dec[0])
+            
             words_up.append((prelim_word,L))
+            #print("asd")
+            #print(prelim_word)
+            #print(prelim_comp1_high_dec)
+            #print(prelim_comp2_high_dec)
             continue
         
         #The original loop had y coding
@@ -867,6 +874,27 @@ def prefers_back(braid_word,A,B,L,u,unmatched_cells_history):
     
 
     return True
+
+def prefers_back2(braid_word,A,B,L,u,unmatched_cells_history):
+    #we assume that A prefers B with an (L,u) arrow. 
+    # The function returns True if B prefers A back and false, if not.
+
+    if not (B[:(u)] in unmatched_cells_history[u]):
+        return False
+    
+    for current_L in range(u,L-1,-1):
+        matching=matching_a_cell(braid_word,B,current_L,u)
+
+        if matching==A:
+            return True
+
+        if  matching!= None:
+            if(prefers_back2(braid_word,B,matching,current_L,u,unmatched_cells_history)):
+                return False
+            #return not prefers_back2(braid_word,B,matching,current_L,u,unmatched_cells_history)
+
+    print("something is strange")
+    return True
     
 #### This does not check if the current vertex is matched down
 def next_step_down(braid_word,enh_word,previous_L,unmatched_cells_history):
@@ -885,15 +913,16 @@ def next_step_down(braid_word,enh_word,previous_L,unmatched_cells_history):
                 #print(hdeg_of_word(braid_word, matching))
 
                 #print("we are checking prefers back")
-                if prefers_back(braid_word,enh_word,matching,L,u,unmatched_cells_history):
+                if prefers_back2(braid_word,enh_word,matching,L,u,unmatched_cells_history):
                     if(hdeg_of_word(braid_word, enh_word)<hdeg_of_word(braid_word, matching)):
                         return -2
                     return (matching,u)
     if not enh_word in unmatched_cells_history[len(unmatched_cells_history)-1]:
+        print("")
         print("something fishy")
         print(enh_word)
         print(previous_L)
-
+        print("")
     return -1
 
 
@@ -1025,17 +1054,35 @@ def main():
     #    print("")
     #    print(word)
     #    print(next_steps_up(braid,word,len(braid)))
+    #ups=next_steps_up(braid,"110000x",len(braid))
+    #print(ups)
+    """
+    all_words=generate_all_enhanced_words(braid)
 
-    #all_words=generate_all_enhanced_words(braid)
-
-    #for word in all_words:
-    #    print("")
-    #    print(word)
-    #    print("down")
-    #    print(next_step_down(braid,word,0,history))
-    #    print("up")
-    #    print(next_steps_up(braid,word,len(braid)))
-
+    for word in all_words:
+        #print("")
+        #print(word)
+        #print("down")
+        
+        #print(next_step_down(braid,word,0,history))
+        #print("up")
+        ups=next_steps_up(braid,word,len(braid))
+        #print(next_steps_up(braid,word,len(braid)))
+        for up_word in ups:
+            if not (up_word[0] in all_words):
+                print("")
+                print(word)
+                print(up_word)
+                print(ups)
+        #down_word=next_step_down(braid, word,0,history)
+        
+        #if down_word!=-1 and down_word!= -2:
+        #    if not down_word[0] in all_words:
+        #        print("khkjhkjhjkhkjhkjh")
+        #        print(down_word)
+        
+    """
+    
 
     #print(next_step_down(braid,"10x",0,history))
 
@@ -1044,7 +1091,6 @@ def main():
     #print(unmatched_words)    
    
     for a in unmatched_words:
-       #print("muasdasd")
         print(a)
         #print(next_steps_up(braid,a,len(braid)))
 
