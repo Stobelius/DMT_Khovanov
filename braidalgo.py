@@ -901,6 +901,32 @@ def hdeg_to_maximal_qdeg(braid,unmatched_words):
             hdeg_to_qdeg[hdeg] = qdeg
 
     return hdeg_to_qdeg
+    
+def count_starting_ones(my_string):
+    count = 0
+    for char in my_string:
+        if char == "1":
+            count += 1
+        else:
+            break 
+    return count
+
+def hdeg_to_maximal_ones(braid,unmatched_words):
+    if not braid==braid.lower():
+        return None
+
+    hdeg_to_ones = {}  
+    for string in unmatched_words:
+        hdeg=hdeg_of_word(braid,string)
+        ones=count_starting_ones(string)
+
+        if hdeg not in hdeg_to_ones or ones > hdeg_to_ones[hdeg]:
+            hdeg_to_ones[hdeg] = ones
+
+    return hdeg_to_ones
+
+
+
 
 
 
@@ -913,17 +939,21 @@ def hdeg_to_maximal_qdeg(braid,unmatched_words):
 
 #Some function which takes in the unmatched cells and splits them into pairs of vertices and acchiavable targets
 
-def zig_zag_paths_from(braid_word,enh_word,unmatched_cells_history,hdeg_max_qdeg):
+def zig_zag_paths_from(braid_word,enh_word,unmatched_cells_history,hdeg_max_qdeg,hdeg_to_max_ones):
     paths_in_construction=deque()
     paths_in_construction.append([(enh_word, len(braid_word))])
+    
+
+    #Some optimisation to cut hopeless paths earlier on
     hdeg=hdeg_of_word(braid_word,enh_word)+1
     max_qdeg=100000000
+    max_ones=100000000
     if hdeg in hdeg_max_qdeg:
-
         max_qdeg=hdeg_max_qdeg[hdeg]
+    if not(hdeg_to_max_ones==None) and hdeg in hdeg_to_max_ones:
+        max_ones=hdeg_to_max_ones[hdeg]
 
-    #hdeg_to_max_qdeg=hdeg_to_maximal_qdeg(braid_word,unmatched_words)
-    
+
     final_paths=[]
 
     while len(paths_in_construction)>0:
@@ -931,8 +961,8 @@ def zig_zag_paths_from(braid_word,enh_word,unmatched_cells_history,hdeg_max_qdeg
         last=path[len(path)-1]
 
         for step_L in next_steps_up(braid_word,last[0],last[1]):#len(braid_word)):#last[1]):# ##put here previous u
-            #if(qdeg_of_word(braid_word,step_L[0])>max_qdeg):    #Stangely this optimization seems to only speed up by some factor of 2
-            #    continue
+            if(qdeg_of_word(braid_word,step_L[0])>max_qdeg) or (count_starting_ones(step_L[0])>max_ones):  
+                continue
 
             
             down=next_step_down(braid_word,step_L[0],step_L[1],unmatched_cells_history)
@@ -955,19 +985,32 @@ def generate_all_zig_zag_paths(braid):
     
     history=generate_unmatched_cell_history(braid)
     unmatched_words=history[len(history)-1]
-       
+    size=len(unmatched_words)   
+
     time2=time.time()
+
+    print("unmatched cells found: " + str(size))
+    print("time elapsed in generating unmatched cells: " + str(time2-time1))
+
     hdeg_to_max_qdeg=hdeg_to_maximal_qdeg(braid,unmatched_words)
+    hdeg_to_max_ones=hdeg_to_maximal_ones(braid,unmatched_words)
     zig_zags={}
+
+    paths_done=0
+
     for word in unmatched_words:
-        zig_zags[word]=zig_zag_paths_from(braid,word,history,hdeg_to_max_qdeg)
-    
+        
+        zig_zags[word]=zig_zag_paths_from(braid,word,history,hdeg_to_max_qdeg,hdeg_to_max_ones)
+        paths_done=paths_done+1
+        text = f"finding paths between unmatched cells: {round((paths_done*100)/size)}%"
+        print(f"\r{text}", end='')
+
     time3=time.time()
 
-    print("time elapsed in generating unmatched cells:" + str(time2-time1))
+    print("")
     print("time elapsed in generating paths:" + str(time3-time2))
-
-
+    print(hdeg_to_max_ones)
+    
     return zig_zags
 
 
