@@ -4,7 +4,7 @@ import time
 from collections import deque
 
 
-################## Utilities for geomotry inside a single smoothing
+################## Utilities for geometry inside a single smoothing
 
 def number_of_strands(word):
     word=word.lower()
@@ -853,6 +853,38 @@ def prefers_back(braid_word,A,B,L,u,unmatched_cells_history):
     return True
 """
 
+def wrap_back(braid_word,A,B,L,u,unmatched_cells_history):
+    (retval,x)=prefers_back3(braid_word,A,B,L,u,unmatched_cells_history,0)
+    #print("haloo" + str(x))
+    if x>1: 
+        print("length of preferback chain" + str(x))
+    return retval
+
+def prefers_back3(braid_word,A,B,L,u,unmatched_cells_history,i):
+    #we assume that A prefers B with an (L,u) arrow. 
+    # The function returns True if B prefers A back and false, if not.
+
+    i2 = i
+    if not (B[:(u)] in unmatched_cells_history[u]):
+        return (False,i2)
+    
+    for current_L in range(u,L-1,-1):
+        matching=matching_a_cell(braid_word,B,current_L,u)
+
+        if matching==A:
+            return (True,i2)
+
+        if  matching!= None:
+            prefer_return=prefers_back3(braid_word,B,matching,current_L,u,unmatched_cells_history, i2+1)
+            if(i2<prefer_return[1]): i2 = prefer_return[1]
+            print(i2)
+            if(prefer_return[0]):
+                return (False,i2)
+
+    print("something is strange")
+    return True
+    
+
 def prefers_back2(braid_word,A,B,L,u,unmatched_cells_history):
     #we assume that A prefers B with an (L,u) arrow. 
     # The function returns True if B prefers A back and false, if not.
@@ -883,7 +915,7 @@ def next_step_down(braid_word,enh_word,previous_L,unmatched_cells_history):
 
             if(matching!= None):
 
-                if prefers_back2(braid_word,enh_word,matching,L,u,unmatched_cells_history):
+                if prefers_back2(braid_word,enh_word,matching,L,u,unmatched_cells_history): #should be prefers_back2
                     if(hdeg_of_word(braid_word, enh_word)<hdeg_of_word(braid_word, matching)):
                         return -2
                     return (matching,u)
@@ -928,7 +960,7 @@ def hdeg_to_maximal_ones(braid,unmatched_words):
 
 
 
-
+dead_cells={}
 
 #def qdeg_distance
 #if this is negative, then do not try pursuing the path
@@ -953,7 +985,6 @@ def zig_zag_paths_from(braid_word,enh_word,unmatched_cells_history,hdeg_max_qdeg
     if not(hdeg_to_max_ones==None) and hdeg in hdeg_to_max_ones:
         max_ones=hdeg_to_max_ones[hdeg]
 
-
     final_paths=[]
 
     while len(paths_in_construction)>0:
@@ -970,12 +1001,16 @@ def zig_zag_paths_from(braid_word,enh_word,unmatched_cells_history,hdeg_max_qdeg
                 added_path=path.copy()
                 added_path.append(step_L)
                 final_paths.append(added_path)
-
             elif (down!= -2) and (down[0]!= last[0]):
                 added_path=path.copy()
                 added_path.append(step_L)
                 added_path.append(down)
                 paths_in_construction.append(added_path)
+            else:
+                length=len(path)
+                if length>60:
+                    pass
+                    #print(len(path))
 
     return final_paths
 
@@ -998,9 +1033,13 @@ def generate_all_zig_zag_paths(braid):
 
     paths_done=0
 
+
+
     for word in unmatched_words:
         
         zig_zags[word]=zig_zag_paths_from(braid,word,history,hdeg_to_max_qdeg,hdeg_to_max_ones)
+        #print(len(zig_zags[word]))
+
         paths_done=paths_done+1
         text = f"finding paths between unmatched cells: {round((paths_done*100)/size)}%"
         print(f"\r{text}", end='')
@@ -1010,7 +1049,7 @@ def generate_all_zig_zag_paths(braid):
     print("")
     print("time elapsed in generating paths:" + str(time3-time2))
     print(hdeg_to_max_ones)
-    
+
     return zig_zags
 
 
@@ -1057,7 +1096,10 @@ def main():
     #print(matching_a_cell(sys.argv[1],"11101Y",5,5))
     
     braid=sys.argv[1]
+
+    generate_all_zig_zag_paths(braid)    
     #unmatched_words=generate_all_unmatched_words(braid)
+    
     #arranged_unmatched_words=add_degs(braid,unmatched_words)
     #arranged_unmatched_words=sort_by_hdeg(arranged_unmatched_words)
 
@@ -1121,7 +1163,7 @@ def main():
 
     #print(hdeg_to_maximal_qdeg(braid,unmatched_words))
     
-    generate_all_zig_zag_paths(braid)
+    #print(generate_all_zig_zag_paths(braid))
     #print(generate_all_zig_zag_paths(braid))
 
     #asd=next_step_down(braid,"01",2)
