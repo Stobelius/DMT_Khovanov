@@ -1,6 +1,7 @@
-
+import pickle
 import sys
 import time
+import os
 from collections import deque
 
 
@@ -494,7 +495,7 @@ def generate_next_unmatched_words(set_of_enh_words, concatenated_braid_word):
     u=len(concatenated_braid_word) -1
     
     for L in range(u,-1,-1):
-        #print(L)
+        print(L)
         new_words=remove_L_u_matched_words_from_set(new_words,concatenated_braid_word,L,u)
     return new_words
 
@@ -853,6 +854,8 @@ def prefers_back(braid_word,A,B,L,u,unmatched_cells_history):
     return True
 """
 
+"""
+
 def wrap_back(braid_word,A,B,L,u,unmatched_cells_history):
     (retval,x)=prefers_back3(braid_word,A,B,L,u,unmatched_cells_history,0)
     #print("haloo" + str(x))
@@ -883,7 +886,8 @@ def prefers_back3(braid_word,A,B,L,u,unmatched_cells_history,i):
 
     print("something is strange")
     return True
-    
+
+""" 
 
 def prefers_back2(braid_word,A,B,L,u,unmatched_cells_history):
     #we assume that A prefers B with an (L,u) arrow. 
@@ -990,6 +994,7 @@ def zig_zag_paths_from(braid_word,enh_word,unmatched_cells_history,hdeg_max_qdeg
     while len(paths_in_construction)>0:
         path=paths_in_construction.pop()
         last=path[len(path)-1]
+        
 
         for step_L in next_steps_up(braid_word,last[0],last[1]):#len(braid_word)):#last[1]):# ##put here previous u
             if(qdeg_of_word(braid_word,step_L[0])>max_qdeg) or (count_starting_ones(step_L[0])>max_ones):  
@@ -1006,11 +1011,11 @@ def zig_zag_paths_from(braid_word,enh_word,unmatched_cells_history,hdeg_max_qdeg
                 added_path.append(step_L)
                 added_path.append(down)
                 paths_in_construction.append(added_path)
-            else:
-                length=len(path)
-                if length>60:
-                    pass
-                    #print(len(path))
+            #else:
+            #    length=len(path)
+                #if length>10:
+            #        
+            #        print(len(path))
 
     return final_paths
 
@@ -1095,9 +1100,48 @@ def main():
     
     #print(matching_a_cell(sys.argv[1],"11101Y",5,5))
     
+
     braid=sys.argv[1]
 
-    generate_all_zig_zag_paths(braid)    
+
+    zig_zags=generate_all_zig_zag_paths(braid)
+    print(zig_zags)
+
+
+
+    """
+    #Load or calculate 4 torus braid paths 
+    no_twists=(round(len(braid)/3))
+    file_path="Torus4braid_paths/4string"+str(no_twists)+"twist.pkl"
+    zig_zags=None  
+    if os.path.exists(file_path):
+        with open(file_path, 'rb') as file:
+            zig_zags = pickle.load(file)
+    else:      
+        zig_zags=generate_all_zig_zag_paths(braid)
+        with open(file_path, 'wb') as file:
+            pickle.dump(zig_zags, file)
+    
+    """
+
+    """
+
+    time1=time.time()
+
+    file_path="Torus4braid_paths/26twistcells.pkl"
+    braid=26*"abc"
+    print(braid)
+    history=generate_unmatched_cell_history(braid)
+    with open(file_path, 'wb') as file:
+        pickle.dump(history, file)
+
+    time2=time.time()
+
+    print("time spend in seconds")
+    print(time2-time1)
+
+    """
+
     #unmatched_words=generate_all_unmatched_words(braid)
     
     #arranged_unmatched_words=add_degs(braid,unmatched_words)
