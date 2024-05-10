@@ -5,6 +5,9 @@ import os
 from collections import deque
 
 
+positive_braid=False #global boolean variable which is set at the end of the file
+#Some optimation is done only for positive braids
+
 ################## Utilities for geometry inside a single smoothing
 
 def number_of_strands(word):
@@ -188,6 +191,16 @@ def generate_all_enhanced_words(braid_word):
 
 
 ################## String utilities for matching the cells
+
+def count_starting_ones(my_string):
+    count = 0
+    for char in my_string:
+        if char == "1":
+            count += 1
+        else:
+            break 
+    return count
+
     
 def replace_char(string,index,char):
     changed=string[:index] + char + string[index+1:]
@@ -239,7 +252,13 @@ def highest_ycoord_of_loop(position_array):
 ################ Matching a cell and generating all unmatched cells
 
 def matching_a_cell(braid_word,enh_word,L,u):
+
+    #speedhack for positive braids
+    if(positive_braid and L<count_starting_ones(enh_word)):
+        return None
     
+
+
     enh_at_L_is_0_or_lowercase=False
     if(enh_word[L]=="0" or enh_word[L]=="x"or enh_word[L]=="y"):
         enh_at_L_is_0_or_lowercase=True
@@ -462,6 +481,9 @@ def matching_a_cell(braid_word,enh_word,L,u):
     return (None)
 
 
+#def generate_words_and_possible_matching_list(set_of_enh_words, concatenated_braid_word):
+
+
 
 
 
@@ -485,6 +507,72 @@ def remove_L_u_matched_words_from_set(set_of_enh_words,braid_word,L,u):
             remaining_words.add(word)
             
     return remaining_words
+"""
+def potential_L_matchings_max_u(braid_word, enh_word):
+    #returns a set of potentials which can be reached with merge or rev-split
+    potentials=set()
+    if enh_word[len(enh_word)-1]=="0" or enh_word[len(enh_word)-1]=="1":
+        return (potentials)
+    if len(braid_word)==0 or len(braid_word)==1:
+        return (potentials)
+    position_of_top_crossing=(x_position_of_crossing(braid_word,len(enh_word)-1) ,len(enh_word)-1)
+    if not (smoothing_northeast_is_Vert(position_of_top_crossing,braid_word,enh_word)):
+        return potentials
+    
+
+    
+    y_pos=len(braid_word) -1
+    if(y_pos==0):
+        return False    
+    x_pos=x_position_of_crossing(braid_word,y_pos)
+    
+    points_along_circle=array_of_positions_from_edge((x_pos,y_pos),(x_pos+1,y_pos),braid_word,enh_word)
+
+    #print(points_along_circle)
+
+    for point in points_along_circle:
+        
+        x_of_crossing_at=x_position_of_crossing(braid_word,point[1])
+        if x_of_crossing_at==point[0]:
+            potentials.add(point[1])
+        if x_of_crossing_at==point[0]+1:
+            potentials.add(point[1])
+        
+        x_of_crossing_below=x_position_of_crossing(braid_word,point[1]-1)
+        if x_of_crossing_below==point[0]:
+            potentials.add(point[1]-1)
+        if x_of_crossing_below==point[0]+1:
+            potentials.add(point[1]-1)
+    
+    #Do x and y filtering here also
+    #potentials=frozenset(potentials)
+    return potentials
+
+   
+def generate_next_unmatched_wordsv3(set_of_enh_words, concatenated_braid_word):
+    if(len(concatenated_braid_word)==1):
+        return {"0","1"}
+    new_words=generate_next_enhanced_words(set_of_enh_words,concatenated_braid_word)
+    
+    potential_Ls=set()
+
+    for cell in new_words:
+        new_potentials=potential_L_matchings_max_u(concatenated_braid_word,cell)
+        potential_Ls=potential_Ls.union(new_potentials)
+    
+    potential_Ls=list(potential_Ls)
+    potential_Ls.sort(reverse = True)
+
+    
+    
+
+    u=len(concatenated_braid_word) -1
+    
+    for L in potential_Ls:
+        print(L)
+        new_words=remove_L_u_matched_words_from_set(new_words,concatenated_braid_word,L,u)
+    return new_words
+"""
 
    
 def generate_next_unmatched_words(set_of_enh_words, concatenated_braid_word):
@@ -495,7 +583,7 @@ def generate_next_unmatched_words(set_of_enh_words, concatenated_braid_word):
     u=len(concatenated_braid_word) -1
     
     for L in range(u,-1,-1):
-        print(L)
+        #print(L)
         new_words=remove_L_u_matched_words_from_set(new_words,concatenated_braid_word,L,u)
     return new_words
 
@@ -512,6 +600,7 @@ def generate_unmatched_cell_history(braid_word):
     for i in range(len(braid_word)):
         history.append(generate_next_unmatched_words(history[i],braid_word[:(i+1)]))  
         print(braid_word[:i+1]) #THIS WORKS AS A PROGRESS BAR 
+        #print(len(history[len(history)-1]))
     return history
 
 
@@ -919,7 +1008,7 @@ def next_step_down(braid_word,enh_word,previous_L,unmatched_cells_history):
 
             if(matching!= None):
 
-                if prefers_back2(braid_word,enh_word,matching,L,u,unmatched_cells_history): #should be prefers_back2
+                if prefers_back2(braid_word,enh_word,matching,L,u,unmatched_cells_history): 
                     if(hdeg_of_word(braid_word, enh_word)<hdeg_of_word(braid_word, matching)):
                         return -2
                     return (matching,u)
@@ -938,14 +1027,7 @@ def hdeg_to_maximal_qdeg(braid,unmatched_words):
 
     return hdeg_to_qdeg
     
-def count_starting_ones(my_string):
-    count = 0
-    for char in my_string:
-        if char == "1":
-            count += 1
-        else:
-            break 
-    return count
+
 
 def hdeg_to_maximal_ones(braid,unmatched_words):
     if not braid==braid.lower():
@@ -1038,11 +1120,14 @@ def generate_all_zig_zag_paths(braid):
 
     paths_done=0
 
+    print("Positive braid optimizations are on: "+str(positive_braid))
 
-
+    total_path_count=0
     for word in unmatched_words:
         
         zig_zags[word]=zig_zag_paths_from(braid,word,history,hdeg_to_max_qdeg,hdeg_to_max_ones)
+        total_path_count+=len(zig_zags[word])
+        
         #print(len(zig_zags[word]))
 
         paths_done=paths_done+1
@@ -1052,15 +1137,27 @@ def generate_all_zig_zag_paths(braid):
     time3=time.time()
 
     print("")
-    print("time elapsed in generating paths:" + str(time3-time2))
-    print(hdeg_to_max_ones)
+    print("total number of paths found: "+ str(total_path_count))
+    print("time elapsed in generating paths: " + str(time3-time2))
+    
+    #print(hdeg_to_max_ones)
 
     return zig_zags
 
 
 
 
-    
+def calc_and_save_T4_paths(twistnumber):
+
+    braid=twistnumber*"abc"
+    file_path="Torus4braid_paths/4string"+str(twistnumber)+"twist.pkl"
+    zig_zags=None  
+    if os.path.exists(file_path):
+        pass
+    else:      
+        zig_zags=generate_all_zig_zag_paths(braid)
+        with open(file_path, 'wb') as file:
+            pickle.dump(zig_zags, file)
 
 
 
@@ -1102,13 +1199,25 @@ def main():
     
 
     braid=sys.argv[1]
+    
 
 
+    """
+    time1=time.time()
+    history=generate_unmatched_cell_history(braid)
+    time2=time.time()
+    print("time spend in seconds")
+    print(time2-time1)
+    """
     zig_zags=generate_all_zig_zag_paths(braid)
-    print(zig_zags)
-
-
-
+    #print(zig_zags)
+    
+    """
+    for i in range(50):
+        print(i)
+        calc_and_save_T4_paths(i)
+    """
+    
     """
     #Load or calculate 4 torus braid paths 
     no_twists=(round(len(braid)/3))
@@ -1124,12 +1233,12 @@ def main():
     
     """
 
+    
     """
-
     time1=time.time()
 
-    file_path="Torus4braid_paths/26twistcells.pkl"
-    braid=26*"abc"
+    file_path="Torus4braid_paths/44twistcells.pkl"
+    braid=44*"abc"
     print(braid)
     history=generate_unmatched_cell_history(braid)
     with open(file_path, 'wb') as file:
@@ -1139,8 +1248,8 @@ def main():
 
     print("time spend in seconds")
     print(time2-time1)
-
     """
+    
 
     #unmatched_words=generate_all_unmatched_words(braid)
     
@@ -1237,5 +1346,9 @@ def main():
     #print(remove_L_u_matched_words_from_set({"00","0y","01","11"},"aa",0,1))
 
 if __name__ == "__main__":
+
+    if(sys.argv[1]==sys.argv[1].lower()):
+        positive_braid=True
+    
     main()
     
