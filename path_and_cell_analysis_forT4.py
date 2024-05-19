@@ -609,6 +609,27 @@ def path_dom_cod_pairs_testing():
                 #two_doms=True
         #two_doms=False
 
+def sorter(array):
+    
+    if(array==None):
+            return ("Z",-1000)
+    # Sort by lexicographic order of the last element
+    last_element = (array[-1])[0]
+    #print(last_element)
+    # Get the integer value from the "first_L" function
+    first_L_value =(list_of_Ls_from_path(array))[0]  
+    #print(first_L_value)
+    return (last_element, first_L_value)
+
+
+def arrange_paths_from_cell(paths_from_cell):
+
+    sorted_arrays = sorted(paths_from_cell, key=sorter)
+    return sorted_arrays
+
+
+
+
 
 
 def snake_functoriality_testing():
@@ -636,14 +657,19 @@ def snake_functoriality_testing():
             cod_snake.add(cell)
 
 
+
     for cell in dom_snake:  
         cod_cell=cell.replace(snake_pattern,2*snake_pattern,1)
         
-        dom_paths_from_cell=domain_paths[cell]        
-        dom_paths_from_cell=sorted(dom_paths_from_cell, key=lambda arr: arr[-1])
+        dom_paths_from_cell=domain_paths[cell]  
+        #dom_paths_from_cell=sorted(dom_paths_from_cell, key=lambda arr: arr[-1])
+        dom_paths_from_cell=arrange_paths_from_cell(dom_paths_from_cell)
+
 
         cod_paths_from_cell=codomain_paths[cod_cell]        
-        cod_paths_from_cell=sorted(cod_paths_from_cell, key=lambda arr: arr[-1])
+        #cod_paths_from_cell=sorted(cod_paths_from_cell, key=lambda arr: arr[-1])
+        cod_paths_from_cell=arrange_paths_from_cell(cod_paths_from_cell)
+
 
         number_of_dom_paths=0
         for i in range(len(dom_paths_from_cell)):
@@ -654,7 +680,7 @@ def snake_functoriality_testing():
             
             number_of_dom_paths+=1
 
-        print("dom"+str(number_of_dom_paths)+"  " +cell)
+        print("cell in domain: "+cell+" number of paths from it: " +str(number_of_dom_paths))
 
         number_of_cod_paths=0
         for i in range(len(cod_paths_from_cell)):
@@ -668,7 +694,7 @@ def snake_functoriality_testing():
         #print("cod"+str(number_of_cod_paths)+"  " +cod_cell)
         #print("")
         
-
+ 
         if number_of_dom_paths!=number_of_cod_paths or True:
             print("dom")
             for i in range(len(dom_paths_from_cell)):
@@ -677,6 +703,9 @@ def snake_functoriality_testing():
                 if not dom_end_vertex in dom_snake:
                     continue
                 print(str(sign_of_path(dom_path))+"  "+cell+" "+dom_end_vertex+"  "+str(qdeg_diffs_and_Ls_from_path(dom_path)))
+                
+                
+
 
             print("cod:")
             for i in range(len(cod_paths_from_cell)):
@@ -688,10 +717,125 @@ def snake_functoriality_testing():
 
         print("")
 
+def sign_string(sign):
+    if sign==1:
+        return "+"
+    if sign==-1:
+        return "-"
+
+
+def lk_functoriality_testing():
+    domain_twistcount=8
+    codomain_twistcount=domain_twistcount+2
+
+    domain_paths=load_paths(domain_twistcount)
+    codomain_paths=load_paths(codomain_twistcount)
+
+    dom_braid=domain_twistcount*"abc"
+    cod_braid=codomain_twistcount*"abc"
+
+    lk_pattern="x0101x"
+
+
+    dom_lk=set()
+    for cell in domain_paths:
+        #if 2*lk_pattern in cell:
+        if cell.endswith(lk_pattern):
+            dom_lk.add(cell)
+
+    
+    cod_lk=set()
+    for cell in codomain_paths:
+        #if (3*lk_pattern) in cell:
+        if cell.endswith(2*lk_pattern):
+            cod_lk.add(cell)
+
+    for dom_cell in dom_lk:  
+        #cod_cell=dom_cell.replace(2*lk_pattern,3*lk_pattern,1)
+        cod_cell=dom_cell.replace(lk_pattern,2*lk_pattern,1)
+        
+
+        dom_paths_from_cell=domain_paths[dom_cell]        
+        #dom_paths_from_cell=sorted(dom_paths_from_cell, key=lambda arr: arr[-1])
+        dom_paths_from_cell=arrange_paths_from_cell(dom_paths_from_cell)
+
+        cod_paths_from_cell=codomain_paths[cod_cell]        
+        #cod_paths_from_cell=sorted(cod_paths_from_cell, key=lambda arr: arr[-1])
+        cod_paths_from_cell=arrange_paths_from_cell(cod_paths_from_cell)
+
+        number_of_dom_paths=0
+        for i in range(len(dom_paths_from_cell)):
+            dom_path=dom_paths_from_cell[i]            
+            dom_end_vertex=(dom_path[len(dom_path)-1])[0]
+            if not dom_end_vertex in dom_lk:
+                continue
+            
+            number_of_dom_paths+=1
+
+
+        print("cell in domain: "+dom_cell+" number of paths from it: " +str(number_of_dom_paths))
+
         
 
 
+        number_of_cod_paths=0
+        for i in range(len(cod_paths_from_cell)):
+            cod_path=cod_paths_from_cell[i]            
+            cod_end_vertex=(cod_path[len(cod_path)-1])[0]
+            if not cod_end_vertex in cod_lk:
+                continue
+            
+            number_of_cod_paths+=1
+        print("cell in codomain: "+cod_cell+" number of paths from it: " +str(number_of_cod_paths)) #This might be misleading as it counts also pairs which are not in the between the functored stuff
+        #print("cod"+str(number_of_cod_paths)+"  " +cod_cell)
+        #print("")
 
+        similar_cod_L_count=1
+        last_array=None
+
+        
+
+        if number_of_dom_paths!=number_of_cod_paths or True:
+            print("dom:")
+            for i in range(len(dom_paths_from_cell)):
+                dom_path=dom_paths_from_cell[i]            
+                dom_end_vertex=(dom_path[len(dom_path)-1])[0]
+                if not dom_end_vertex in dom_lk:
+                    continue
+                
+                if sorter(dom_path)[0]==sorter(last_array)[0]:
+                    similar_cod_L_count+=1
+                else:
+                    print(similar_cod_L_count)
+                    similar_cod_L_count=1
+                last_array=dom_path
+                print(sign_string((sign_of_path(dom_path)))+"  "+dom_cell+" "+dom_end_vertex+"  "+str(qdeg_diffs_and_Ls_from_path(dom_path)))
+                
+                
+
+                
+            #last_array=None
+            print("cod:")
+            for i in range(len(cod_paths_from_cell)):
+                cod_path=cod_paths_from_cell[i]            
+                cod_end_vertex=(cod_path[len(cod_path)-1])[0]
+                if not cod_end_vertex in cod_lk:
+                    continue
+                
+                if (sorter(cod_path))[0]==(sorter(last_array))[0] and (sorter(cod_path))[1]==(sorter(last_array))[1]:
+                    similar_cod_L_count+=1
+                else:
+                    print(similar_cod_L_count)
+                    similar_cod_L_count=0
+                last_array=cod_path
+                
+                print(sign_string((sign_of_path(cod_path)))+"   "+cod_cell+" "+cod_end_vertex+"  "+str(qdeg_diffs_and_Ls_from_path(cod_path)))
+                
+                #print(sorter(cod_path))
+
+                
+                
+        print("")
 
 
 
@@ -701,7 +845,8 @@ def main():
     #cell__bijection_testing()
     #path_testing()
     #path_dom_cod_pairs_testing()
-    snake_functoriality_testing()
+    #snake_functoriality_testing()
+    lk_functoriality_testing()
 
     
 if __name__ == "__main__":

@@ -765,6 +765,101 @@ def generate_unmatched_words_with_degs(braid_word):
     degwords=add_degs(braid_word,words)
     return degwords
 
+################### Connectivity diagrams on crtitical cells
+
+
+#connectivity will be a list of pairs of postive integers
+# as is kht++ cx-c2 files the top vertices will be labeled by 1,...,n from left to right and bottom ones n+1,...,2n
+
+def endpoint_label_to_coord(braid_word,end_point_label):
+    strands=number_of_strands(braid_word)+1
+    #we are at bottom
+    if end_point_label>strands:
+        return (end_point_label-strands-1,0)
+    #we are at top
+    return (end_point_label-1,len(braid_word))
+
+def single_connectivity(braid_word,enh_word,coord):
+    strands=number_of_strands(braid_word)+1
+    #Bottom
+    if coord[1]==0:
+        #check a direct match left if possible
+        if coord[0]>0:
+            if smoothing_northeast_is_Vert((coord[0]-1,coord[1]),braid_word,enh_word):
+                return (coord[0]-1,coord[1])
+        #check direct right
+        if coord[0]<strands-1:
+            if smoothing_northeast_is_Vert((coord[0],coord[1]),braid_word,enh_word):
+                return (coord[0]+1,coord[1])
+        #general case 
+        #might have a problem with length 1 braid
+        #print("looping from")
+        #print(coord)
+        path=array_of_positions_from_edge(coord,(coord[0],coord[1]+1),braid_word,enh_word)
+        return path[len(path)-1]
+    
+    #Top
+    #check a direct match left if possible
+    if coord[0]>0:
+        if smoothing_northeast_is_Vert((coord[0]-1,coord[1]-1),braid_word,enh_word):
+            return (coord[0]-1,coord[1])
+    #check direct right
+    if coord[0]<strands-1:
+        if smoothing_northeast_is_Vert((coord[0],coord[1]-1),braid_word,enh_word):
+            return (coord[0]+1,coord[1])
+    #general case 
+    #might have a problem with length 1 braid
+    #print("looping from")
+    #print(coord)
+    #print(enh_word)
+    path=array_of_positions_from_edge(coord,(coord[0],coord[1]-1),braid_word,enh_word)
+    return path[len(path)-1]
+
+
+
+
+def coord_to_endpoint_label(braid_word,coord):
+    strands=number_of_strands(braid_word)+1
+    if coord[1]==0:
+        return(strands+coord[0]+1)
+    return(coord[0]+1)
+
+def connectivity_tuple_of_cell(braid_word,enh_word):
+    strands=number_of_strands(braid_word)+1
+    connectivity=[]
+    connection_found=set()
+    
+    for i in range(1,2*strands+1):
+        if i in connection_found:
+            continue
+                
+        start_coord=endpoint_label_to_coord(braid_word,i)
+        end_coord=single_connectivity(braid_word,enh_word,start_coord)
+        end_label=coord_to_endpoint_label(braid_word,end_coord)
+
+        connection_found.add(i)
+        connection_found.add(end_label)
+
+        connectivity.append((i,end_label))
+    
+    return connectivity
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ################### Finding paths between critical cells
@@ -1159,7 +1254,15 @@ def calc_and_save_T4_paths(twistnumber):
         with open(file_path, 'wb') as file:
             pickle.dump(zig_zags, file)
 
-
+def calc_and_save_T5_cells(twistnumber):
+    braid=twistnumber*"abcd"
+    file_path="Torus5braids/5string"+str(twistnumber)+"twist.pkl"
+    if os.path.exists(file_path):
+        pass
+    else:      
+        history=generate_unmatched_cell_history(braid)
+        with open(file_path, 'wb') as file:
+            pickle.dump(history, file)
 
 
 
@@ -1199,7 +1302,19 @@ def main():
     
 
     braid=sys.argv[1]
+    #zig_zags=generate_all_zig_zag_paths(braid)
+    #print(zig_zags)
     
+    
+    history=generate_unmatched_cell_history(braid)
+    unmatched_words=history[len(history)-1]
+
+    for word in unmatched_words:
+        print(word+str(connectivity_tuple_of_cell(braid,word)))
+
+    
+    for i in range(1,100):
+        calc_and_save_T5_cells(i)
 
 
     """
@@ -1209,8 +1324,6 @@ def main():
     print("time spend in seconds")
     print(time2-time1)
     """
-    zig_zags=generate_all_zig_zag_paths(braid)
-    #print(zig_zags)
     
     """
     for i in range(50):
