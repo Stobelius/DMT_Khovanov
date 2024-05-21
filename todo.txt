@@ -1,11 +1,12 @@
 Todo:
 
-Some more testing to convince that the path finder is working.
-qdeg distance without connectivity
-
-ones distance for certain? positive braids
-
-speedup on finding critical cells. Generate new "next all cells" function which removes u=L cells as well as generates a global list of L:s needed to be considered
+faster path algorithm
+-hdeg by hdeg find out all paths between all critical cells at once. Do this with higher memory usage. 
+Find out all paths to from critical cells to all cells and use this to limit the number of times next step up/down is called
+-consider concatenating braid/enh_words when calculating next step up/down and prefersback
 
 
- 
+
+
+on path and cell analysis, divide the paths into sets/dicts/arrays of (start_vertex,end_vertex,first_L) and find out a way to print them
+
