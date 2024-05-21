@@ -1222,7 +1222,7 @@ def zig_zag_paths_from2(braid_word,enh_word,unmatched_cells_history,hdeg_max_qde
     #testtable=dict()
     #testnum=0
     
-
+    """
     def update_dict_from_vertex(down_word,previous_u):
         #max qdeg_ones optimisation here
         #testtable["asd"]="lol"
@@ -1290,6 +1290,7 @@ def zig_zag_paths_from2(braid_word,enh_word,unmatched_cells_history,hdeg_max_qde
             paths_from_cell_to_criticals[down_word]=None
         else:
             paths_from_cell_to_criticals[down_word]=paths_from_down_word
+    """
 
     def update_dict_from_vertex2(down_word,previous_u,paths_from_cell_to_criticals):
         #max qdeg_ones optimisation here
@@ -1297,8 +1298,7 @@ def zig_zag_paths_from2(braid_word,enh_word,unmatched_cells_history,hdeg_max_qde
         #testnum=testnum+1
         #print("testetette")
         #print(testtable)
-        #testtable["asdsad"]="lolol"
-        
+        #testtable["asdsad"]="lolol"  
 
 
 
@@ -1306,15 +1306,24 @@ def zig_zag_paths_from2(braid_word,enh_word,unmatched_cells_history,hdeg_max_qde
         not_a_step_up=None #next steps up include reversed arrows in the wrong direction
 
         for (up_word,L) in steps_up:
+            
+
             #print(paths_from_cell_to_criticals)
+            
+
+
+
             if up_word in paths_from_cell_to_criticals.keys():
                 continue
             
+            if(qdeg_of_word(braid_word,up_word)>max_qdeg) or (count_starting_ones(up_word)>max_ones):
+                paths_from_cell_to_criticals[up_word]=[]
+                continue
+
             next_down=next_step_down(braid_word,up_word,L,unmatched_cells_history)
 
             if next_down==-2: #the vertex is not matched up and thus not down. Hence the paths cannot continue.
-                paths_from_cell_to_criticals[up_word]=None
-                #print("munamuna")
+                paths_from_cell_to_criticals[up_word]=[]
                 #print(paths_from_cell_to_criticals)
             elif next_down==-1: #the vertex is critical
                 paths_from_cell_to_criticals[up_word]=[[up_word]]
@@ -1324,8 +1333,8 @@ def zig_zag_paths_from2(braid_word,enh_word,unmatched_cells_history,hdeg_max_qde
                 #print("halp")
                 #print(next_down)
                 paths_from_cell_to_criticals=update_dict_from_vertex2(next_down[0],next_down[1],paths_from_cell_to_criticals)
-                if paths_from_cell_to_criticals[next_down[0]]==None:
-                    paths_from_cell_to_criticals[up_word]=None
+                if paths_from_cell_to_criticals[next_down[0]]==[]:
+                    paths_from_cell_to_criticals[up_word]=[]
                 else:
                     #list_of_paths_copy=(paths_from_cell_to_criticals[next_down[0]]).copy()
                     new_paths=[]
@@ -1338,7 +1347,7 @@ def zig_zag_paths_from2(braid_word,enh_word,unmatched_cells_history,hdeg_max_qde
                     #print("asdasdasd")
             #this does not add something to up if it is instead matched down
 
-        all_are_Nones=True
+        steps_are_empty=True
         paths_from_down_word=[]
 
         #print(down_word)
@@ -1349,9 +1358,9 @@ def zig_zag_paths_from2(braid_word,enh_word,unmatched_cells_history,hdeg_max_qde
         for (up_word,L) in steps_up:
             if up_word==not_a_step_up:
                 continue
-            if paths_from_cell_to_criticals[up_word]==None:
+            if paths_from_cell_to_criticals[up_word]==[]:
                 continue
-            all_are_Nones=False
+            steps_are_empty=False
             for path in paths_from_cell_to_criticals[up_word]:
                 path_copy=path.copy()
                 path_copy.append(down_word)
@@ -1361,18 +1370,117 @@ def zig_zag_paths_from2(braid_word,enh_word,unmatched_cells_history,hdeg_max_qde
                 #paths_from_cell_to_criticals[word]=list_of_paths_copy
 
 
-        if(all_are_Nones):
-            paths_from_cell_to_criticals[down_word]=None
-        else:
-            paths_from_cell_to_criticals[down_word]=paths_from_down_word
-        return paths_from_cell_to_criticals
+        #if(steps_are_empty):
+        #    paths_from_cell_to_criticals[down_word]=None
+        #else:
+        paths_from_cell_to_criticals[down_word]=paths_from_down_word
         
+        return paths_from_cell_to_criticals
+
+
+
+
+
+
+    """
+    testnum=1
+    paths_from_cell_to_criticals=dict()
+
+    def update_dict_from_vertex3(down_word,previous_u):
+        #max qdeg_ones optimisation here
+        #testtable["asd"]="lol"
+        #testnum=testnum+1
+        #print("testetette")
+        #print(testtable)
+        #testtable["asdsad"]="lolol"  
+
+
+
+        steps_up=next_steps_up(braid_word,down_word,previous_u)
+        not_a_step_up=None #next steps up include reversed arrows in the wrong direction
+
+        for (up_word,L) in steps_up:
+            print(testnum)
+            print(paths_from_cell_to_criticals)
+            
+
+
+
+            if up_word in paths_from_cell_to_criticals.keys():
+                continue
+            
+            next_down=next_step_down(braid_word,up_word,L,unmatched_cells_history)
+
+            if next_down==-2: #the vertex is not matched up and thus not down. Hence the paths cannot continue.
+                paths_from_cell_to_criticals[up_word]=[]
+                #print(paths_from_cell_to_criticals)
+            elif next_down==-1: #the vertex is critical
+                paths_from_cell_to_criticals[up_word]=[[up_word]]
+            elif next_down[0]==down_word:
+                not_a_step_up=up_word
+            else:
+                #print("halp")
+                #print(next_down)
+                paths_from_cell_to_criticals=update_dict_from_vertex2(next_down[0],next_down[1],paths_from_cell_to_criticals)
+                if paths_from_cell_to_criticals[next_down[0]]==[]:
+                    paths_from_cell_to_criticals[up_word]=[]
+                else:
+                    #list_of_paths_copy=(paths_from_cell_to_criticals[next_down[0]]).copy()
+                    new_paths=[]
+                    #paths_from_cell_to_criticals[up_word]=[[]]
+                    for path in paths_from_cell_to_criticals[next_down[0]]:
+                        path_copy=path.copy()
+                        path_copy.append(up_word)
+                        new_paths.append(path_copy)
+                    paths_from_cell_to_criticals[up_word]=new_paths
+                    #print("asdasdasd")
+            #this does not add something to up if it is instead matched down
+
+        steps_are_empty=True
+        paths_from_down_word=[]
+
+        #print(down_word)
+        #print(steps_up)
+        #print(paths_from_cell_to_criticals)
+        
+
+        for (up_word,L) in steps_up:
+            if up_word==not_a_step_up:
+                continue
+            if paths_from_cell_to_criticals[up_word]==[]:
+                continue
+            steps_are_empty=False
+            for path in paths_from_cell_to_criticals[up_word]:
+                path_copy=path.copy()
+                path_copy.append(down_word)
+                paths_from_down_word.append(path_copy)
+                #list_of_paths_copy=(paths_from_cell_to_criticals[word]).copy()
+                #list_of_paths_copy.append(path_copy)
+                #paths_from_cell_to_criticals[word]=list_of_paths_copy
+
+
+        #if(steps_are_empty):
+        #    paths_from_cell_to_criticals[down_word]=None
+        #else:
+        paths_from_cell_to_criticals[down_word]=paths_from_down_word
+        
+        #return paths_from_cell_to_criticals
+    
+    
+    update_dict_from_vertex3(enh_word,len(enh_word))
+    path_dictionary=paths_from_cell_to_criticals
+
+    """
+    
     
 
 
 
     path_dictionary=update_dict_from_vertex2(enh_word,len(enh_word),dict())
-    
+
+
+
+
     #print("")
     #print(enh_word)
     #print(path_dictionary)
@@ -1472,7 +1580,7 @@ def generate_all_zig_zag_paths(braid):
     total_path_count=0
     for word in unmatched_words:
         
-        zig_zags[word]=zig_zag_paths_from2(braid,word,history,hdeg_to_max_qdeg,hdeg_to_max_ones)
+        zig_zags[word]=zig_zag_paths_from(braid,word,history,hdeg_to_max_qdeg,hdeg_to_max_ones)
         #total_path_count+=len(zig_zags[word])
         
         #print(len(zig_zags[word]))

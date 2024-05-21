@@ -10,3 +10,7 @@ Find out all paths to from critical cells to all cells and use this to limit the
 
 on path and cell analysis, divide the paths into sets/dicts/arrays of (start_vertex,end_vertex,first_L) and find out a way to print them
 
+
+
+get statistics while running:
+python3 -m cProfile -s time braidalgo.py abcabcabcabcabcabc
