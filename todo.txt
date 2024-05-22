@@ -14,3 +14,31 @@ on path and cell analysis, divide the paths into sets/dicts/arrays of (start_ver
 
 get statistics while running:
 python3 -m cProfile -s time braidalgo.py abcabcabcabcabcabc
+
+interesting braid? 
+
+s_1^2s_2^2s_1^3s_2^2s_1s_3s_2^2s_4^2s_3s_1^2s_2^2s_1^3s_2^3s_1^2s_3s_2^2s_4^3s_3^2
+=aabbaaabbacaaddcaabbaaabbbaacbbdddcc 
+
+
+
+
+
+
+
+s_1^2s_2^2s_1^3s_2^2s_1
+aabbaaabba
+
+s_3s_2^2s_4^2s_3
+caaddc
+s_1^2s_2^2s_1^3
+aabbaaa
+s_2^3s_1^2s_3
+bbbaac
+s_2^2s_4^3s_3^2
+bbdddcc
+
+
+
+aabbaaabbacaaddcaabbaaabbbaacbbdddcc
+aabbaaabbacaaddcaabbaaabbbaacbbdddcc
