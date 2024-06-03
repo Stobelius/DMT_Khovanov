@@ -110,7 +110,7 @@ def connectivity_symbol(table, connectivity):
 
 #output is dictionary with keys (h,q) pairs and and values are dictionaries of with keys as characters outputted by number to char representing connectivity diagrams and values representing the amounts of cells of those kinds 
 def degs_to_connectivity_counts(braid,word_deg_triples):
-    strands=number_of_strands(braid)+1
+    strands=number_of_strands(braid)
     conn_table=generate_connectivity_array(strands)
 
     degs_to_conns=dict()

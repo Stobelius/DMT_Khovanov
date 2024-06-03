@@ -14,7 +14,7 @@ def number_of_strands(word):
     word=word.lower()
     alphabet_chars = [char for char in word if char.isalpha()]
     if alphabet_chars:
-        return ord(max(alphabet_chars))-ord('a')+1
+        return ord(max(alphabet_chars))-ord('a')+2
     else:
         print("bad characters on the braidword")
         return None
@@ -46,7 +46,7 @@ def smoothing_northeast_is_Vert(position,braid_word,enhanced_word):
     return False
 
 def out_of_bounds(position, braid_word):
-    if(position[0]<0 or position[0]> number_of_strands(braid_word) or position[1]<=0 or position[1]>= len(braid_word)):
+    if(position[0]<0 or position[0]> number_of_strands(braid_word)-1 or position[1]<=0 or position[1]>= len(braid_word)):
        return True
     return False
     
@@ -785,7 +785,7 @@ def generate_unmatched_words_with_degs(braid_word):
 # as is kht++ cx-c2 files the top vertices will be labeled by 1,...,n from left to right and bottom ones n+1,...,2n
 
 def endpoint_label_to_coord(braid_word,end_point_label):
-    strands=number_of_strands(braid_word)+1
+    strands=number_of_strands(braid_word)
     #we are at bottom
     if end_point_label>strands:
         return (end_point_label-strands-1,0)
@@ -793,7 +793,7 @@ def endpoint_label_to_coord(braid_word,end_point_label):
     return (end_point_label-1,len(braid_word))
 
 def single_connectivity(braid_word,enh_word,coord):
-    strands=number_of_strands(braid_word)+1
+    strands=number_of_strands(braid_word)
     #Bottom
     if coord[1]==0:
         #check a direct match left if possible
@@ -832,13 +832,13 @@ def single_connectivity(braid_word,enh_word,coord):
 
 
 def coord_to_endpoint_label(braid_word,coord):
-    strands=number_of_strands(braid_word)+1
+    strands=number_of_strands(braid_word)
     if coord[1]==0:
         return(strands+coord[0]+1)
     return(coord[0]+1)
 
 def connectivity_tuple_of_cell(braid_word,enh_word):
-    strands=number_of_strands(braid_word)+1
+    strands=number_of_strands(braid_word)
     connectivity=[]
     connection_found=set()
     

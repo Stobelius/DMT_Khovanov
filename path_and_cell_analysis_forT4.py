@@ -1,6 +1,7 @@
 import pickle
 from braidalgo import qdeg_of_word, hdeg_of_word
 
+########### Utilities:  Loading precalculated cells and paths
 
 def load_cells(twistnumber):
     #Currently 44 is highest doable
@@ -23,6 +24,19 @@ def load_paths(twistnumber):
 
     return paths
 
+def load_new_T4_paths(twistnumber):
+    #Current maximum is 11
+    file_path="Torus4braid_paths/new4string"+str(twistnumber)+"twist.pkl"
+    paths=None
+    with open(file_path, 'rb') as file:
+        paths = pickle.load(file)
+    return paths
+
+
+########### Utilities:  functions on cells 
+#All of these seem silly
+
+
 def silly_ones_snake_line(cell):
     xcount=cell.count("x")
 
@@ -31,16 +45,316 @@ def silly_ones_snake_line(cell):
     #here I do not cut out more cells in the larger twist case 
     return xcount/onecount-0.33
 
-"""
-def snake_ones_line_as_func_of_hdeg(hdeg,twistnumber):
-    #ax+b
-    #hdeg=hdeg/twistnumber
+def ones_count(my_string):
+    count = 0
+    for char in my_string:
+        if char == "1":
+            count += 1
+        else:
+            break 
+    return count
+
+def lk_count(string):    
+    sub_string="x0101x"
+    count = 0
+    sub_len = len(sub_string)
+    for i in range(len(string) - sub_len + 1):
+        if string[i:i + sub_len] == sub_string:
+            count += 1
+    return count
+
+
+def snake_count(string):    
+    sub_string="x0011x101011"
+    count = 0
+    sub_len = len(sub_string)
+    for i in range(len(string) - sub_len + 1):
+        if string[i:i + sub_len] == sub_string:
+            count += 1
+    return count
+
+
+
+def double_cut_index(enh_word):
+    for i in range(len(enh_word)-1):
+        if(i%3==2):
+            if((enh_word[i]=="0" or enh_word[i]=="x") and (enh_word[i+1]=="0" or enh_word[i+1]=="x") ):
+                return i
+    #special case at the end            
+    i=len(enh_word)-1
+    if (enh_word[i]=="0" or enh_word[i]=="x") and (enh_word[i-2]=="0" or enh_word[i-2]=="x"):
+        return i
+    return 1000
+
+
+#Twist adding functors on cells
+
+def add_lk(cell):
+    return(cell.replace("x0101x","x0101xx0101x",1))
+
+def add_snake(cell):
+    snake_pattern="101011x0011x"
+    cod_cell=cell.replace(snake_pattern,2*snake_pattern,1)
+    return cod_cell
     
+
+########### Utilities:  functions on paths
+
+
+def remove_dups_sort(l):
+    return sorted(list(set(l)))
+
+def one_zero_diff_index(start_string,end_string):
+    #print(start_string)
+    #print(end_string)
+    for i in range(len(start_string)):
+        s_char=start_string[i]
+        e_char=end_string[i]
+        #print("")
+        #print(s_char)
+        #print(e_char)
+        
+        start_is_zero=True
+        end_is_zero=True
+        if(s_char=="1" or s_char=="X" or s_char=="Y"):
+            start_is_zero=False
+        if(e_char=="1" or e_char=="X" or e_char=="Y"):
+            end_is_zero=False
+        
+        if (start_is_zero and (not end_is_zero)) or ((not(start_is_zero)) and end_is_zero):
+            return i 
+
+def first_L(path):
+    return one_zero_diff_index(path[0],path[1])
+
+def qdeg_diffs_and_Ls_from_path(path):
+    list_of_Ls=list()
+
+    for i in range(len(path)-1):
+        current_word=path[i]
+        next_word=path[i+1]
+        qdiff=qdeg_of_word("a",next_word)-qdeg_of_word("a",current_word)
+        if qdiff>0:
+            list_of_Ls.append(str(one_zero_diff_index(current_word,next_word))+" Q: "+str(qdiff))
+        else:
+            list_of_Ls.append(one_zero_diff_index(path[i],path[i+1]))
+    return list_of_Ls
+
+
+def list_of_Ls_from_path(path):
+    list_of_Ls=list()
+
+    for i in range(len(path)-1):
+        current_word=path[i]
+        next_word=path[i+1]
+        #qdiff=qdeg_of_word("a",next_word)-qdeg_of_word("a",current_word)
+        list_of_Ls.append(one_zero_diff_index(path[i],path[i+1]))
+    return list_of_Ls
+
+    #return sorted(list(set_of_Ls))
+
+def sign_of_path(path):
+    length_term=(len(path)-1)/2
+    if length_term%2==0:
+        length_term=1
+    else:
+        length_term=-1
     
-    a=-
-    b=-twistnumber
-    return a*hdeg+b
+    def count_characters_in_string(mystring):
+        count_1 = mystring.count("1")
+        count_X = mystring.count("X")
+        count_Y = mystring.count("Y")
+    
+        return count_1+ count_X+ count_Y
+
+    total_ones_before_L_s=0
+    list_of_Ls=list_of_Ls_from_path(path)
+
+    for i in range(len(path)-1):
+        current_L=list_of_Ls[i]
+        current_word=path[i]
+        ones_before_L_s=count_characters_in_string(current_word[:current_L])
+
+        #print(ones_before_L_s)
+        total_ones_before_L_s+=ones_before_L_s
+    
+    if(total_ones_before_L_s%2==0):
+        return length_term
+    else:
+        return -length_term
+
+
+
+
+
+
+
+
+
+
+
 """
+def qdeg_diffs_and_Ls_from_path(path):
+    list_of_Ls=list()
+
+    for i in range(len(path)-1):
+        current_word=path[i][0]
+        next_word=path[i+1][0]
+        qdiff=qdeg_of_word("a",next_word)-qdeg_of_word("a",current_word)
+        if qdiff>0:
+            list_of_Ls.append(str(one_zero_diff_index(current_word,next_word))+" Q: "+str(qdiff))
+        else:
+            list_of_Ls.append(one_zero_diff_index(path[i][0],path[i+1][0]))
+    return list_of_Ls
+
+
+def list_of_Ls_from_path(path):
+    list_of_Ls=list()
+
+    for i in range(len(path)-1):
+        current_word=path[i][0]
+        next_word=path[i+1][0]
+        #qdiff=qdeg_of_word("a",next_word)-qdeg_of_word("a",current_word)
+        list_of_Ls.append(one_zero_diff_index(path[i][0],path[i+1][0]))
+    return list_of_Ls
+
+    #return sorted(list(set_of_Ls))
+
+def sign_of_path(path):
+    length_term=(len(path)-1)/2
+    if length_term%2==0:
+        length_term=1
+    else:
+        length_term=-1
+    
+    def count_characters_in_string(mystring):
+        count_1 = mystring.count("1")
+        count_X = mystring.count("X")
+        count_Y = mystring.count("Y")
+    
+        return count_1+ count_X+ count_Y
+
+    total_ones_before_L_s=0
+    list_of_Ls=list_of_Ls_from_path(path)
+
+    for i in range(len(path)-1):
+        current_L=list_of_Ls[i]
+        current_word=path[i][0]
+        ones_before_L_s=count_characters_in_string(current_word[:current_L])
+
+        #print(ones_before_L_s)
+        total_ones_before_L_s+=ones_before_L_s
+    
+    if(total_ones_before_L_s%2==0):
+        return length_term
+    else:
+        return -length_term
+"""
+
+def sign_string(sign):
+    if sign==1:
+        return "+"
+    if sign==-1:
+        return "-"
+
+
+
+def sorter(array):
+    
+    if(array==None):
+            return ("Z",-1000)
+    # Sort by lexicographic order of the last element
+    last_element = (array[-1])[0]
+    #print(last_element)
+    # Get the integer value from the "first_L" function
+    first_L_value =(list_of_Ls_from_path(array))[0]  
+    #print(first_L_value)
+    return (last_element, first_L_value)
+
+
+def arrange_paths_from_cell(paths_from_cell):
+
+    sorted_arrays = sorted(paths_from_cell, key=sorter)
+    return sorted_arrays
+
+
+def dom_cod_first_L_to_paths_dict(paths):
+    #works with new path convention
+    dictionary=dict()
+    for cell in paths.keys():
+        paths_from_cell=paths[cell]
+        for path in paths_from_cell:
+            triple=(path[0],path[-1],first_L(path))
+            if triple in dictionary.keys():
+                dictionary[triple].append(path)
+            else:
+                dictionary[triple]=[path]
+    
+    #consider sorting here
+
+    return dictionary
+
+def dom_cod_noL_path_dict(paths):
+    dictionary=dict()
+    for cell in paths.keys():
+        paths_from_cell=paths[cell]
+        for path in paths_from_cell:
+            pair=(path[0],path[-1])
+            if pair in dictionary.keys():
+                dictionary[pair].append(path)
+            else:
+                dictionary[pair]=[path]
+    return dictionary
+
+
+def print_path(path):
+    print(sign_string((sign_of_path(path)))+"  "+path[0]+" "+path[-1]+"  "+str(qdeg_diffs_and_Ls_from_path(path)))
+
+
+def conj_lk2_path(list_of_Ls):
+    #print(list_of_Ls)
+    new_array=[]
+    for i in range(8):
+        new_array.append(list_of_Ls[i]+12)
+    for i in range(len(list_of_Ls)):
+        new_array.append(list_of_Ls[i])
+    for i in range(-4,0,1):
+        new_array.append(list_of_Ls[i]+12)
+    return new_array
+
+
+def conj_lk_paths(list_of_Ls):
+    arrays=([],[],[],[])
+    for arr in arrays:    
+        for i in range(8):
+            arr.append(list_of_Ls[i]+6)
+
+    for i in range(6,len(list_of_Ls)-4):
+        arrays[0].append(list_of_Ls[i])
+    for i in range(4,len(list_of_Ls)-2):
+        arrays[1].append(list_of_Ls[i])
+    for i in range(4,len(list_of_Ls)-2):
+        arrays[2].append(list_of_Ls[i])
+    for i in range(2,len(list_of_Ls)-0):
+        arrays[3].append(list_of_Ls[i])
+    
+    for arr in arrays:    
+        for i in range(-4,0,1):
+            arr.append(list_of_Ls[i]+6)
+    return arrays
+
+
+
+
+
+
+
+
+
+
+
+
+############## Analysis/tests
 
 def cell__bijection_testing():
 
@@ -291,147 +605,6 @@ def cell__bijection_testing():
     #print(len(domain_cells))
 
 
-def ones_count(my_string):
-    count = 0
-    for char in my_string:
-        if char == "1":
-            count += 1
-        else:
-            break 
-    return count
-
-def lk_count(string):    
-    sub_string="x0101x"
-    count = 0
-    sub_len = len(sub_string)
-    for i in range(len(string) - sub_len + 1):
-        if string[i:i + sub_len] == sub_string:
-            count += 1
-    return count
-
-
-def snake_count(string):    
-    sub_string="x0011x101011"
-    count = 0
-    sub_len = len(sub_string)
-    for i in range(len(string) - sub_len + 1):
-        if string[i:i + sub_len] == sub_string:
-            count += 1
-    return count
-
-
-def remove_dups_sort(l):
-    return sorted(list(set(l)))
-
-def one_zero_diff_index(start_string,end_string):
-    #print(start_string)
-    #print(end_string)
-    for i in range(len(start_string)):
-        s_char=start_string[i]
-        e_char=end_string[i]
-        #print("")
-        #print(s_char)
-        #print(e_char)
-        
-        start_is_zero=True
-        end_is_zero=True
-        if(s_char=="1" or s_char=="X" or s_char=="Y"):
-            start_is_zero=False
-        if(e_char=="1" or e_char=="X" or e_char=="Y"):
-            end_is_zero=False
-        
-        if (start_is_zero and (not end_is_zero)) or ((not(start_is_zero)) and end_is_zero):
-            return i 
-
-
-def qdeg_diffs_and_Ls_from_path(path):
-    list_of_Ls=list()
-
-    for i in range(len(path)-1):
-        current_word=path[i][0]
-        next_word=path[i+1][0]
-        qdiff=qdeg_of_word("a",next_word)-qdeg_of_word("a",current_word)
-        if qdiff>0:
-            list_of_Ls.append(str(one_zero_diff_index(current_word,next_word))+" Q: "+str(qdiff))
-        else:
-            list_of_Ls.append(one_zero_diff_index(path[i][0],path[i+1][0]))
-    return list_of_Ls
-
-
-def list_of_Ls_from_path(path):
-    list_of_Ls=list()
-
-    for i in range(len(path)-1):
-        current_word=path[i][0]
-        next_word=path[i+1][0]
-        #qdiff=qdeg_of_word("a",next_word)-qdeg_of_word("a",current_word)
-        list_of_Ls.append(one_zero_diff_index(path[i][0],path[i+1][0]))
-    return list_of_Ls
-
-    #return sorted(list(set_of_Ls))
-
-def sign_of_path(path):
-    length_term=(len(path)-1)/2
-    if length_term%2==0:
-        length_term=1
-    else:
-        length_term=-1
-    
-    def count_characters_in_string(mystring):
-        count_1 = mystring.count("1")
-        count_X = mystring.count("X")
-        count_Y = mystring.count("Y")
-    
-        return count_1+ count_X+ count_Y
-
-    total_ones_before_L_s=0
-    list_of_Ls=list_of_Ls_from_path(path)
-
-    for i in range(len(path)-1):
-        current_L=list_of_Ls[i]
-        current_word=path[i][0]
-        ones_before_L_s=count_characters_in_string(current_word[:current_L])
-
-        #print(ones_before_L_s)
-        total_ones_before_L_s+=ones_before_L_s
-    
-    if(total_ones_before_L_s%2==0):
-        return length_term
-    else:
-        return -length_term
-
-
-
-
-def double_cut_index(enh_word):
-    for i in range(len(enh_word)-1):
-        if(i%3==2):
-            if((enh_word[i]=="0" or enh_word[i]=="x") and (enh_word[i+1]=="0" or enh_word[i+1]=="x") ):
-                return i
-
-    return 99
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def path_testing():
     twistnumber=9
     #twistnumber 3 there are examples of non minimal complexes
@@ -573,23 +746,50 @@ def path_testing():
     
     #print(len(differences))
 
-    
+def forbidden_structures_testing():
+    twistnumber=12
+    paths=load_new_T4_paths(twistnumber)
 
+    teststring="y00x"
+
+    for critcell in paths:
+        for path in paths[critcell]:
+            for vertex in path:
+                for i in range(len(vertex)-len(teststring)):
+                    if vertex[i:i+len(teststring)]==teststring:
+                        #print(vertex[i:(len(vertex))])
+                        #print(vertex)
+                        if not ("y" in vertex[i:(len(vertex))]):
+                            print(vertex)
+                
+                
+                
+                #if teststring in vertex:
+                    #print(path)
+                #    print(vertex)
 
 
 def path_dom_cod_pairs_testing():
-    twistnumber=40
+    twistnumber=44
     unmatched_cells=load_cells(twistnumber)
     
     braid=twistnumber*"abc"
 
     crossings=3*twistnumber
 
+    dcs=set()
+    max_ones_diff=0    
+
+
     #two_doms=False
 
     for dom in unmatched_cells:
         dom_hdeg=hdeg_of_word(braid,dom)
         dom_qdeg=qdeg_of_word(braid,dom)
+        #if "x0101xx0101xx0101x" in dom:
+        #    continue
+
+        #count=0
         for cod in unmatched_cells:
             cod_hdeg=hdeg_of_word(braid,cod)
             cod_qdeg=qdeg_of_word(braid,cod)
@@ -599,8 +799,26 @@ def path_dom_cod_pairs_testing():
             if ones_count(cod)<ones_count(dom):
                 continue
 
+            dc1=double_cut_index(dom)
+            dc2=double_cut_index(cod)
+            dcdiff=0
+            if(dc1!=1000 and dc2!=1000):
+                dcdiff=dc2-dc1
+
+            dcs.add(dcdiff)
+
+            ones_diff=ones_count(cod)-ones_count(dom)
+            max_ones_diff=max(max_ones_diff,ones_diff)
+
+            #if ones_diff==15:
+            #    print(dom)
+            #    print(cod)
+
             qdiff=cod_qdeg-dom_qdeg
-            if qdiff>2:
+            #if qdiff>=0:
+            #    count+=1
+            
+            if qdiff>3:
                 print(str(qdiff)+"  "+ str(ones_count(dom)%3)+"   "+str(ones_count(cod)-ones_count(dom)) +"   "+dom+"   "+cod)
                 
                 #if(two_doms):
@@ -609,28 +827,9 @@ def path_dom_cod_pairs_testing():
                 #two_doms=True
         #two_doms=False
 
-def sorter(array):
-    
-    if(array==None):
-            return ("Z",-1000)
-    # Sort by lexicographic order of the last element
-    last_element = (array[-1])[0]
-    #print(last_element)
-    # Get the integer value from the "first_L" function
-    first_L_value =(list_of_Ls_from_path(array))[0]  
-    #print(first_L_value)
-    return (last_element, first_L_value)
-
-
-def arrange_paths_from_cell(paths_from_cell):
-
-    sorted_arrays = sorted(paths_from_cell, key=sorter)
-    return sorted_arrays
-
-
-
-
-
+        #print(count)
+    #print(max_ones_diff)
+    print(dcs)
 
 def snake_functoriality_testing():
 
@@ -716,12 +915,6 @@ def snake_functoriality_testing():
                 print(str(sign_of_path(cod_path))+"   "+cod_cell+" "+cod_end_vertex+"  "+str(qdeg_diffs_and_Ls_from_path(cod_path)))
 
         print("")
-
-def sign_string(sign):
-    if sign==1:
-        return "+"
-    if sign==-1:
-        return "-"
 
 
 def lk_functoriality_testing():
@@ -838,6 +1031,345 @@ def lk_functoriality_testing():
         print("")
 
 
+def new_lk_functoriality_testing():
+    #test first with adding a single lk
+    
+    #domain and codomain of paths and functors are mixed up here
+    
+    orig_twistcount=8
+    lk_twistcount=orig_twistcount+2
+    lk2_twistcount=orig_twistcount+4
+
+    orig_paths=load_new_T4_paths(orig_twistcount)
+    orig_path_dict=dom_cod_first_L_to_paths_dict(orig_paths)
+
+    lk_paths=load_new_T4_paths(lk_twistcount)
+    lk_path_dict=dom_cod_first_L_to_paths_dict(lk_paths)
+    
+    lk2_paths=load_new_T4_paths(lk2_twistcount)
+    lk2_path_dict=dom_cod_first_L_to_paths_dict(lk2_paths)
+
+    orig_braid=orig_twistcount*"abc"
+    lk_braid=lk_twistcount*"abc"
+    lk2_braid=lk2_twistcount*"abc"
+
+    lk_pattern="01xx01"
+    succcount=0
+    failcount=0
+    
+    triplescount=0
+    unfiltered=0
+
+
+    for orig_triple in orig_path_dict:
+        ### Filter non-lk cells out
+        if not((2*lk_pattern) in orig_triple[0] and (2*lk_pattern) in orig_triple[1]):
+            continue
+
+        triplescount+=1
+
+        #Options: Allow the following through:
+        endsx01_L1=False    
+        endsx01_L2=True     #ok
+        endsx01_L3=False   
+        endsx01_lowL=True   #ok
+
+        ends01x_L0=False
+        ends01x_L2=False
+        ends01x_L4=False
+        ends01x_lowL=True   #ok
+
+        #Print paths:
+        print_paths=False
+        
+        #Based on options, filter out paths
+        word_endsx01=False
+        if orig_triple[0].endswith("x01"):
+            word_endsx01=True
+
+        word_ends01x=False
+        if orig_triple[0].endswith("01x"):
+            word_ends01x=True
+        
+        filterL=len(orig_triple[0])-orig_triple[2]-1
+
+        if (word_endsx01,filterL)==(True,1) and  not endsx01_L1:
+            continue
+        elif (word_endsx01,filterL)==(True,2) and  not endsx01_L2:
+            continue
+        elif (word_endsx01,filterL)==(True,3) and  not endsx01_L3:
+            continue
+        elif word_endsx01==True and filterL>6 and not endsx01_lowL:
+            continue
+
+        if (word_ends01x,filterL)==(True,0) and  not ends01x_L0:
+            continue
+        elif (word_ends01x,filterL)==(True,2) and  not ends01x_L2:
+            continue
+        elif (word_ends01x,filterL)==(True,4) and  not ends01x_L4:
+            continue
+        elif word_ends01x==True and filterL>6 and not ends01x_lowL:
+            continue
+
+        unfiltered+=1
+
+        #if word_ends01x:
+        #    continue
+        
+        #if orig_triple[2]==20:
+        #    continue
+        """
+
+        if orig_triple[0].endswith("01x"):
+            continue
+        
+        if (orig_triple[2] ==22):
+            continue
+        """
+
+
+        #Filter to look at only a specific one
+        #if orig_triple != ('11000101xx0101xx0101xx01', '11100011x00101xx0101xx01', 21):
+        #    continue
+
+        
+        ### Original
+        print("")
+        print("Original: "+str(orig_triple))
+        orig_cum_sign=0
+        for path in orig_path_dict[orig_triple]:
+            orig_cum_sign+=sign_of_path(path)
+        print("number of paths:                                            "+str(len(orig_path_dict[orig_triple])))
+        print("their cumulative sign: "+str(orig_cum_sign))
+
+        if print_paths:
+            for path in orig_path_dict[orig_triple]:
+                print_path(path)
+
+        ###LK
+        lk_triple=(add_lk(orig_triple[0]),add_lk(orig_triple[1]),orig_triple[2]+6)
+
+        lk_adds_L6=False
+        
+
+        if lk_triple in lk_path_dict.keys():
+            lk_adds_L6=True    
+            print("LK with first_L -> +6")
+            lk_cum_sign=0
+            for path in lk_path_dict[lk_triple]:
+                lk_cum_sign+=sign_of_path(path)
+            print("number of paths:                                         "+str(len(lk_path_dict[lk_triple])))
+            print("their cumulative sign: "+str(lk_cum_sign))
+
+            if print_paths:
+                for path in lk_path_dict[lk_triple]:
+                    print_path(path)
+        else:
+            print("LK with first_L -> +0")
+            lk_triple=(lk_triple[0],lk_triple[1],lk_triple[2]-6)
+            lk_cum_sign=0
+            for path in lk_path_dict[lk_triple]:
+                lk_cum_sign+=sign_of_path(path)
+            if print_paths:
+                for path in lk_path_dict[lk_triple]:
+                    print_path(path)
+
+            print("number of paths:                                          "+str(len(lk_path_dict[lk_triple])))
+            print("their cumulative sign: "+str(lk_cum_sign))
+
+        
+
+        ###LK2
+        
+        lk2_triple=(add_lk(add_lk(orig_triple[0])),add_lk(add_lk(orig_triple[1])),orig_triple[2]+12)
+
+        if lk2_triple in lk2_path_dict.keys():
+            print("LK2 with first_L -> +12")
+            lk2_cum_sign=0
+            for path in lk2_path_dict[lk2_triple]:
+                lk2_cum_sign+=sign_of_path(path)
+            print("number of paths:                                          "+str(len(lk2_path_dict[lk2_triple])))
+            print("their cumulative sign: "+str(lk2_cum_sign))
+
+            if print_paths:
+                for path in lk2_path_dict[lk2_triple]:
+                    print_path(path)
+        else:
+            print("LK2 with first_L -> +0")
+            lk2_triple=(lk2_triple[0],lk2_triple[1],lk2_triple[2]-12)
+            lk2_cum_sign=0
+            for path in lk2_path_dict[lk2_triple]:
+                lk2_cum_sign+=sign_of_path(path)
+            if print_paths:
+                for path in lk2_path_dict[lk2_triple]:
+                    print_path(path)
+
+            print("number of paths:                                           "+str(len(lk2_path_dict[lk2_triple])))
+            print("their cumulative sign: "+str(lk2_cum_sign))
+        
+
+        ### Trying to guess LK2 from Orig and LK
+        actual_array_of_lk2=[]
+
+        if lk_adds_L6:
+            lk2_triple=(add_lk(add_lk(orig_triple[0])),add_lk(add_lk(orig_triple[1])),orig_triple[2]+12)
+            for path in lk2_path_dict[lk2_triple]:
+                actual_array_of_lk2.append(list_of_Ls_from_path(path))
+        else:
+            lk2_triple=(add_lk(add_lk(orig_triple[0])),add_lk(add_lk(orig_triple[1])),orig_triple[2]+0)
+            for path in lk2_path_dict[lk2_triple]:
+                actual_array_of_lk2.append(list_of_Ls_from_path(path))
+
+        conj_array_of_lk2=[]
+
+        if lk_adds_L6:
+            for path in orig_path_dict[orig_triple]:
+                conj_array_of_lk2.append(conj_lk2_path(list_of_Ls_from_path(path)))
+            
+            lk_triple=(add_lk(orig_triple[0]),add_lk(orig_triple[1]),orig_triple[2]+6)
+            for path in lk_path_dict[lk_triple]:
+                conj_paths=conj_lk_paths(list_of_Ls_from_path(path))
+                for arr in conj_paths:
+                    conj_array_of_lk2.append(arr)
+        else:
+            for path in orig_path_dict[orig_triple]:
+                conj_array_of_lk2.append(list_of_Ls_from_path(path))
+
+        
+
+        if sorted(actual_array_of_lk2)==sorted(conj_array_of_lk2):
+            succcount+=1
+            print("yeye")
+        else:
+            print("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR")
+            failcount+=1
+    print("successes :" +str(succcount))
+    print("fails :"+ str(failcount))
+    print("filtered: "+ str(triplescount-unfiltered))
+
+
+def new_snake_functoriality_testing():
+    orig_twistcount=8
+    sn_twistcount=orig_twistcount+4
+
+    orig_paths=load_new_T4_paths(orig_twistcount)
+    orig_path_dict=dom_cod_first_L_to_paths_dict(orig_paths)
+    orig_noL_path_dict=dom_cod_noL_path_dict(orig_paths)
+
+    sn_paths=load_new_T4_paths(sn_twistcount)
+    sn_L_path_dict=dom_cod_first_L_to_paths_dict(sn_paths)
+    sn_noL_path_dict=dom_cod_noL_path_dict(sn_paths)
+
+    orig_braid=orig_twistcount*"abc"
+    sn_braid=sn_twistcount*"abc"
+
+    sn_pattern="101011x0011x"
+    #sn_pattern="10101011x0011x"
+    
+    
+    """
+    for orig_triple in orig_path_dict:
+        ### Filter bad ones out
+        if not((sn_pattern) in orig_triple[0] and (sn_pattern) in orig_triple[1]):
+            continue
+
+        #if orig_triple[2]==20:
+        #    continue
+        
+        #if orig_triple[0].endswith("01x") or orig_triple[1].endswith("01x"):
+        #    continue
+
+        #Filter to look at only a specific one
+        #if orig_triple != ('11000101xx0101xx0101xx01', '11100011x00101xx0101xx01', 21):
+        #    continue
+
+        
+        ### Original
+        print("")
+        print("Original: "+str(orig_triple))
+        orig_cum_sign=0
+        #for path in orig_path_dict[orig_triple]:
+        #    orig_cum_sign+=sign_of_path(path)
+        print("number of paths:                                            "+str(len(orig_path_dict[orig_triple])))
+        print("their cumulative sign: "+str(orig_cum_sign))
+
+        #for path in orig_path_dict[orig_triple]:
+        #    print_path(path)
+
+        ###LK
+        sn_triple=(add_snake(orig_triple[0]),add_snake(orig_triple[1]),orig_triple[2]+12)
+
+        sn_adds_L12=False
+        
+
+        if sn_triple in sn_L_path_dict.keys():
+            sn_adds_L12=True    
+            print("sn with first_L -> +12")
+            sn_cum_sign=0
+            for path in sn_L_path_dict[sn_triple]:
+                sn_cum_sign+=sign_of_path(path)
+            print("number of paths:                                         "+str(len(sn_L_path_dict[sn_triple])))
+            print("their cumulative sign: "+str(sn_cum_sign))
+
+            #for path in sn_L_path_dict[sn_triple]:
+            #    print_path(path)
+        else:
+            print("sn with first_L -> +0")
+            sn_triple=(sn_triple[0],sn_triple[1],sn_triple[2]-12)
+            sn_cum_sign=0
+            #for path in sn_L_path_dict[sn_triple]:
+            #    sn_cum_sign+=sign_of_path(path)
+            print("number of paths:                                          "+str(len(sn_L_path_dict[sn_triple])))
+            print("their cumulative sign: "+str(sn_cum_sign))
+
+    """
+    for orig_pair in orig_noL_path_dict.keys():
+        ### Filter bad ones out
+        if not((sn_pattern) in orig_pair[0] and (sn_pattern) in orig_pair[1]):
+            continue
+        
+        
+        ### Original
+        print("")
+        print("Original: "+str(orig_pair))
+        orig_cum_sign=0
+        orig_L_array=[]
+        for path in orig_noL_path_dict[orig_pair]:
+            orig_cum_sign+=sign_of_path(path)
+            orig_L_array.append(first_L(path))
+        print("number of paths:                                            "+str(len(orig_noL_path_dict[orig_pair])))
+        print("their cumulative sign: "+str(orig_cum_sign))
+        print("L_array: "+str(orig_L_array))
+
+        #for path in orig_path_dict[orig_triple]:
+        #    print_path(path)
+        
+        ### Snake
+        sn_pair=(add_snake(orig_pair[0]),add_snake(orig_pair[1]))
+        sn_L_array=[]
+        sn_cum_sign=0
+        for path in sn_noL_path_dict[sn_pair]:
+            sn_cum_sign+=sign_of_path(path)
+            sn_L_array.append(first_L(path))
+        print("number of paths:                                            "+str(len(sn_noL_path_dict[sn_pair])))
+        print("their cumulative sign: "+str(sn_cum_sign))
+        print("L_array: "+str(sn_L_array))
+
+def lk_start_L_testing():
+    paths=load_new_T4_paths(12)
+
+    for cell in paths:
+        if not ("x0101xx0101x" in cell):
+            continue
+        print(cell)
+        firstLs_set=set()
+
+        for path in paths[cell]:
+            firstLs_set.add(first_L(path))
+        
+        print(firstLs_set)
+        print("")
+
 
 
 def main():
@@ -846,45 +1378,24 @@ def main():
     #path_testing()
     #path_dom_cod_pairs_testing()
     #snake_functoriality_testing()
-    lk_functoriality_testing()
-
+    #lk_functoriality_testing()
     
+    new_lk_functoriality_testing()
+    #new_snake_functoriality_testing()
+
+    #lk_start_L_testing()
+
+    #forbidden_structures_testing()
+    """
+    paths=load_new_T4_paths(3)
+    path_dict=dom_cod_first_L_to_paths_dict(paths)
+    for a in path_dict:
+        print("")
+        print(a)
+        print(path_dict[a])
+    """
+
 if __name__ == "__main__":
     main()
 
 
-"""
-for h in range(min_hdeg,max_hdeg+1):
-    for q in range(min_qdeg,max_qdeg+1):
-        
-        for cell in paths:
-            if (h,q)==(hdeg_of_word(braid,cell),qdeg_of_word(braid,cell)):
-                print("\n"+cell+" h:"+str(h)+" q:"+str(q))
-                paths_from_cell=paths[cell]
-                for path in paths_from_cell:
-                    print(path[len(path)-1])
-            
-"""
-
-
-
-
-
-"""
-
-last_chars=set()
-
-for cell in unmatched_cells:
-    last_chars.add(cell[-12:])
-
-for string in last_chars:
-    print(string)
-
-"""
-
-"""
-for path in paths:
-    if path=="00011x101011":
-        print((paths[path])[len(paths[path])-1])
-        print(len(paths[path]))
-"""
