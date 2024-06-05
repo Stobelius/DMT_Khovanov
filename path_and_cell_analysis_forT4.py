@@ -96,6 +96,12 @@ def add_snake(cell):
     snake_pattern="101011x0011x"
     cod_cell=cell.replace(snake_pattern,2*snake_pattern,1)
     return cod_cell
+
+def lk_to_triple(triple):
+    if triple[2]<len(triple[0])-6:
+        return (add_lk(triple[0]),add_lk(triple[1]),triple[2])
+    else:
+        return (add_lk(triple[0]),add_lk(triple[1]),triple[2]+6)
     
 
 ########### Utilities:  functions on paths
@@ -311,7 +317,100 @@ def print_path(path):
     print(sign_string((sign_of_path(path)))+"  "+path[0]+" "+path[-1]+"  "+str(qdeg_diffs_and_Ls_from_path(path)))
 
 
-def conj_lk2_path(list_of_Ls):
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### Conjectural path generation for lk:
+
+
+def lk_path_x01_L1_diff_end(list_of_Ls):
+    new_array=[]
+    for i in range(2):
+        new_array.append(list_of_Ls[i]+6)
+    for i in range(len(list_of_Ls)):
+        new_array.append(list_of_Ls[i])
+    for i in range(-2,0,1):
+        new_array.append(list_of_Ls[i]+6)
+    return new_array
+
+def lk_path_x01_L1_same_end(list_of_Ls):
+    arrays=([],[],[],[])
+    for arr in arrays:    
+        for i in range(4):
+            arr.append(list_of_Ls[i]+6)
+
+    for i in range(2,len(list_of_Ls)-2):
+        arrays[0].append(list_of_Ls[i])
+    for i in range(0,len(list_of_Ls)-0):
+        arrays[1].append(list_of_Ls[i])
+    for i in range(0,len(list_of_Ls)-0):
+        arrays[2].append(list_of_Ls[i])
+    
+    #fourth one    
+    for i in range(0,2):
+        arrays[3].append(list_of_Ls[i]+2)
+
+    for i in range(0,len(list_of_Ls)-0):
+        arrays[3].append(list_of_Ls[i])
+    
+    for i in range(len(list_of_Ls)-2,len(list_of_Ls)-0):
+        arrays[3].append(list_of_Ls[i]+2)
+
+
+
+    for arr in arrays:    
+        for i in range(-2,0,1):
+            arr.append(list_of_Ls[i]+6)
+    return arrays
+
+def lk2_path_x01_L1_same_end(list_of_Ls):
+    new_array=[]
+    for i in range(4):
+        new_array.append(list_of_Ls[i]+12)
+    for i in range(2,4):
+        new_array.append(list_of_Ls[i]+7)
+    for i in range(2):
+        new_array.append(list_of_Ls[i]+2)
+    for i in range(len(list_of_Ls)):
+        new_array.append(list_of_Ls[i])
+    
+    for i in range(-2,0,1):
+        new_array.append(list_of_Ls[i]+2)
+    
+    for i in range(-2,0,1):
+        new_array.append(list_of_Ls[i]+12)
+   
+    return new_array
+
+
+
+
+
+
+
+def lk2_path_x01_L2(list_of_Ls):
     #print(list_of_Ls)
     new_array=[]
     for i in range(8):
@@ -323,7 +422,8 @@ def conj_lk2_path(list_of_Ls):
     return new_array
 
 
-def conj_lk_paths(list_of_Ls):
+
+def lk_path_x01_L2(list_of_Ls):
     arrays=([],[],[],[])
     for arr in arrays:    
         for i in range(8):
@@ -342,6 +442,102 @@ def conj_lk_paths(list_of_Ls):
         for i in range(-4,0,1):
             arr.append(list_of_Ls[i]+6)
     return arrays
+
+
+
+
+def conj_lk_paths(orig_triple, orig_path_dict, lk_triple,lk_path_dict):
+    paths=orig_path_dict[orig_triple]
+    
+    conj_array=[]
+
+    word_endsx01=False
+    if orig_triple[0].endswith("x01"):
+        word_endsx01=True
+    word_ends01x=False
+    if orig_triple[0].endswith("01x"):
+        word_ends01x=True
+    filterL=len(orig_triple[0])-orig_triple[2]-1
+    
+    
+    if (word_endsx01,filterL)==(True,1):
+        
+        #split cases on whether codomain has same or different ending
+        if(orig_triple[1].endswith("01x")):
+            for path in paths:
+                conj_array.append(lk_path_x01_L1_diff_end(lk_path_x01_L1_diff_end(list_of_Ls_from_path(path))))
+
+        else:
+            for path in orig_path_dict[orig_triple]:
+                #print(len(list_of_Ls_from_path(path)))
+
+                conj_array.append(lk2_path_x01_L1_same_end(list_of_Ls_from_path(path))) 
+
+
+                #print(len(conj_array[-1]))
+
+
+
+            for path in lk_path_dict[lk_triple]:
+                conj_paths=lk_path_x01_L1_same_end(list_of_Ls_from_path(path))
+                for arr in conj_paths:
+                    conj_array.append(arr)
+            
+
+
+
+
+        return conj_array
+    
+    
+    elif (word_endsx01,filterL)==(True,2):
+        
+        for path in orig_path_dict[orig_triple]:
+            conj_array.append(lk2_path_x01_L2(list_of_Ls_from_path(path))) 
+        for path in lk_path_dict[lk_triple]:
+            conj_paths=lk_path_x01_L2(list_of_Ls_from_path(path))
+            for arr in conj_paths:
+                conj_array.append(arr)
+        return conj_array
+
+    elif (word_endsx01,filterL)==(True,3):
+        return conj_array
+    elif word_endsx01==True and filterL>6:
+        for path in paths:
+            conj_array.append(list_of_Ls_from_path(path))
+        return conj_array
+    
+    if (word_ends01x,filterL)==(True,0):
+        return conj_array
+    elif (word_ends01x,filterL)==(True,2):
+        return conj_array
+    elif (word_ends01x,filterL)==(True,4):
+        return conj_array
+    elif word_ends01x==True and filterL>6:
+        for path in paths:
+            conj_array.append(list_of_Ls_from_path(path))        
+        return conj_array
+
+
+    print("something is strange")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1054,33 +1250,37 @@ def new_lk_functoriality_testing():
     lk2_braid=lk2_twistcount*"abc"
 
     lk_pattern="01xx01"
+
+    #Options: Allow the following through:
+    endsx01_L1=True    
+    endsx01_L2=False     #ok
+    endsx01_L3=False   
+    endsx01_lowL=False   #ok
+    
+    ends01x_L0=False
+    ends01x_L2=False
+    ends01x_L4=False
+    ends01x_lowL=False   #ok
+    
+    #Print paths:
+    print_paths=False
+
+
+
+
     succcount=0
     failcount=0
-    
     triplescount=0
     unfiltered=0
 
 
     for orig_triple in orig_path_dict:
+
         ### Filter non-lk cells out
         if not((2*lk_pattern) in orig_triple[0] and (2*lk_pattern) in orig_triple[1]):
             continue
 
         triplescount+=1
-
-        #Options: Allow the following through:
-        endsx01_L1=False    
-        endsx01_L2=True     #ok
-        endsx01_L3=False   
-        endsx01_lowL=True   #ok
-
-        ends01x_L0=False
-        ends01x_L2=False
-        ends01x_L4=False
-        ends01x_lowL=True   #ok
-
-        #Print paths:
-        print_paths=False
         
         #Based on options, filter out paths
         word_endsx01=False
@@ -1113,26 +1313,7 @@ def new_lk_functoriality_testing():
 
         unfiltered+=1
 
-        #if word_ends01x:
-        #    continue
-        
-        #if orig_triple[2]==20:
-        #    continue
-        """
 
-        if orig_triple[0].endswith("01x"):
-            continue
-        
-        if (orig_triple[2] ==22):
-            continue
-        """
-
-
-        #Filter to look at only a specific one
-        #if orig_triple != ('11000101xx0101xx0101xx01', '11100011x00101xx0101xx01', 21):
-        #    continue
-
-        
         ### Original
         print("")
         print("Original: "+str(orig_triple))
@@ -1145,13 +1326,30 @@ def new_lk_functoriality_testing():
         if print_paths:
             for path in orig_path_dict[orig_triple]:
                 print_path(path)
-
+        
         ###LK
-        lk_triple=(add_lk(orig_triple[0]),add_lk(orig_triple[1]),orig_triple[2]+6)
+
+        #lk_triple=(add_lk(orig_triple[0]),add_lk(orig_triple[1]),orig_triple[2]+6)
+        lk_triple=lk_to_triple(orig_triple)
+
 
         lk_adds_L6=False
+        if lk_triple[2]!=orig_triple[2]:
+            lk_adds_L6=True    
+        #print("LK with first_L -> +6")
+        
+        lk_cum_sign=0
+        for path in lk_path_dict[lk_triple]:
+            lk_cum_sign+=sign_of_path(path)
+        print("number of paths:                                         "+str(len(lk_path_dict[lk_triple])))
+        print("their cumulative sign: "+str(lk_cum_sign))
+        if print_paths:
+            for path in lk_path_dict[lk_triple]:
+                print_path(path)
         
 
+
+        """
         if lk_triple in lk_path_dict.keys():
             lk_adds_L6=True    
             print("LK with first_L -> +6")
@@ -1176,13 +1374,26 @@ def new_lk_functoriality_testing():
 
             print("number of paths:                                          "+str(len(lk_path_dict[lk_triple])))
             print("their cumulative sign: "+str(lk_cum_sign))
-
+        """
         
 
         ###LK2
         
-        lk2_triple=(add_lk(add_lk(orig_triple[0])),add_lk(add_lk(orig_triple[1])),orig_triple[2]+12)
+        #lk2_triple=(add_lk(add_lk(orig_triple[0])),add_lk(add_lk(orig_triple[1])),orig_triple[2]+12)
+        lk2_triple=lk_to_triple(lk_triple)
+        
+        lk2_cum_sign=0
+        for path in lk2_path_dict[lk2_triple]:
+            lk2_cum_sign+=sign_of_path(path)
+        print("number of paths:                                          "+str(len(lk2_path_dict[lk2_triple])))
+        print("their cumulative sign: "+str(lk2_cum_sign))
+        if print_paths:
+            for path in lk2_path_dict[lk2_triple]:
+                print_path(path)
 
+
+
+        """
         if lk2_triple in lk2_path_dict.keys():
             print("LK2 with first_L -> +12")
             lk2_cum_sign=0
@@ -1206,11 +1417,15 @@ def new_lk_functoriality_testing():
 
             print("number of paths:                                           "+str(len(lk2_path_dict[lk2_triple])))
             print("their cumulative sign: "+str(lk2_cum_sign))
-        
+        """    
 
         ### Trying to guess LK2 from Orig and LK
         actual_array_of_lk2=[]
+        
+        for path in lk2_path_dict[lk2_triple]:
+            actual_array_of_lk2.append(list_of_Ls_from_path(path))
 
+        """
         if lk_adds_L6:
             lk2_triple=(add_lk(add_lk(orig_triple[0])),add_lk(add_lk(orig_triple[1])),orig_triple[2]+12)
             for path in lk2_path_dict[lk2_triple]:
@@ -1219,9 +1434,14 @@ def new_lk_functoriality_testing():
             lk2_triple=(add_lk(add_lk(orig_triple[0])),add_lk(add_lk(orig_triple[1])),orig_triple[2]+0)
             for path in lk2_path_dict[lk2_triple]:
                 actual_array_of_lk2.append(list_of_Ls_from_path(path))
+        """
 
         conj_array_of_lk2=[]
 
+        conj_array_of_lk2=conj_lk_paths(orig_triple,orig_path_dict,lk_triple,lk_path_dict)
+        #print(conj_array_of_lk2)
+
+        """
         if lk_adds_L6:
             for path in orig_path_dict[orig_triple]:
                 conj_array_of_lk2.append(conj_lk2_path(list_of_Ls_from_path(path)))
@@ -1234,15 +1454,34 @@ def new_lk_functoriality_testing():
         else:
             for path in orig_path_dict[orig_triple]:
                 conj_array_of_lk2.append(list_of_Ls_from_path(path))
+        """
 
+        
+        samecount=0
+        allcount=0
+        for i in range(len(sorted(actual_array_of_lk2))):
+            allcount+=1
+            if sorted(actual_array_of_lk2)[i]==sorted(conj_array_of_lk2)[i]:
+                samecount+=1 
+                
+            else:
+                pass
+                #print("")
+                #print(sorted(conj_array_of_lk2)[i])
+                #print(sorted(actual_array_of_lk2)[i])
+
+        print("countssaasdsad")
+        print(samecount)
+        print(allcount)
         
 
         if sorted(actual_array_of_lk2)==sorted(conj_array_of_lk2):
             succcount+=1
-            print("yeye")
+            print("succeeded")
         else:
-            print("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR")
+            print("failed")
             failcount+=1
+    print("")
     print("successes :" +str(succcount))
     print("fails :"+ str(failcount))
     print("filtered: "+ str(triplescount-unfiltered))
