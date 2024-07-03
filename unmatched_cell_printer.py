@@ -97,6 +97,48 @@ def generate_connectivity_array(strands):
     return readys_as_pairs
 
     
+def connectivity_to_closure_circle_count(connectivity):
+    
+    def end_to_end(position,strands):
+        if position>strands:
+            return position-strands
+        return position+strands
+
+    def search(conn, start):
+        strands=len(conn)
+
+        found=set()
+        #found.add(start)
+        current=start
+        while current not in found:
+            found.add(current)
+            current=end_to_end(current,strands)
+            found.add(current)
+            for pair in conn:
+                if current==pair[0]:
+                    current=pair[1]
+                elif current==pair[1]:
+                    current=pair[0]
+
+        return found
+
+    strands=len(connectivity)
+
+    circlecount=0
+
+    found_so_far=set()
+    while True:
+        startpoint=None
+        for i in range(1, 2*strands+1):
+            if i not in found_so_far:
+                startpoint=i
+
+        if startpoint==None:
+            return circlecount
+
+        new_stuff=search(connectivity,startpoint)
+        found_so_far=found_so_far.union(new_stuff)
+        circlecount+=1
 
 
 
@@ -348,8 +390,17 @@ def number_of_diagonals(array_of_triples):
 
 
 
+def print_conn_table():
+    for i in range(2,6):
+        print("")
+        print("Number of strands:" +str(i))
+        conns=generate_connectivity_array(i)
+        #print(conns)
+        for a in range(len(conns)):
+            print(connectivity_symbol(conns,conns[a])+"   "+str(conns[a]))
+            #print(conns[a])
 
-
+        
 
 
 def main():
@@ -357,7 +408,16 @@ def main():
         print("Give me a braid")
         sys.exit(1)
     braid=sys.argv[1]
+    
+    #print_conn_table()
+    
+    
 
+
+
+
+
+    #UNCOMMENT THIS BLOCK
     
     history=generate_unmatched_cell_history(braid)
     unmatched_cells=history[len(history)-1]
@@ -380,6 +440,10 @@ def main():
     
 
 
+
+
+
+
     """
     manyT5_tabulars=""
     for i in range(1,44):
@@ -397,6 +461,13 @@ def main():
     """
 
 
+
+    """
+    for conn in generate_connectivity_array(4):
+        print(conn)
+        print(connectivity_to_closure_circle_count(conn))
+        print("")
+    """
 
 
 

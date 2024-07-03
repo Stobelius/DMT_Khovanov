@@ -1,5 +1,5 @@
 import pickle
-from braidalgo import qdeg_of_word, hdeg_of_word
+from braidalgo import qdeg_of_word, hdeg_of_word, count_starting_ones
 
 ########### Utilities:  Loading precalculated cells and paths
 
@@ -55,7 +55,7 @@ def ones_count(my_string):
     return count
 
 def lk_count(string):    
-    sub_string="x0101x"
+    sub_string="0101x"
     count = 0
     sub_len = len(sub_string)
     for i in range(len(string) - sub_len + 1):
@@ -444,6 +444,100 @@ def lk_path_x01_L2(list_of_Ls):
     return arrays
 
 
+def lk_path_x01_L3(list_of_Ls):
+    arrays=([],[],[],[])
+    for arr in arrays:    
+        for i in range(2):
+            arr.append(list_of_Ls[i]+6)
+    
+    arrays[1].append(list_of_Ls[0]+2)
+    arrays[1].append(list_of_Ls[0]+3)
+
+    arrays[2].append(list_of_Ls[0]+2)
+    arrays[2].append(list_of_Ls[0]+3)
+    
+    arrays[3].append(list_of_Ls[0]+4)
+    arrays[3].append(list_of_Ls[0]+5)
+    arrays[3].append(list_of_Ls[0]+2)
+    arrays[3].append(list_of_Ls[0]+3)
+
+    
+    for arr in arrays:    
+        for i in range(len(list_of_Ls)):
+            arr.append(list_of_Ls[i])
+    
+    arrays[1].append(list_of_Ls[0]+2)
+    arrays[1].append(list_of_Ls[0]+3)
+
+    arrays[2].append(list_of_Ls[0]+2)
+    arrays[2].append(list_of_Ls[0]+3)
+    
+    arrays[3].append(list_of_Ls[0]+2)
+    arrays[3].append(list_of_Ls[0]+3)
+    arrays[3].append(list_of_Ls[0]+4)
+    arrays[3].append(list_of_Ls[0]+5)
+    
+    return arrays
+
+def lk2_path_x01_L3(list_of_Ls):
+    arr=[]
+
+    f=list_of_Ls[0]
+
+    arr.append(f+12)
+    arr.append(f+12)
+    arr.append(f+7)
+    arr.append(f+7)
+    arr.append(f+4)
+    arr.append(f+5)
+    arr.append(f+2)
+    arr.append(f+3)
+
+    arr=arr+list_of_Ls
+    
+    arr.append(f+2)
+    arr.append(f+3)
+    arr.append(f+4)
+    arr.append(f+5)
+    
+    return arr
+
+def lk_path_01x_L2(list_of_Ls):
+    arrays=([],[],[],[])
+    for arr in arrays:    
+        for i in range(6):
+            arr.append(list_of_Ls[i]+6)
+
+    for i in range(4,len(list_of_Ls)-4):
+        arrays[0].append(list_of_Ls[i])
+    for i in range(2,len(list_of_Ls)-2):
+        arrays[1].append(list_of_Ls[i])
+    for i in range(2,len(list_of_Ls)-2):
+        arrays[2].append(list_of_Ls[i])
+    for i in range(0,len(list_of_Ls)-0):
+        arrays[3].append(list_of_Ls[i])
+    
+    for arr in arrays:    
+        for i in range(-4,0,1):
+            arr.append(list_of_Ls[i]+6)
+    return arrays
+
+def lk2_path_01x_L2(list_of_Ls):
+    arr=[]
+
+    f=list_of_Ls[0]
+    
+    for i in range(6):
+        arr.append(list_of_Ls[i]+12)
+    
+    arr.append(f+3)
+    arr.append(f+3)
+
+    arr=arr+list_of_Ls
+    
+    for i in range(-4,0,1):
+        arr.append(list_of_Ls[i]+12)
+    return arr
 
 
 def conj_lk_paths(orig_triple, orig_path_dict, lk_triple,lk_path_dict):
@@ -501,6 +595,14 @@ def conj_lk_paths(orig_triple, orig_path_dict, lk_triple,lk_path_dict):
         return conj_array
 
     elif (word_endsx01,filterL)==(True,3):
+        for path in orig_path_dict[orig_triple]:
+            conj_array.append(lk2_path_x01_L3(list_of_Ls_from_path(path))) 
+        
+        for path in lk_path_dict[lk_triple]:
+            conj_paths=lk_path_x01_L3(list_of_Ls_from_path(path))
+            for arr in conj_paths:
+                conj_array.append(arr)
+
         return conj_array
     elif word_endsx01==True and filterL>6:
         for path in paths:
@@ -508,10 +610,36 @@ def conj_lk_paths(orig_triple, orig_path_dict, lk_triple,lk_path_dict):
         return conj_array
     
     if (word_ends01x,filterL)==(True,0):
+        ##Magically this is the same as ends x01 L3 
+        #Due to lazyness, I just copied that
+        
+        for path in orig_path_dict[orig_triple]:
+            conj_array.append(lk2_path_x01_L3(list_of_Ls_from_path(path))) 
+        
+        for path in lk_path_dict[lk_triple]:
+            conj_paths=lk_path_x01_L3(list_of_Ls_from_path(path))
+            for arr in conj_paths:
+                conj_array.append(arr)
+
         return conj_array
+
     elif (word_ends01x,filterL)==(True,2):
+        for path in orig_path_dict[orig_triple]:
+            conj_array.append(lk2_path_01x_L2(list_of_Ls_from_path(path))) 
+        
+        for path in lk_path_dict[lk_triple]:
+            conj_paths=lk_path_01x_L2(list_of_Ls_from_path(path))
+            for arr in conj_paths:
+                conj_array.append(arr)
+
         return conj_array
     elif (word_ends01x,filterL)==(True,4):
+        
+        #magically these are same as ends x01 L1 diff end
+        for path in paths:
+            conj_array.append(lk_path_x01_L1_diff_end(lk_path_x01_L1_diff_end(list_of_Ls_from_path(path))))
+
+
         return conj_array
     elif word_ends01x==True and filterL>6:
         for path in paths:
@@ -551,6 +679,8 @@ def conj_lk_paths(orig_triple, orig_path_dict, lk_triple,lk_path_dict):
 
 
 ############## Analysis/tests
+
+
 
 def cell__bijection_testing():
 
@@ -696,7 +826,7 @@ def cell__bijection_testing():
 
     #check for well defined map
     for cell in lk_dom_cells:
-        print(cell)
+        #print(cell)
         mapped_cell=cell.replace("x0101x","x0101xx0101xx0101x",1)
         if not (mapped_cell in lk_cod_cells):
             print("halp2")
@@ -1238,32 +1368,38 @@ def new_lk_functoriality_testing():
 
     orig_paths=load_new_T4_paths(orig_twistcount)
     orig_path_dict=dom_cod_first_L_to_paths_dict(orig_paths)
+    #orig_path_dict=dom_cod_noL_path_dict(orig_paths)
+
 
     lk_paths=load_new_T4_paths(lk_twistcount)
     lk_path_dict=dom_cod_first_L_to_paths_dict(lk_paths)
+    #lk_path_dict=dom_cod_noL_to_path_dict(lk_paths)
     
+
     lk2_paths=load_new_T4_paths(lk2_twistcount)
     lk2_path_dict=dom_cod_first_L_to_paths_dict(lk2_paths)
+    #lk2_path_dict=dom_cod_noL_to_path_dict(lk_paths)
+    
 
     orig_braid=orig_twistcount*"abc"
     lk_braid=lk_twistcount*"abc"
     lk2_braid=lk2_twistcount*"abc"
 
-    lk_pattern="01xx01"
+    lk_pattern="x0101xx0101x"
 
     #Options: Allow the following through:
-    endsx01_L1=True    
-    endsx01_L2=False     #ok
-    endsx01_L3=False   
+    endsx01_L1=True     #ok  
+    endsx01_L2=True     #ok
+    endsx01_L3=True     #ok
     endsx01_lowL=False   #ok
     
-    ends01x_L0=False
-    ends01x_L2=False
-    ends01x_L4=False
+    ends01x_L0=False     #ok
+    ends01x_L2=False     #ok
+    ends01x_L4=False     #ok      
     ends01x_lowL=False   #ok
     
     #Print paths:
-    print_paths=False
+    print_paths=True
 
 
 
@@ -1277,7 +1413,7 @@ def new_lk_functoriality_testing():
     for orig_triple in orig_path_dict:
 
         ### Filter non-lk cells out
-        if not((2*lk_pattern) in orig_triple[0] and (2*lk_pattern) in orig_triple[1]):
+        if not((lk_pattern) in orig_triple[0] and (lk_pattern) in orig_triple[1]):
             continue
 
         triplescount+=1
@@ -1325,6 +1461,7 @@ def new_lk_functoriality_testing():
 
         if print_paths:
             for path in orig_path_dict[orig_triple]:
+                #print(path)
                 print_path(path)
         
         ###LK
@@ -1456,6 +1593,7 @@ def new_lk_functoriality_testing():
                 conj_array_of_lk2.append(list_of_Ls_from_path(path))
         """
 
+        """
         
         samecount=0
         allcount=0
@@ -1473,7 +1611,37 @@ def new_lk_functoriality_testing():
         print("countssaasdsad")
         print(samecount)
         print(allcount)
-        
+        """
+
+
+
+        """
+        diff_values=set()
+        diff_index=1000000
+        previous_L_list=actual_array_of_lk2[0]
+        for L_list in actual_array_of_lk2:
+            index=10000000000
+            for i in range(len(L_list)):
+                if i>=len(previous_L_list):
+                    index=i
+                    break
+                elif L_list[i]!=previous_L_list[i]:
+                    index=i 
+                    break
+            if index<diff_index:
+                diff_values=set()
+                #print("asd")
+                #print(diff_values)
+                diff_values.add(L_list[index])
+                diff_values.add(previous_L_list[index])
+                diff_index=index
+            elif diff_index==index: 
+                diff_values.add(L_list[index])
+
+        print(diff_index)
+        print(diff_values)
+        """
+
 
         if sorted(actual_array_of_lk2)==sorted(conj_array_of_lk2):
             succcount+=1
@@ -1485,6 +1653,189 @@ def new_lk_functoriality_testing():
     print("successes :" +str(succcount))
     print("fails :"+ str(failcount))
     print("filtered: "+ str(triplescount-unfiltered))
+
+
+
+
+
+
+def unmatched_cells_generation_testing():
+
+
+    ones_cells=set()
+    ones_cells.add("")
+    
+    snake_cells=set()
+    lk_cells=set()
+
+    ready_cells=set()
+
+    ones_cap=44
+    lk_cap=round(ones_cap/2)
+    snake_cap=round(lk_cap/2)
+
+    #ones_cap=1
+    #lk_cap=1
+    #snake_cap=1
+
+
+
+    added=set()
+    for word in ones_cells:
+        for i in range(ones_cap):
+            added.add(word+(i*"111"))
+    ones_cells=added
+
+    for word in ones_cells:
+        ready_cells.add(word)
+        ready_cells.add(word+"000")
+        snake_cells.add(word+"00011x")
+        lk_cells.add(word+"00011x001")
+
+        ready_cells.add(word+"001")
+        ready_cells.add(word+"010")
+        ready_cells.add(word+"011")
+        
+        ready_cells.add(word+"100")
+        lk_cells.add(word+"100001")
+        
+        snake_cells.add(word+"100")
+        snake_cells.add(word)
+
+        ready_cells.add(word+"110")
+        #lk_cells.add(word+"101011")
+        lk_cells.add(word+"110001")
+        snake_cells.add(word+"110")
+
+    added=set()
+    for word in snake_cells:
+        for i in range(snake_cap):
+            added.add(word+(i*"101011x0011x"))
+    
+    snake_cells=added
+
+    for word in snake_cells:
+        ready_cells.add(word)
+        lk_cells.add(word+"101011x0011x001")
+        
+        ready_cells.add(word+"101")
+        ready_cells.add(word+"101010")
+
+        ready_cells.add(word+"101011")
+        lk_cells.add(word+"101010x01")
+
+        ready_cells.add(word+"101011x00")
+        ready_cells.add(word+"101011x10")
+        ready_cells.add(word+"101011x11")
+
+        ready_cells.add(word+"101011x01")
+
+    for word in lk_cells:
+        for i in range(lk_cap):
+            ready_cells.add(word+(i*"01xx01"))
+
+            ready_cells.add(word+(i*"01xx01")+"01x")
+
+
+    #ready_cells.add("11111111111100000000xxxx")
+    
+    glue_triples=set()
+    for word in ready_cells:
+        xcount=word.count("x")
+        onecount=word.count("1")
+        triple=(onecount,xcount,len(word))
+        glue_triples.add(triple)
+    
+    glue_triples=sorted(list(glue_triples))
+    for triple in glue_triples:
+        print(triple)
+        print(triple[0]/(-3)-triple[1]+triple[2]/3)
+
+    
+    testnum=30
+
+    generated_cells=set()
+    for word in ready_cells:
+        if len(word)==3*testnum:
+            generated_cells.add(word)
+    true_cells=load_cells(testnum)
+    print("numb of generateds"+str(len(generated_cells)))
+    print("numb of true"+ str(len(true_cells)))
+    if generated_cells==true_cells:
+        print("yeyye")
+
+    print("generated but not truly critical")
+    for word in generated_cells:
+        if not word in true_cells:
+            print(word)
+    print("critical but not generated")
+    for word in true_cells:
+        if not word in generated_cells:
+            print(word)
+
+
+
+def noL_lk_functoriality_testing():
+    orig_twistcount=8
+    lk2_twistcount=orig_twistcount+4
+
+    orig_paths=load_new_T4_paths(orig_twistcount)
+    #orig_path_dict=dom_cod_first_L_to_paths_dict(orig_paths)
+    orig_path_dict=dom_cod_noL_path_dict(orig_paths)
+
+    lk2_paths=load_new_T4_paths(lk2_twistcount)
+    #sn_L_path_dict=dom_cod_first_L_to_paths_dict(sn_paths)
+    lk2_path_dict=dom_cod_noL_path_dict(lk2_paths)
+
+    #print(orig_paths)
+
+    print_paths=False
+    lk_pattern="x0101xx0101x"
+
+
+    for orig_triple in orig_path_dict:
+
+        ### Filter non-lk cells out
+        if not((lk_pattern) in orig_triple[0] and (lk_pattern) in orig_triple[1]):
+            continue
+
+
+        ### Original
+        print("")
+        print("Original: "+str(orig_triple))
+        orig_cum_sign=0
+        for path in orig_path_dict[orig_triple]:
+            orig_cum_sign+=sign_of_path(path)
+        print("number of paths:                                            "+str(len(orig_path_dict[orig_triple])))
+        print("their cumulative sign: "+str(orig_cum_sign))
+
+        if print_paths:
+            for path in orig_path_dict[orig_triple]:
+                print(path)
+                print_path(path)
+        
+
+
+        ###LK2
+        lk2_dom=orig_triple[0].replace("x0101x","x0101xx0101xx0101x",1)
+        lk2_cod=orig_triple[1].replace("x0101x","x0101xx0101xx0101x",1)
+
+
+
+        #lk2_triple=(add_lk(add_lk(orig_triple[0])),add_lk(add_lk(orig_triple[1])),orig_triple[2]+12)
+        #lk2_triple=lk_to_triple(lk_triple)
+        lk2_triple=(lk2_dom,lk2_cod)
+
+        lk2_cum_sign=0
+        for path in lk2_path_dict[lk2_triple]:
+            lk2_cum_sign+=sign_of_path(path)
+        print("number of paths:                                          "+str(len(lk2_path_dict[lk2_triple])))
+        print("their cumulative sign: "+str(lk2_cum_sign))
+        if print_paths:
+            for path in lk2_path_dict[lk2_triple]:
+                print_path(path)
+
+
 
 
 def new_snake_functoriality_testing():
@@ -1609,10 +1960,131 @@ def lk_start_L_testing():
         print(firstLs_set)
         print("")
 
+def inequalities_testing():
+    
+    def f_lk(word):
+        m=0
+        #higher fails
+        
+        O=word.count("1")
+        X=word.count("x")
+        L=len(word)
+
+        return O/2 +(3/2)*X -L/2+m
+
+
+    def f_ones(word):
+        m=-1
+        #higher fails
+        
+        O=word.count("1")
+        X=word.count("x")
+        L=len(word)
+
+        return O +X -(2*L)/3+m
+    
+    def f_snake(word):
+        m=-2.5 
+        #higher fails
+
+        O=word.count("1")
+        X=word.count("x")
+        L=len(word)
+
+        return -(O/2 +X -L/2-m)
+    
+    def g_lk(word):
+        m=-2
+        #higher seems to fail
+
+        # in some formulation, this m was -m
+        
+        O=word.count("1")
+        X=word.count("x")
+        L=len(word)
+        
+        return L/2 - O+m
+
+    for twistnumber in range(30):
+        cells=load_cells(twistnumber)
+        """
+        for cell in cells:
+            #print(str(cell.count("01xx01"))+"    "+str(f_lk(cell)))
+            #if f_lk(cell)>0:
+            #    print(cell)
+            
+            #the -0.01 is for floating point fuckery
+            if f_lk(cell)-0.01>cell.count("01xx01"):
+                print(cell)
+                print(f_lk(cell))
+        
+        
+        for cell in cells:
+            #if f_snake(cell)>0:
+            #    print(cell)
+            #print(str(cell.count("101011x0011x"))+"    "+str(f_snake(cell)))
+            
+            #print(cell)
+            #print(f_snake(cell))
+            if f_snake(cell)-0.01>cell.count("101011x0011x"):
+                print(cell)
+                print(f_snake(cell))
+        
+
+        for cell in cells:
+            #print(str(cell.count("111"))+"    "+str(f_ones(cell)))
+            #if f_ones(cell)>0:
+            #    print(cell)
+            if f_ones(cell)-0.01>cell.count("111"):
+                print(cell)
+                print(f_ones(cell))
+
+        """
+
+
+        for cell in cells:
+
+            #print(str(cell.count("01xx01"))+"    "+str(g_lk(cell)))
+
+            if g_lk(cell)-0.01>cell.count("01xx01"):
+                print(cell)
+                print(g_lk(cell))
+
+
+
+
+
+
+    
+
+
+
+def qdeg_up_testing():
+    
+    for i in range(25):
+        cells=load_cells(i)
+
+        for cella in cells:
+            oa=cella.count("1")
+            xa=cella.count("x")
+            odega=count_starting_ones(cella)
+
+            for cellb in cells:
+                ob=cellb.count("1")
+                xb=cellb.count("x")
+                odegb=count_starting_ones(cellb)
+                
+                if oa+1==ob and odega<=odegb and xa>xb+2:
+
+                    print("halp")
+                
+                
+
 
 
 def main():
 
+    #unmatched_cells_generation_testing()
     #cell__bijection_testing()
     #path_testing()
     #path_dom_cod_pairs_testing()
@@ -1622,9 +2094,23 @@ def main():
     new_lk_functoriality_testing()
     #new_snake_functoriality_testing()
 
+    
+    #noL_lk_functoriality_testing()
+
     #lk_start_L_testing()
 
     #forbidden_structures_testing()
+    #inequalities_testing()
+    #qdeg_up_testing()
+    """
+    twistnumber=1
+    file_path="Torus4braid_paths/snake1twist.pkl"
+    paths=None
+    with open(file_path, 'rb') as file:
+        paths = pickle.load(file)
+    print(paths)
+    """
+
     """
     paths=load_new_T4_paths(3)
     path_dict=dom_cod_first_L_to_paths_dict(paths)

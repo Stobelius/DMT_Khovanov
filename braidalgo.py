@@ -1122,6 +1122,8 @@ def next_step_down(braid_word,enh_word,previous_L,unmatched_cells_history):
                     return (matching,u)
     if not enh_word in unmatched_cells_history[len(unmatched_cells_history)-1]:
         print("something is fishy")
+        print(enh_word)
+        #print((unmatched_cells_history[len(unmatched_cells_history)-1]).pop())
     return -1
 
 def hdeg_to_maximal_qdeg(braid,unmatched_words):
@@ -1431,6 +1433,69 @@ def calc_and_save_T5_cells(twistnumber):
 
 
 
+def save_the_snake(twistnumber):
+    
+    #file_path="Torus4braid_paths/44twistcells.pkl"
+
+    #history=None
+
+
+    #with open(file_path, 'rb') as file:
+    #    history = pickle.load(file)
+
+    #history=history[0:(4*twistnumber)]
+
+    braid=(4*twistnumber)*"abc"
+
+    history=generate_unmatched_cell_history(braid)
+
+
+
+    snake=twistnumber*"101011x0011x"
+    
+    unmatched_words=history[-1]
+    
+    #hdeg_to_max_qdeg=hdeg_to_maximal_qdeg(braid,unmatched_words)
+    hdeg_to_max_qdeg=dict()
+    hdeg_to_max_qdeg[hdeg_of_word(braid,snake)]=qdeg_of_word(braid,snake)+3
+    #slightly scared that I made something aweful here
+
+    hdeg_to_max_ones=hdeg_to_maximal_ones(braid,unmatched_words)
+    
+    zig_zags={}
+    zig_zags[snake]=zig_zag_paths_from2(braid,snake,history,hdeg_to_max_qdeg,hdeg_to_max_ones)
+
+
+    output_file_path="Torus4braid_paths/snake"+str(twistnumber)+"twist.pkl"
+      
+    if os.path.exists(output_file_path):
+        pass
+    else:      
+        with open(output_file_path, 'wb') as file:
+            pickle.dump(zig_zags, file)
+
+
+
+
+
+#repeating code in a bad style
+
+def dom_cod_noL_path_dict(paths):
+    dictionary=dict()
+    for cell in paths.keys():
+        paths_from_cell=paths[cell]
+        for path in paths_from_cell:
+            pair=(path[0],path[-1])
+            if pair in dictionary.keys():
+                dictionary[pair].append(path)
+            else:
+                dictionary[pair]=[path]
+    return dictionary
+
+    
+
+
+
 
 ################## Main, no functionality there so far 
 
@@ -1465,14 +1530,44 @@ def main():
     
     #print(matching_a_cell(sys.argv[1],"11101Y",5,5))
     
+    
+
+
 
     braid=sys.argv[1]
     zig_zags=generate_all_zig_zag_paths(braid)
-    #for cell in zig_zags:
+    #print(zig_zags)
+    path_dict=dom_cod_noL_path_dict(zig_zags)
+    pathcounts=set()
+
+    for cell_pair in path_dict:
+        #print(path_dict[cell])
+        paths=path_dict[cell_pair]
+        pcount=len(path_dict[cell_pair])
+        pathcounts.add(len(path_dict[cell_pair]))
+        qdiff=qdeg_of_word(braid,cell_pair[1])-qdeg_of_word(braid,cell_pair[0])
+        
+        if len(paths)>1:
+
+            for a in paths:
+                print(len(a))
+
+            print("")
+
+        if(pcount!=qdiff):
+            print(cell_pair)
+            print(qdiff)
+            print(pcount) 
+
+    print(pathcounts)
     #    print(cell)
     #    print(len(zig_zags[cell]))
     #print(zig_zags)
-    
+    """
+    for i in range(1,9):
+        print(i)
+        save_the_snake(i)
+    """ 
     
     #history=generate_unmatched_cell_history(braid)
     #unmatched_words=history[len(history)-1]
