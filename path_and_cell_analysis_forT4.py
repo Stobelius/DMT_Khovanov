@@ -1662,8 +1662,106 @@ def new_lk_functoriality_testing():
 
 
 
+def alternative_unmatched_cell_generator(twistnumber):
+
+    ones_cap=twistnumber+10
+    lk_cap=round(ones_cap/2)
+    snake_cap=round(ones_cap/4)
+
+    def ones(set_of_words,cap):
+        newset=set()
+        for word in set_of_words:
+            for i in range(cap):
+                newset.add(word+i*"111")
+        return newset
+    
+    def glu1(set_of_words):
+        newset=set()
+        for word in set_of_words:
+            newset.add(word+"000")
+            newset.add(word+"001")
+            newset.add(word+"010")
+            newset.add(word+"011")
+        return newset
+
+    def glu2(set_of_words):
+        newset=set()
+        for word in set_of_words:
+            newset.add(word)
+            newset.add(word+"100")
+            newset.add(word+"110")
+            newset.add(word+"00011x")
+        return newset
+    
+    def snake(set_of_words,cap):
+        newset=set()
+        for word in set_of_words:
+            for i in range(cap):
+                newset.add(word+i*"101011x0011x")
+        return newset
+
+    def glu3(set_of_words):
+        newset=set()
+        for word in set_of_words:
+            newset.add(word)
+            newset.add(word+"101")
+            newset.add(word+"101010")
+            newset.add(word+"101011")
+            newset.add(word+"101011x00")
+            newset.add(word+"101011x10")
+            newset.add(word+"101011x11")
+            newset.add(word+"101011x01")
+        return newset
+    
+    def glu4(set_of_words):
+        newset=set()
+        for word in set_of_words:
+            newset.add(word+"101011x0011x001")
+            newset.add(word+"101010x01")
+        return newset
+    
+    def lion_king(set_of_words,cap):
+        newset=set()
+        for word in set_of_words:
+            for i in range(cap):
+                newset.add(word+i*"01xx01")
+        return newset
+    
+    def glu5(set_of_words):
+        newset=set()
+        for word in set_of_words:
+            newset.add(word)
+            newset.add(word+"01x")
+        return newset
+
+    def glu6(set_of_words):
+        newset=set()
+        for word in set_of_words:
+            newset.add(word+"00011x001")
+            newset.add(word+"100001")
+            newset.add(word+"110001")
+        return newset
+
+    initial_set=set()
+    initial_set.add("")
+
+    U1=glu1(ones(initial_set,ones_cap))
+    U2=glu3(snake(glu2(ones(initial_set,ones_cap)),snake_cap))
+    U3=snake(glu2(ones(initial_set,ones_cap)),snake_cap)
+    U3=glu5(lion_king(glu4(U3),lk_cap))
+    U4=glu5(lion_king(glu6(ones(initial_set,ones_cap)),lk_cap))
+
+    U= U1 | U2 | U3 | U4
+
+    lengthfiltered=set()
+    for word in U:
+        if len(word)==3*twistnumber:
+            lengthfiltered.add(word)
+    
+    return lengthfiltered
 
 
+    
 
 def unmatched_cells_generation_testing():
 
@@ -1676,7 +1774,7 @@ def unmatched_cells_generation_testing():
 
     ready_cells=set()
 
-    ones_cap=110
+    ones_cap=60
     lk_cap=round(ones_cap/2)
     snake_cap=round(lk_cap/2)
 
@@ -1693,7 +1791,7 @@ def unmatched_cells_generation_testing():
     ones_cells=added
 
     for word in ones_cells:
-        ready_cells.add(word)
+        #ready_cells.add(word)
         ready_cells.add(word+"000")
         snake_cells.add(word+"00011x")
         lk_cells.add(word+"00011x001")
@@ -1702,13 +1800,13 @@ def unmatched_cells_generation_testing():
         ready_cells.add(word+"010")
         ready_cells.add(word+"011")
         
-        ready_cells.add(word+"100")
+        #ready_cells.add(word+"100")
         lk_cells.add(word+"100001")
         
         snake_cells.add(word+"100")
         snake_cells.add(word)
 
-        ready_cells.add(word+"110")
+        #ready_cells.add(word+"110")
         #lk_cells.add(word+"101011")
         lk_cells.add(word+"110001")
         snake_cells.add(word+"110")
@@ -1760,6 +1858,7 @@ def unmatched_cells_generation_testing():
         print(triple[0]/(-3)-triple[1]+triple[2]/3)
     """
     
+    """
     #Saving the generated critical cells into a file
     twistcount=71
     # ones count should be a bit, say 5, higher than twistcount 
@@ -1775,9 +1874,9 @@ def unmatched_cells_generation_testing():
         with open(file_path, 'wb') as file:
             pickle.dump(generated_cells, file)
 
-
-
     """
+
+    
     #Testing against the real critical cells
                 
     testnum=44
@@ -1787,9 +1886,11 @@ def unmatched_cells_generation_testing():
         if len(word)==3*testnum:
             generated_cells.add(word)
 
-    
+    generated_cells=alternative_unmatched_cell_generator(testnum)
     
     true_cells=load_cells(testnum)
+    #true_cells=alternative_unmatched_cell_generator(testnum)
+
     print("numb of generateds"+str(len(generated_cells)))
     print("numb of true"+ str(len(true_cells)))
     if generated_cells==true_cells:
@@ -1803,9 +1904,9 @@ def unmatched_cells_generation_testing():
     for word in true_cells:
         if not word in generated_cells:
             print(word)
-    """
+    
 
-
+    
 
 def noL_lk_functoriality_testing():
     orig_twistcount=8
@@ -2135,7 +2236,7 @@ def top_homology_testing():
 
 def main():
 
-    #unmatched_cells_generation_testing()
+    unmatched_cells_generation_testing()
     #cell__bijection_testing()
     #path_testing()
     #path_dom_cod_pairs_testing()
@@ -2144,7 +2245,7 @@ def main():
     
     #new_lk_functoriality_testing()
 
-    top_homology_testing()
+    #top_homology_testing()
     
     
     #new_snake_functoriality_testing()
