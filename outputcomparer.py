@@ -1,11 +1,102 @@
-from braidalgo import generate_unmatched_words_with_degs
+from braidalgo import generate_unmatched_words_with_degs, generate_next_unmatched_words,connectivity_tuple_of_cell,generate_all_enhanced_words,generate_next_enhanced_words
 from khtfilegenerator import knotinfo_string_to_integer_array
 import os.path
 import pickle
+import sys
 
 #idea: generate dictionaries from both programs with keys being integer pairs (hdeg,qdeg) and values being positive integers (#number of generator of that deg)
 
+def collapse_dictionarycounts(braid,old_dict):
+    collapsed_dict=dict()
+    while len(old_dict)>0:
 
+        
+        (key,value)=old_dict.popitem()
+        #print(key)
+        #print(value)
+        #print(old_dict)
+
+        
+        conn=connectivity_tuple_of_cell(braid,key)
+
+        sum_of_counts=value
+        for cell in old_dict.keys():
+            if conn==connectivity_tuple_of_cell(braid,cell):
+                sum_of_counts+=old_dict[cell]
+                old_dict[cell]=0
+
+        collapsed_dict[key]=sum_of_counts
+    
+    cleaned_from_zeros=dict()
+    for cell in collapsed_dict:
+        if collapsed_dict[cell]>0:
+            cleaned_from_zeros[cell]=collapsed_dict[cell]
+
+    return cleaned_from_zeros
+
+
+
+
+def total_number_of_cells(braid):
+    count_dict=dict()
+    count_dict[""]=1
+    #print(count_dict)
+
+    
+    for i in range(len(braid)):
+        new_cells=generate_next_enhanced_words(count_dict.keys(),braid[:(i+1)])
+        
+        #copying the multiplicities from the previous ones
+        new_dict=dict()
+        for cell in new_cells:
+            new_dict[cell]=count_dict[cell[:-1]]
+        #print(new_dict)
+
+        
+        #collapsing the new dictionary to a representative
+        if i>0:        
+            count_dict=collapse_dictionarycounts(braid[:(i+1)],new_dict)
+            #print(count_dict)
+        else:
+            count_dict=new_dict
+
+    #print(count_dict)
+
+    sum_of_values=0
+    for key in count_dict:
+        sum_of_values+=count_dict[key]
+
+    return sum_of_values
+
+def total_cell_counting_fails(braid):
+    if(len(generate_all_enhanced_words(braid))!=total_number_of_cells(braid)):
+        print("AASDDDSADASDASDSADSDSADSDASADADS")
+
+
+def mirror_connectivity(connectivity):
+    #return connectivity
+    stringcount=0
+    for pair in connectivity:
+        stringcount=max(stringcount, max(pair))
+    stringcount=round(stringcount/2)
+
+    def mirror_pos(pos,stringcount):
+        if pos<=stringcount:
+            return pos +stringcount
+            #return pos
+            #return stringcount-pos+1
+        else:
+            return pos - stringcount
+            #return pos
+            #return 3*stringcount-pos+1
+
+    new_list_of_pairs=[]
+
+    for pair in connectivity:
+        new_pair=[mirror_pos(pair[0],stringcount),mirror_pos(pair[1],stringcount)]
+        new_pair=tuple(sorted(new_pair))
+        new_list_of_pairs.append(new_pair)
+    return(tuple(sorted(new_list_of_pairs)))
 
 def integer_array_to_knotscape_string(arr):
     result = ""
@@ -52,6 +143,51 @@ def khtfile_parser(file_path):
     print("failed to stop reading file")
     return result_dict
 
+def khtfile_parser2(file_path):
+    result_dict = {}
+    new_object_key=(None,None,None)
+    with open(file_path, 'r') as file:
+        for line in file:
+            line = line.strip()
+
+            # Check if we've reached the "=== diffs ===" section
+            if line == "=== diffs ===":
+                return result_dict
+
+            
+            if line.startswith("object"):
+                # Extract h,q
+                start_index = line.find("(h=")
+                end_index = line.find(")", start_index)
+                if start_index != -1 and end_index != -1:
+                    data = line[start_index + 3:end_index]
+                    data=data.split(',')
+                    h=int(data[0])
+                    qstring=(data[1])[3:]
+                    q=int(qstring)
+                    new_object_key = (h, q, None)
+            connectivity=[]
+            if line.startswith("arcs:  "):
+                data = line[7:len(line)]
+                data=data.split(" ")
+                for pair in data:
+                    pair=pair.split("–")
+                    s=int(pair[0])+1
+                    e=int(pair[1])+1
+                    connectivity.append((s,e)) 
+                new_object_key=(new_object_key[0],new_object_key[1],tuple(mirror_connectivity(connectivity)))
+                #print(new_object_key)
+                # Update the dictionary
+                if new_object_key in result_dict:
+                    result_dict[new_object_key] += 1
+                else:
+                    result_dict[new_object_key] = 1        
+    print("failed to stop reading file")
+    return result_dict
+
+
+
+
 def unmatched_words_with_degs_into_degs_dictionary(unmatched_words):
 
     result_dict={}
@@ -64,10 +200,26 @@ def unmatched_words_with_degs_into_degs_dictionary(unmatched_words):
             result_dict[key] = 1
     return result_dict               
 
-def dictionary_size(dict):
+def unmatched_words_with_degs_into_degs_dictionary2(braid,unmatched_words):
+
+    result_dict={}
+
+    for word_deg_tuple in unmatched_words:
+        key= (word_deg_tuple[1],word_deg_tuple[2],tuple(connectivity_tuple_of_cell(braid,word_deg_tuple[0])))
+        if key in result_dict:
+            result_dict[key] += 1
+        else:
+            result_dict[key] = 1
+    return result_dict               
+
+
+
+
+
+def dictionary_size(dictionary):
     s=0
-    for key in dict:
-        s+=dict[key]
+    for key in dictionary:
+        s+=dictionary[key]
     return s
 
 def dictionary_difference(DMT_degs, khtpp_degs):
@@ -96,15 +248,33 @@ def dictionary_difference(DMT_degs, khtpp_degs):
 
 
 def main():
+    #braid="aaaaaaaaaaaaaaaaa"
+
+    #print(len(generate_all_enhanced_words(braid)))
+    #a=total_number_of_cells(braid)
+    #print(a)
+
+
+    #sys.exit(1)
+    
+
+
+    
+    
     f=open("knotinfodb.csv", "r")
     f.readline() #discard 1st line
 
     DMT_cell_amounts=0
     kht_cell_amounts=0
 
-    testamount=100000
+    testamount=1000000000
     testcount=0
 
+    tot_cell_count=0
+    
+    total_number_of_braids=0
+    minimality_obtained=0
+    
     while True:
         testcount=testcount+1
         if testamount==testcount:
@@ -122,7 +292,27 @@ def main():
 
         
         print(braid_name)
+        print(ks_braid)
+        #total_cell_counting_fails(ks_braid)
+
         
+        #Load or calculate total number of cells in the complex
+        cell_count=None
+        cell_count_path='khtfiles/'+braid_name+'cellcount.txt'
+        if os.path.exists(cell_count_path):
+            ffff=open(cell_count_path,"r")
+            cell_count=int(ffff.read())
+            ffff.close()
+        else:
+            cell_count=total_number_of_cells(ks_braid)
+            ffff = open(cell_count_path, "w")
+            ffff.write(str(cell_count))
+            ffff.close()
+            
+        tot_cell_count+=cell_count
+        #print(tot_cell_count)
+        
+
         #Load or calculate unmatched cells of the braid 
         unmatched_words=None
         unmatched_words_path='khtfiles/'+braid_name+'/unmatched_words.pkl'
@@ -135,7 +325,7 @@ def main():
                 pickle.dump(unmatched_words, file)
 
         #Reformat the DMT-calculated data into a dictionary
-        DMT_degs=unmatched_words_with_degs_into_degs_dictionary(unmatched_words)
+        DMT_degs=unmatched_words_with_degs_into_degs_dictionary2(ks_braid,unmatched_words)
 
         #Recover the cells calculated by kht++ from a file and read them into a dictionary
         two_string_braid=True
@@ -145,7 +335,7 @@ def main():
         cx_file_path="khtfiles/"+braid_name+"/cx-c2"
         khtpp_degs=None
         if os.path.exists(cx_file_path):
-            khtpp_degs=khtfile_parser(cx_file_path)
+            khtpp_degs=khtfile_parser2(cx_file_path)
         elif not two_string_braid:
             print("did not find cx-c2 file and the tangle has more than 4 outputs")
 
@@ -161,6 +351,11 @@ def main():
 
             DMT_cell_amounts+=dictionary_size(DMT_degs)
             kht_cell_amounts+=dictionary_size(khtpp_degs)
+
+            
+            total_number_of_braids+=1
+            if len(DMT_minus_kht)==0:
+                minimality_obtained+=1
             
 
             #Alert if unwanted things happen    
@@ -171,7 +366,8 @@ def main():
                 print("kht++")
                 print(khtpp_degs)
                 print("Difference")
-                print((DMT_minus_kht,kht_minus_DMT))
+                print(DMT_minus_kht)
+                print(kht_minus_DMT)
             
 
 
@@ -206,9 +402,15 @@ def main():
     
 
     #Print some results
-    print(DMT_cell_amounts)
-    print(kht_cell_amounts)
-    print(DMT_cell_amounts/kht_cell_amounts)
+    print("#cells in Morse complexes: " + str(DMT_cell_amounts))
+    print("#cells in minimal complexes: " + str(kht_cell_amounts))
+    print("ratio of Morse to minimal: "+str(DMT_cell_amounts/kht_cell_amounts))
+    print("#cells in total complexes: "+ str(tot_cell_count))
+    print("ratio of total to minimal: "+str(tot_cell_count/kht_cell_amounts))
+    
+
+    print("total number of braids: "+str(total_number_of_braids))
+    print("#braids with minimality obtained: "+str(minimality_obtained))
     
     #dictionary=khtfile_parser("khtfiles/5_2/cx-c2")
     #print(dictionary)

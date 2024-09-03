@@ -1,10 +1,16 @@
 import pickle
+import os
 from braidalgo import qdeg_of_word, hdeg_of_word, count_starting_ones
 
 ########### Utilities:  Loading precalculated cells and paths
 
 def load_cells(twistnumber):
-    #Currently 44 is highest doable
+    #Currently 44 is highest doable out of legit ones. There is 100 twist synthetic ones also.
+    if twistnumber>44:
+        file_path="Torus4braid_paths/"+str(twistnumber)+"synthetic_cells.pkl"
+        with open(file_path, 'rb') as file:
+            return pickle.load(file)
+   
     file_path="Torus4braid_paths/44twistcells.pkl"
 
     history=None
@@ -1670,7 +1676,7 @@ def unmatched_cells_generation_testing():
 
     ready_cells=set()
 
-    ones_cap=44
+    ones_cap=110
     lk_cap=round(ones_cap/2)
     snake_cap=round(lk_cap/2)
 
@@ -1737,8 +1743,10 @@ def unmatched_cells_generation_testing():
             ready_cells.add(word+(i*"01xx01")+"01x")
 
 
-    #ready_cells.add("11111111111100000000xxxx")
+    """
     
+    #Printing stuff:
+    #ready_cells.add("11111111111100000000xxxx")
     glue_triples=set()
     for word in ready_cells:
         xcount=word.count("x")
@@ -1750,14 +1758,37 @@ def unmatched_cells_generation_testing():
     for triple in glue_triples:
         print(triple)
         print(triple[0]/(-3)-triple[1]+triple[2]/3)
-
+    """
     
-    testnum=30
+    #Saving the generated critical cells into a file
+    twistcount=71
+    # ones count should be a bit, say 5, higher than twistcount 
+    generated_cells=set()
+    for word in ready_cells:
+        if len(word)==3*twistcount:
+            generated_cells.add(word)
+
+    file_path="Torus4braid_paths/"+str(twistcount)+"synthetic_cells.pkl"
+    if os.path.exists(file_path):
+        pass
+    else:      
+        with open(file_path, 'wb') as file:
+            pickle.dump(generated_cells, file)
+
+
+
+    """
+    #Testing against the real critical cells
+                
+    testnum=44
 
     generated_cells=set()
     for word in ready_cells:
         if len(word)==3*testnum:
             generated_cells.add(word)
+
+    
+    
     true_cells=load_cells(testnum)
     print("numb of generateds"+str(len(generated_cells)))
     print("numb of true"+ str(len(true_cells)))
@@ -1772,6 +1803,7 @@ def unmatched_cells_generation_testing():
     for word in true_cells:
         if not word in generated_cells:
             print(word)
+    """
 
 
 
@@ -2079,7 +2111,26 @@ def qdeg_up_testing():
                     print("halp")
                 
                 
-
+def top_homology_testing():
+    braid=12*"abc"
+    paths=load_new_T4_paths(12)
+    path_dict=dom_cod_first_L_to_paths_dict(paths)
+    """
+    for cell in paths:
+        if qdeg_of_word(braid,cell)==-66 and hdeg_of_word(braid,cell)==-22:
+            print(cell)
+            print(len(paths[cell]))
+            #print(paths[cell])
+            for path in paths[cell]:
+                print_path(path)
+    """
+    for triple in path_dict:
+        if qdeg_of_word(braid,triple[0])==-66 and hdeg_of_word(braid,triple[0])==-22:
+            print(triple[0])
+            print(len(path_dict[triple]))
+            #print(paths[cell])
+            for path in path_dict[triple]:
+                print_path(path)
 
 
 def main():
@@ -2091,7 +2142,11 @@ def main():
     #snake_functoriality_testing()
     #lk_functoriality_testing()
     
-    new_lk_functoriality_testing()
+    #new_lk_functoriality_testing()
+
+    top_homology_testing()
+    
+    
     #new_snake_functoriality_testing()
 
     

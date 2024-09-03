@@ -1,6 +1,6 @@
 from braidalgo import qdeg_of_word, hdeg_of_word, generate_unmatched_cell_history, connectivity_tuple_of_cell, add_degs,sort_by_hdeg, number_of_strands
 from path_and_cell_analysis_forT4 import load_cells
-import sys, pickle
+import sys, pickle, math
 from collections import deque
 
 paperwidth=200  #cm
@@ -96,6 +96,11 @@ def generate_connectivity_array(strands):
 
     return readys_as_pairs
 
+
+
+
+
+
     
 def connectivity_to_closure_circle_count(connectivity):
     
@@ -139,6 +144,39 @@ def connectivity_to_closure_circle_count(connectivity):
         new_stuff=search(connectivity,startpoint)
         found_so_far=found_so_far.union(new_stuff)
         circlecount+=1
+
+
+
+def degs_to_closure_ranks(braid,word_deg_triples):
+
+
+    def closure_dict(h,q,c):
+        dictionary=dict()
+        for i in range(c+1):
+            dictionary[h,q+c-2*i]=math.comb(c,i)
+        
+        return dictionary
+
+
+    strands=number_of_strands(braid)
+    final_dict=dict()
+
+    for triple in word_deg_triples:
+        hq_key=(triple[1],triple[2])
+        connectivity=connectivity_tuple_of_cell(braid,triple[0])
+        circlecount=connectivity_to_closure_circle_count(connectivity)
+
+        new_dict=closure_dict(hq_key[0],hq_key[1],circlecount)
+
+        for key in new_dict:
+            if key in final_dict:
+                final_dict[key]+=new_dict[key]
+            else:
+                final_dict[key]=new_dict[key]
+    
+    return final_dict
+
+        
 
 
 
@@ -290,7 +328,7 @@ def create_latex_table(polynomial_dict):
     for key, value in polynomial_dict.items():
         row_index = key[0] - t_min + 1
         column_index = columns-(key[1] - q_min)//2 - 1
-        table[row_index][column_index] = entry_dict_to_str(value) #muuta tämä latexiksi
+        table[row_index][column_index] = str(value) #muuta tämä latexiksi
         
     # Add row and column headers to table
     for i in range(rows):
@@ -418,7 +456,7 @@ def main():
 
 
     #UNCOMMENT THIS BLOCK
-    
+    """
     history=generate_unmatched_cell_history(braid)
     unmatched_cells=history[len(history)-1]
     
@@ -433,11 +471,40 @@ def main():
     degs_dict=degs_to_connectivity_counts(braid,word_deg_triples)
     latex_table=create_latex_table2(degs_dict)
 
-    print(create_latex_table(degs_dict))
+    print(create_latex_table2(degs_dict))
     print("number of diagonals: " +str(number_of_diagonals(word_deg_triples)))
 
     write_latex_file(braid,latex_table)
+    """
+
+
+
+
+
+
+
+
+    #history=generate_unmatched_cell_history(braid)
+    #unmatched_cells=history[len(history)-1]
     
+    twistcount=74
+    unmatched_cells=load_cells(twistcount)
+    braid=twistcount*"abc"
+    #print(braid)
+
+    #unmatched_cells=load_T5_cells(23)
+    #braid=23*"abcd"
+
+    word_deg_triples=sort_by_hdeg(add_degs(braid,unmatched_cells))
+    degs_dict=degs_to_closure_ranks(braid,word_deg_triples)
+    latex_table=create_latex_table(degs_dict)
+    #write_latex_file(braid,latex_table)
+    
+    print(latex_table)
+    braid="abc"+str(twistcount)
+    write_latex_file(braid,latex_table)
+
+
 
 
 

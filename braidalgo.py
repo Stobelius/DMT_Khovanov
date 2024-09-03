@@ -1156,7 +1156,6 @@ def hdeg_to_maximal_ones(braid,unmatched_words):
 
 
 
-dead_cells={}
 
 #def qdeg_distance
 #if this is negative, then do not try pursuing the path
@@ -1535,8 +1534,16 @@ def main():
 
 
     braid=sys.argv[1]
+    #allcells=generate_all_enhanced_words(braid)
+    #print(allcells)
+    #print(len(allcells))
+
     zig_zags=generate_all_zig_zag_paths(braid)
     #print(zig_zags)
+
+
+    """
+    #counting paths to see patterns in alternating braids 
     path_dict=dom_cod_noL_path_dict(zig_zags)
     pathcounts=set()
 
@@ -1563,6 +1570,10 @@ def main():
     #    print(cell)
     #    print(len(zig_zags[cell]))
     #print(zig_zags)
+    """
+
+
+
     """
     for i in range(1,9):
         print(i)

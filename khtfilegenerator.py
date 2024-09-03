@@ -84,17 +84,24 @@ def main():
 
 
         file_path = os.path.join(folder_name, braid_name+'.kht')
-        
-        
+                
         cx_file_path="khtfiles/"+braid_name+"/cx-c2"
         if os.path.exists(cx_file_path):
             continue
         
-        print("ASDSADDSA")
         
         with open(file_path, 'w', encoding='utf-8') as asd:
             asd.write(khtstring)
+        #    asd.close()
         
+        #asd= open(file_path, 'w')
+        #asd.write(khtstring)
+        #asd.close()
+        #if os.path.exists(file_path):
+        #    print("asdasddsa")
+
+
+
         #run the kht++ program on the generated file
         subprocess.run(["../kht/khtpp/./kht++", "/khtfiles/"+braid_name])
 
