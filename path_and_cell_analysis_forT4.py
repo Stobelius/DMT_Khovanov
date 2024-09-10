@@ -1700,7 +1700,7 @@ def alternative_unmatched_cell_generator(twistnumber):
                 newset.add(word+i*"101011x0011x")
         return newset
 
-    def glu3(set_of_words):
+    def glu4(set_of_words):
         newset=set()
         for word in set_of_words:
             newset.add(word)
@@ -1708,12 +1708,12 @@ def alternative_unmatched_cell_generator(twistnumber):
             newset.add(word+"101010")
             newset.add(word+"101011")
             newset.add(word+"101011x00")
+            newset.add(word+"101011x01")
             newset.add(word+"101011x10")
             newset.add(word+"101011x11")
-            newset.add(word+"101011x01")
         return newset
     
-    def glu4(set_of_words):
+    def glu5(set_of_words):
         newset=set()
         for word in set_of_words:
             newset.add(word+"101011x0011x001")
@@ -1727,14 +1727,14 @@ def alternative_unmatched_cell_generator(twistnumber):
                 newset.add(word+i*"01xx01")
         return newset
     
-    def glu5(set_of_words):
+    def glu6(set_of_words):
         newset=set()
         for word in set_of_words:
             newset.add(word)
             newset.add(word+"01x")
         return newset
 
-    def glu6(set_of_words):
+    def glu3(set_of_words):
         newset=set()
         for word in set_of_words:
             newset.add(word+"00011x001")
@@ -1746,10 +1746,10 @@ def alternative_unmatched_cell_generator(twistnumber):
     initial_set.add("")
 
     U1=glu1(ones(initial_set,ones_cap))
-    U2=glu3(snake(glu2(ones(initial_set,ones_cap)),snake_cap))
+    U2=glu4(snake(glu2(ones(initial_set,ones_cap)),snake_cap))
     U3=snake(glu2(ones(initial_set,ones_cap)),snake_cap)
-    U3=glu5(lion_king(glu4(U3),lk_cap))
-    U4=glu5(lion_king(glu6(ones(initial_set,ones_cap)),lk_cap))
+    U3=glu6(lion_king(glu5(U3),lk_cap))
+    U4=glu6(lion_king(glu3(ones(initial_set,ones_cap)),lk_cap))
 
     U= U1 | U2 | U3 | U4
 
@@ -2188,8 +2188,13 @@ def inequalities_testing():
 
 
 
-    
-
+def print_cellcounts():
+    s=""
+    for i in range(20,44,4):
+        a=load_cells(i)
+        #print(len(a))
+        s=s+str(len(a))+","
+    print(s)
 
 
 def qdeg_up_testing():
@@ -2235,6 +2240,7 @@ def top_homology_testing():
 
 
 def main():
+    print_cellcounts()
 
     unmatched_cells_generation_testing()
     #cell__bijection_testing()

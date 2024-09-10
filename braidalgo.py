@@ -1126,6 +1126,46 @@ def next_step_down(braid_word,enh_word,previous_L,unmatched_cells_history):
         #print((unmatched_cells_history[len(unmatched_cells_history)-1]).pop())
     return -1
 
+
+
+"""
+### unoptimized pseudocode version. The point here is to test if the simpler (but less comp efficient) algorithm works
+
+def next_step_down2(braid_word,enh_word,previous_L,unmatched_cells_history,potential_match):
+    #returns -1 if unmatched cell is found. Returns -2, if the cell is matched upwards.
+    
+    for u in range(1,len(braid_word),1):
+        for L in range(u,-1,-1):
+            matching=concatenated_matching(braid_word,enh_word,L,u)
+
+            if matching==potential_match and matching!=None:
+                return True
+
+            if(matching!= None):
+                if next_step_down2(braid_word,matching,previous_L,unmatched_cells_history,enh_word)==True:                   
+                    if potential_match !=None:
+                        return False
+                    
+                    if(hdeg_of_word(braid_word, enh_word)<hdeg_of_word(braid_word, matching)):
+                        return -2
+                    return (matching,u)
+    if not enh_word in unmatched_cells_history[len(unmatched_cells_history)-1]:
+        print("something is fishy")
+        print(enh_word)
+        #print((unmatched_cells_history[len(unmatched_cells_history)-1]).pop())
+    return -1
+"""
+
+
+
+
+
+
+
+
+
+
+
 def hdeg_to_maximal_qdeg(braid,unmatched_words):
     hdeg_to_qdeg = {}  
     for string in unmatched_words:
@@ -1166,6 +1206,7 @@ def hdeg_to_maximal_ones(braid,unmatched_words):
 
 #Some function which takes in the unmatched cells and splits them into pairs of vertices and acchiavable targets
 
+"""
 def zig_zag_paths_from(braid_word,enh_word,unmatched_cells_history,hdeg_max_qdeg,hdeg_to_max_ones):
     paths_in_construction=deque()
     paths_in_construction.append([(enh_word, len(braid_word))])
@@ -1193,6 +1234,8 @@ def zig_zag_paths_from(braid_word,enh_word,unmatched_cells_history,hdeg_max_qdeg
 
             
             down=next_step_down(braid_word,step_L[0],step_L[1],unmatched_cells_history)
+            
+
             if down==-1:
                 added_path=path.copy()
                 added_path.append(step_L)
@@ -1209,6 +1252,8 @@ def zig_zag_paths_from(braid_word,enh_word,unmatched_cells_history,hdeg_max_qdeg
             #        print(len(path))
 
     return final_paths
+"""
+
 
 def zig_zag_paths_from2(braid_word,enh_word,unmatched_cells_history,hdeg_max_qdeg,hdeg_to_max_ones):
     
@@ -1239,6 +1284,10 @@ def zig_zag_paths_from2(braid_word,enh_word,unmatched_cells_history,hdeg_max_qde
                 continue
 
             next_down=next_step_down(braid_word,up_word,L,unmatched_cells_history)
+            #down2=next_step_down2(braid_word,up_word,L,unmatched_cells_history,None)
+            #if next_down!=down2:
+            #    print("asddasdsaadssaddddddddddddddddddddddddddddddddd")
+            
 
             if next_down==-2: #the vertex is not matched up and thus not down. Hence the paths cannot continue.
                 paths_from_cell_to_criticals[up_word]=[]              
@@ -1405,8 +1454,7 @@ def generate_all_zig_zag_paths(braid):
 
     return zig_zags
 
-
-
+####################################### CLEAN THESE UP AT SOME POINT
 
 def calc_and_save_T4_paths(twistnumber):
 
