@@ -308,7 +308,7 @@ def main():
             ffff = open(cell_count_path, "w")
             ffff.write(str(cell_count))
             ffff.close()
-            
+        print(cell_count)
         tot_cell_count+=cell_count
         #print(tot_cell_count)
         
@@ -325,7 +325,9 @@ def main():
                 pickle.dump(unmatched_words, file)
 
         #Reformat the DMT-calculated data into a dictionary
-        DMT_degs=unmatched_words_with_degs_into_degs_dictionary2(ks_braid,unmatched_words)
+        DMT_degs=unmatched_words_with_degs_into_degs_dictionary(unmatched_words)  #TOGGLE CONNECTIVITY CHECK HERE
+        #DMT_degs=unmatched_words_with_degs_into_degs_dictionary2(ks_braid,unmatched_words)
+        
 
         #Recover the cells calculated by kht++ from a file and read them into a dictionary
         two_string_braid=True
@@ -335,7 +337,8 @@ def main():
         cx_file_path="khtfiles/"+braid_name+"/cx-c2"
         khtpp_degs=None
         if os.path.exists(cx_file_path):
-            khtpp_degs=khtfile_parser2(cx_file_path)
+            khtpp_degs=khtfile_parser(cx_file_path)     #TOGGLE CONNECTIVITY CHECK HERE
+            #khtpp_degs=khtfile_parser2(cx_file_path)
         elif not two_string_braid:
             print("did not find cx-c2 file and the tangle has more than 4 outputs")
 

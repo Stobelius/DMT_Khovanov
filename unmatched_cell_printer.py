@@ -455,8 +455,7 @@ def main():
 
 
 
-    #UNCOMMENT THIS BLOCK
-    """
+    
     history=generate_unmatched_cell_history(braid)
     unmatched_cells=history[len(history)-1]
     
@@ -475,15 +474,15 @@ def main():
     print("number of diagonals: " +str(number_of_diagonals(word_deg_triples)))
 
     write_latex_file(braid,latex_table)
+    
+
+
+
+
+
+
+
     """
-
-
-
-
-
-
-
-
     #history=generate_unmatched_cell_history(braid)
     #unmatched_cells=history[len(history)-1]
     
@@ -503,7 +502,7 @@ def main():
     print(latex_table)
     braid="abc"+str(twistcount)
     write_latex_file(braid,latex_table)
-
+    """
 
 
 

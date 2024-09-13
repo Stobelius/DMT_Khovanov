@@ -1588,6 +1588,9 @@ def main():
 
     zig_zags=generate_all_zig_zag_paths(braid)
     #print(zig_zags)
+    for cell in zig_zags:
+        print(cell)
+        print(zig_zags[cell])
 
 
     """
