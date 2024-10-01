@@ -2,6 +2,11 @@ import pickle
 import os
 from braidalgo import qdeg_of_word, hdeg_of_word, count_starting_ones
 
+import numpy as np
+from sklearn.linear_model import LinearRegression
+
+
+
 ########### Utilities:  Loading precalculated cells and paths
 
 def load_cells(twistnumber):
@@ -1765,7 +1770,7 @@ def alternative_unmatched_cell_generator(twistnumber):
 
 def unmatched_cells_generation_testing():
 
-
+    """
     ones_cells=set()
     ones_cells.add("")
     
@@ -1840,6 +1845,8 @@ def unmatched_cells_generation_testing():
 
             ready_cells.add(word+(i*"01xx01")+"01x")
 
+    """
+
 
     """
     
@@ -1878,33 +1885,37 @@ def unmatched_cells_generation_testing():
 
     
     #Testing against the real critical cells
-                
     testnum=44
 
-    generated_cells=set()
-    for word in ready_cells:
+    for i in range(0,testnum):
+    
+        """
+        generated_cells=set()
+        for word in ready_cells:
         if len(word)==3*testnum:
             generated_cells.add(word)
+        """
 
-    generated_cells=alternative_unmatched_cell_generator(testnum)
-    
-    true_cells=load_cells(testnum)
-    #true_cells=alternative_unmatched_cell_generator(testnum)
+        generated_cells=alternative_unmatched_cell_generator(i)
+        
+        true_cells=load_cells(i)
+        #true_cells=alternative_unmatched_cell_generator(testnum)
 
-    print("numb of generateds"+str(len(generated_cells)))
-    print("numb of true"+ str(len(true_cells)))
-    if generated_cells==true_cells:
-        print("yeyye")
-
-    print("generated but not truly critical")
-    for word in generated_cells:
-        if not word in true_cells:
-            print(word)
-    print("critical but not generated")
-    for word in true_cells:
-        if not word in generated_cells:
-            print(word)
-    
+        print("numb of generateds"+str(len(generated_cells)))
+        print("numb of true"+ str(len(true_cells)))
+        if generated_cells==true_cells:
+            print("yeyye")
+        else:
+            print("Aasddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd")
+        print("generated but not truly critical")
+        for word in generated_cells:
+            if not word in true_cells:
+                print(word)
+        print("critical but not generated")
+        for word in true_cells:
+            if not word in generated_cells:
+                print(word)
+        
 
     
 
@@ -2096,7 +2107,7 @@ def lk_start_L_testing():
 def inequalities_testing():
     
     def f_lk(word):
-        m=0
+        m=-0.5
         #higher fails
         
         O=word.count("1")
@@ -2138,19 +2149,21 @@ def inequalities_testing():
         
         return L/2 - O+m
 
+    lk_dist=0
     for twistnumber in range(30):
         cells=load_cells(twistnumber)
-        """
+        
         for cell in cells:
             #print(str(cell.count("01xx01"))+"    "+str(f_lk(cell)))
             #if f_lk(cell)>0:
             #    print(cell)
             
             #the -0.01 is for floating point fuckery
-            if f_lk(cell)-0.01>cell.count("01xx01"):
+            if f_lk(cell)/2-0.01>cell.count("01xx0101xx01"):
                 print(cell)
                 print(f_lk(cell))
-        
+            
+            lk_dist=max(lk_dist,-f_lk(cell)/2+cell.count("01xx0101xx01"))
         
         for cell in cells:
             #if f_snake(cell)>0:
@@ -2172,9 +2185,10 @@ def inequalities_testing():
                 print(cell)
                 print(f_ones(cell))
 
+        
+        
+
         """
-
-
         for cell in cells:
 
             #print(str(cell.count("01xx01"))+"    "+str(g_lk(cell)))
@@ -2182,6 +2196,159 @@ def inequalities_testing():
             if g_lk(cell)-0.01>cell.count("01xx01"):
                 print(cell)
                 print(g_lk(cell))
+        """
+    
+    print("lkdist"+ str(lk_dist))
+
+def inequalities_testing2():
+
+
+
+    def nhq_triple(word):
+        n=round(len(word)/3)
+        braid=n*"abc"
+        return([n,hdeg_of_word(braid,word),qdeg_of_word(braid,word)])
+
+
+    ###Finding good candidates for coeffiecents of tA, tB, tC
+
+    #for "111111111111" it gave
+    #intercept: -0.038852787348661266
+    #slope: [-0.50576753  0.50029899 -0.25141252]
+
+    #for "101011x0011x" it gave
+    #intercept: -1.7732046165184956
+    #slope: [ 2.99971013 -1.49871393  0.99978115]
+
+    #for "01xx0101xx01" it gave
+    #intercept: 0.43085674040147204
+    #slope: [-2.23269616  0.9920414  -0.74419892]
+
+    
+    """
+    model_input=[]
+    model_y=[]
+    for twistnumber in range(110):
+        #cells=load_cells(twistnumber)
+        cells=alternative_unmatched_cell_generator(twistnumber)
+
+
+        for word in cells:
+            model_input.append(nhq_triple(word))
+            #model_y.append(word.count("111111111111"))
+            model_y.append(word.count("101011x0011x"))
+            #model_y.append(word.count("01xx0101xx01"))
+            
+    
+    model = LinearRegression()
+    model.fit(model_input, model_y)
+
+    print(f"intercept: {model.intercept_}")
+    print(f"slope: {model.coef_}")
+    """
+
+
+
+
+
+    
+    def tA(word):
+        nhq=nhq_triple(word)
+        alpha=-1/2
+        beta=1/2
+        gamma=-1/4
+        theta=-1
+
+        return alpha*nhq[0]+beta*nhq[1]+gamma*nhq[2]+theta
+    
+    def tB(word):
+        nhq=nhq_triple(word)
+        alpha=3
+        beta=-3/2
+        gamma=1
+        theta=-2.5
+
+        return alpha*nhq[0]+beta*nhq[1]+gamma*nhq[2]+theta
+
+    def tC(word):
+        nhq=nhq_triple(word)
+        alpha=-9/4
+        beta=1
+        gamma=-3/4
+        theta=-0.25
+
+        return alpha*nhq[0]+beta*nhq[1]+gamma*nhq[2]+theta
+
+    
+    A_max_count_to_bound=0
+    for twistnumber in range(40):
+        cells=load_cells(twistnumber)
+        for word in cells:
+            A_count=word.count("111111111111")
+            A_lowerbound=tA(word)
+
+            diff=A_count-A_lowerbound
+            #\matprint(diff)
+            if(diff<0):
+                print("A bound fails with word")
+                print(word)
+
+            A_max_count_to_bound=max(A_max_count_to_bound,diff)
+
+    print(A_max_count_to_bound)
+    
+
+    
+    B_max_count_to_bound=0
+    for twistnumber in range(40):
+        cells=load_cells(twistnumber)
+        for word in cells:
+            B_count=word.count("101011x0011x")
+            B_lowerbound=tB(word)
+
+            diff=B_count-B_lowerbound
+            #print(diff)
+            if(diff<0):
+                print("B bound fails with word")
+                print(word)
+
+            B_max_count_to_bound=max(B_max_count_to_bound,diff)
+
+    print(B_max_count_to_bound)
+
+    
+
+    C_max_count_to_bound=0
+    for twistnumber in range(20):
+        cells=load_cells(twistnumber)
+        for word in cells:
+            C_count=word.count("01xx0101xx01")
+            C_lowerbound=tC(word)
+
+            diff=C_count-C_lowerbound
+            #print(diff)
+            if(diff<0):
+                print("C bound fails with word")
+                print(word)
+
+            C_max_count_to_bound=max(C_max_count_to_bound,diff)
+
+    print(C_max_count_to_bound)
+    
+
+
+
+
+def regression_testing():
+    x = [[0, 1], [5, 1], [15, 2], [25, 5], [35, 11], [45, 15], [55, 34], [60, 35]]
+    y = [4, 5, 20, 14, 32, 22, 38, 43]
+    model = LinearRegression()
+    model.fit(x, y)
+
+    print(f"intercept: {model.intercept_}")
+
+    print(f"slope: {model.coef_}")
+
 
 
 
@@ -2240,9 +2407,11 @@ def top_homology_testing():
 
 
 def main():
-    print_cellcounts()
+    #print_cellcounts()
 
-    unmatched_cells_generation_testing()
+    #unmatched_cells_generation_testing()
+    
+    
     #cell__bijection_testing()
     #path_testing()
     #path_dom_cod_pairs_testing()
@@ -2262,7 +2431,10 @@ def main():
     #lk_start_L_testing()
 
     #forbidden_structures_testing()
-    #inequalities_testing()
+    inequalities_testing2()
+
+
+    #regression_testing()
     #qdeg_up_testing()
     """
     twistnumber=1
