@@ -1,15 +1,45 @@
-Todo:
+Coding things in order to finish the article.
 
-Ideas for efficiency:
--hdeg by hdeg find out all paths between all critical cells at once. Do this with higher memory usage. 
--Try to use a (semi)-global dictionary for path finding
--improve matched down to not try to look at the same L over and over again
--multithreading
--on positive braids and words with ones at the start of the word, remove the ones and do the path analysis with that
+Extend dimension checking from 12 braids to 13 braids without 7 or more strands. Collect dimensions and compare them to max and min.
 
-Other things:
--test old and new paths
--on path and cell analysis, divide the paths into sets/dicts/arrays of (start_vertex,end_vertex,first_L) and find out a way to print them
+Ask Claudius about running thick braids
+
+Do acyclicity checking for 11 (or more) braids.
+
+Try to improve efficiency of unmatched cell generation. When generating the next level of potential unmatched cells, assigning a set/list of potential $L$-values for these. Do this based on the crossings of which a closed circles it hits. When killing pairs of cells, match only on values based on this list. 
+Using this improvement, try to get a conjecture on Torus links, specifically 5 strand. Run reasonably high values in jumps of 5 and plug the number of cells into OEIS.
+If this is succesful, conjecture that the torus braid T(n,m) with m strands fixed has O(x^(floor(n/2))) cells for large n.
+
+Make a github for this article and mimic Lukas's github
+
+Clean up code
+
+Do the required results for the paper
+
+
+jos keksit tähän jotain
+git push
+pelleile red khovanov softalla
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -516,6 +516,13 @@ def remove_L_u_matched_words_from_set(set_of_enh_words,braid_word,L,u):
             remaining_words.add(word)
         elif(potential_match in set_of_enh_words):
             set_of_enh_words.remove(potential_match)
+            #######Code can be inserted here to see, what kind of arrows are matched in certain braids
+            
+            #if(L<u-4):
+            #    print(str(L) + "asd " +str(u))
+            #    print(word)
+            #    print(potential_match)
+            #    print("")
         else:
             remaining_words.add(word)
             
@@ -597,6 +604,12 @@ def generate_next_unmatched_words(set_of_enh_words, concatenated_braid_word):
     
     for L in range(u,-1,-1):
         #print(L)
+
+        # uncomment this to try for lexicographic match
+        #if L<u:
+        #    continue
+        
+
         new_words=remove_L_u_matched_words_from_set(new_words,concatenated_braid_word,L,u)
     return new_words
 

@@ -1083,11 +1083,11 @@ def path_testing():
     
     #print(len(differences))
 
-def forbidden_structures_testing():
+def forbidden_structures_testing(teststring):
     twistnumber=12
     paths=load_new_T4_paths(twistnumber)
 
-    teststring="y00x"
+    #teststring="y00x"
 
     for critcell in paths:
         for path in paths[critcell]:
@@ -1095,15 +1095,33 @@ def forbidden_structures_testing():
                 for i in range(len(vertex)-len(teststring)):
                     if vertex[i:i+len(teststring)]==teststring:
                         #print(vertex[i:(len(vertex))])
-                        #print(vertex)
-                        if not ("y" in vertex[i:(len(vertex))]):
-                            print(vertex)
+                        print(vertex)
+                        return True
+                        #if not ("y" in vertex[i:(len(vertex))]):
+                        #    print(vertex)
                 
                 
                 
                 #if teststring in vertex:
                     #print(path)
                 #    print(vertex)
+
+def forbidden_struc():
+    teststring="01x1xx0101x"
+    if (forbidden_structures_testing(teststring)):
+                print("found this sturcture")
+    print("asd")
+
+
+    chunk="1xx0101x"
+
+    chars=["0","x"]
+    for a in chars:
+        for b in chars:
+            teststring=a+b+chunk
+            print(teststring)
+            if (forbidden_structures_testing(teststring)):
+                print("found this sturcture")
 
 
 def path_dom_cod_pairs_testing():
@@ -2279,6 +2297,9 @@ def inequalities_testing2():
 
         return alpha*nhq[0]+beta*nhq[1]+gamma*nhq[2]+theta
 
+    minTa=0
+    minTb=0
+    minTc=0
     
     A_max_count_to_bound=0
     for twistnumber in range(40):
@@ -2286,6 +2307,8 @@ def inequalities_testing2():
         for word in cells:
             A_count=word.count("111111111111")
             A_lowerbound=tA(word)
+
+            minTa=min(minTa,tA(word))
 
             diff=A_count-A_lowerbound
             #\matprint(diff)
@@ -2296,15 +2319,15 @@ def inequalities_testing2():
             A_max_count_to_bound=max(A_max_count_to_bound,diff)
 
     print(A_max_count_to_bound)
-    
 
-    
     B_max_count_to_bound=0
     for twistnumber in range(40):
         cells=load_cells(twistnumber)
         for word in cells:
             B_count=word.count("101011x0011x")
             B_lowerbound=tB(word)
+
+            minTb=min(minTb,B_lowerbound)
 
             diff=B_count-B_lowerbound
             #print(diff)
@@ -2325,6 +2348,9 @@ def inequalities_testing2():
             C_count=word.count("01xx0101xx01")
             C_lowerbound=tC(word)
 
+
+            minTc=min(minTc,C_lowerbound)
+
             diff=C_count-C_lowerbound
             #print(diff)
             if(diff<0):
@@ -2334,6 +2360,12 @@ def inequalities_testing2():
             C_max_count_to_bound=max(C_max_count_to_bound,diff)
 
     print(C_max_count_to_bound)
+
+
+    
+    print("minimal ta value: " +str(minTa))
+    print("minimal tb value: " +str(minTb))
+    print("minimal tc value: " +str(minTc))
     
 
 
@@ -2366,7 +2398,7 @@ def print_cellcounts():
 
 def qdeg_up_testing():
     
-    for i in range(25):
+    for i in range(35):
         cells=load_cells(i)
 
         for cella in cells:
@@ -2406,6 +2438,11 @@ def top_homology_testing():
                 print_path(path)
 
 
+def u_i_difference_testing():
+    twistnumber=5
+    
+
+
 def main():
     #print_cellcounts()
 
@@ -2431,11 +2468,17 @@ def main():
     #lk_start_L_testing()
 
     #forbidden_structures_testing()
-    inequalities_testing2()
+    #inequalities_testing2()
 
+    #forbidden_struc()
 
     #regression_testing()
+    
+    
+    inequalities_testing2()
     #qdeg_up_testing()
+    
+    
     """
     twistnumber=1
     file_path="Torus4braid_paths/snake1twist.pkl"
