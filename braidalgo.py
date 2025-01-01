@@ -1595,15 +1595,38 @@ def main():
 
 
     braid=sys.argv[1]
-    #allcells=generate_all_enhanced_words(braid)
-    #print(allcells)
-    #print(len(allcells))
+    
+    
+    print(braid)
+    """
+    allcells=generate_all_enhanced_words(braid)
+    for cell in allcells:
+        print(cell)
+    """
 
+    
+    crit_cells=generate_all_unmatched_words(braid)
+    for cell in crit_cells:
+        print(cell)
+
+
+
+    """
     zig_zags=generate_all_zig_zag_paths(braid)
     #print(zig_zags)
     for cell in zig_zags:
         print(cell)
         print(zig_zags[cell])
+    """
+
+
+
+
+
+
+
+
+
 
 
     """

@@ -1417,12 +1417,12 @@ def new_lk_functoriality_testing():
     lk_pattern="x0101xx0101x"
 
     #Options: Allow the following through:
-    endsx01_L1=True     #ok  
-    endsx01_L2=True     #ok
-    endsx01_L3=True     #ok
+    endsx01_L1=False     #ok  
+    endsx01_L2=False     #ok
+    endsx01_L3=False    #ok
     endsx01_lowL=False   #ok
     
-    ends01x_L0=False     #ok
+    ends01x_L0=True     #ok
     ends01x_L2=False     #ok
     ends01x_L4=False     #ok      
     ends01x_lowL=False   #ok
@@ -1904,6 +1904,7 @@ def unmatched_cells_generation_testing():
     
     #Testing against the real critical cells
     testnum=44
+    
 
     for i in range(0,testnum):
     
@@ -1934,6 +1935,43 @@ def unmatched_cells_generation_testing():
             if not word in generated_cells:
                 print(word)
         
+
+def observe_paths():
+    """
+    twistcount=9
+    teststring="11000101xx0101xx0101xx0101x"
+    paths=load_new_T4_paths(twistcount)
+    path_dict=dom_cod_first_L_to_paths_dict(paths)
+    for key in path_dict:
+        if key[0]==teststring:
+            print(key)
+            for path in path_dict[key]:
+                for cell in path:
+                    print(cell)
+                print("")
+
+    """
+
+    #interesting path
+    #['35 Q: 2', 35, 30, 30, 27, 28, 25, 26, 23, 23, 18, 18, 15, 16, 13, 14, 11, 11, 6, 13, 14, 15, 16, 25, 26, 27, 28]
+    #11111000101xx0101xx0101xx0101xx0101x 111110101010x0101xx0101xx0101xx0101x
+    #
+    #[35, 35, 30, 30, 27, 28, 25, 26, 23, 23, 18, 18, 15, 16, 13, 14, 11, 11, 6, 13, 14, 15, 16, 25, 26, 27, 28]
+    
+    candidate_L_list=[35, 35, 30, 30, 27, 28, 25, 26, 23, 23, 18, 18, 15, 16, 13, 14, 11, 11, 6, 13, 14, 15, 16, 25, 26, 27, 28]
+
+    twistcount=12
+    teststring="11111000101xx0101xx0101xx0101xx0101x"
+    paths=load_new_T4_paths(twistcount)
+    path_dict=dom_cod_first_L_to_paths_dict(paths)
+    for key in path_dict:
+        if key[0]==teststring:
+            #print(key)
+            for path in path_dict[key]:
+                if candidate_L_list== list_of_Ls_from_path(path):
+                    for cell in path:
+                        print(cell)
+                    print("")
 
     
 
@@ -2455,7 +2493,11 @@ def main():
     #snake_functoriality_testing()
     #lk_functoriality_testing()
     
+    
+    
     #new_lk_functoriality_testing()
+    observe_paths()
+
 
     #top_homology_testing()
     
@@ -2475,7 +2517,9 @@ def main():
     #regression_testing()
     
     
-    inequalities_testing2()
+
+
+    #inequalities_testing2()
     #qdeg_up_testing()
     
     
