@@ -43,7 +43,7 @@ def generate_output(arr, num_repeats):
 
 def main():
     
-    folder_name = "khtfiles"
+    folder_name = "braid_data"
     try:
         os.mkdir(folder_name)
         print(f"Directory '{folder_name}' created!")
@@ -51,13 +51,13 @@ def main():
         print(f"Directory '{folder_name}' already exists")    
     
     
-    f=open("knotinfodb.csv", "r")
+    f=open("knotinfo_braids13.csv", "r")
     
     f.readline() #discard 1st line
     
     
     
-    testamount=2000000
+    testamount=100000
     testcount=0
     
     while True:
@@ -83,9 +83,17 @@ def main():
 
 
 
-        file_path = os.path.join(folder_name, braid_name+'.kht')
-                
-        cx_file_path="khtfiles/"+braid_name+"/cx-c2"
+        #file_path = os.path.join(folder_name, braid_name+'.kht')
+        #os.mkdir(folder_name+"/"+braid_name+"/") 
+        try:
+            os.mkdir(folder_name+"/"+braid_name+"/")
+        except FileExistsError:
+            pass
+        file_path = folder_name+"/"+braid_name+"/"+braid_name+'.kht'
+        
+
+        #cx_file_path=folder_name+"/"+braid_name+"/cx-c2"
+        cx_file_path=folder_name+"/"+braid_name+"/"+braid_name+"/cx-c2"
         if os.path.exists(cx_file_path):
             continue
         
@@ -103,9 +111,11 @@ def main():
 
 
         #run the kht++ program on the generated file
-        subprocess.run(["../kht/khtpp/./kht++", "/khtfiles/"+braid_name])
-
-    
+        subprocess.run(["../kht/khtpp/./kht++", "/"+folder_name+"/"+braid_name+"/"+braid_name+"/"])
+        
+        if os.path.exists(folder_name+"/"+braid_name+".html"):
+            os.remove(folder_name+"/"+braid_name+".html")
+        
 
 
 if __name__ == "__main__":

@@ -261,13 +261,13 @@ def main():
 
     
     
-    f=open("knotinfodb.csv", "r")
+    f=open("knotinfo_braids13.csv", "r")
     f.readline() #discard 1st line
 
     DMT_cell_amounts=0
     kht_cell_amounts=0
 
-    testamount=1000000000
+    testamount=50
     testcount=0
 
     tot_cell_count=0
@@ -298,7 +298,7 @@ def main():
         
         #Load or calculate total number of cells in the complex
         cell_count=None
-        cell_count_path='khtfiles/'+braid_name+'cellcount.txt'
+        cell_count_path='braid_data/'+braid_name+'/totalcellcount.txt'
         if os.path.exists(cell_count_path):
             ffff=open(cell_count_path,"r")
             cell_count=int(ffff.read())
@@ -315,7 +315,9 @@ def main():
 
         #Load or calculate unmatched cells of the braid 
         unmatched_words=None
-        unmatched_words_path='khtfiles/'+braid_name+'/unmatched_words.pkl'
+        unmatched_words_path='braid_data/'+braid_name+'/unmatched_cells.pkl'
+        #unmatched_words_path='braid_data/'+braid_name+'/lex_cells.pkl'
+        
         if os.path.exists(unmatched_words_path):
             with open(unmatched_words_path, 'rb') as file:
                 unmatched_words = pickle.load(file)
