@@ -1,0 +1,763 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 13.1' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     26964,        755]
+NotebookOptionsPosition[     23082,        687]
+NotebookOutlinePosition[     23471,        703]
+CellTagsIndexPosition[     23428,        700]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell["\<\
+This notebook proves some implications on indices which help cutting and \
+pasting the homology tables.
+
+Mathematically, the claims we want to make are: (system of linear \
+inequalities A) implies (linear equation b or linear equation c).
+This is shown with verifying that the system (A, not b, not c) has no \
+solutions.  
+
+
+First define functions which appear for T4 homology recursion Theorem and  \
+vanishing of the homology groups Proposition.\
+\>", "Text",
+ CellChangeTimes->{{3.950936044935417*^9, 3.950936072438904*^9}, {
+   3.950936104807519*^9, 3.9509361798062897`*^9}, {3.950936395731361*^9, 
+   3.9509364393578444`*^9}, {3.950944488315255*^9, 3.9509444952761908`*^9}, {
+   3.9509471314827633`*^9, 3.9509473115947437`*^9}, 3.9509530554682417`*^9, {
+   3.950953726048987*^9, 
+   3.9509537291332827`*^9}},ExpressionUUID->"433fb53f-95e9-4b99-9f76-\
+21b640d6c210"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"f", "[", 
+   RowBox[{"n_", ",", "i_", ",", "j_"}], "]"}], ":=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"-", "9"}], "n"}], "+", 
+   RowBox[{"4", "i"}], "-", 
+   RowBox[{"3", "j"}]}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"g", "[", 
+   RowBox[{"n_", ",", "i_", ",", "j_"}], "]"}], ":=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"-", "2"}], "n"}], "+", 
+   RowBox[{"2", "i"}], "-", "j"}]}]}], "Input",
+ CellChangeTimes->{{3.939352034569138*^9, 3.9393521443456593`*^9}, {
+  3.950934817395833*^9, 3.950934862070492*^9}, {3.950935182996463*^9, 
+  3.950935190131433*^9}, {3.950935234031396*^9, 3.9509352799444857`*^9}, {
+  3.9509360375004997`*^9, 3.950936038066105*^9}, {3.9509386761063423`*^9, 
+  3.950938708323975*^9}},
+ CellLabel->
+  "In[244]:=",ExpressionUUID->"786f915d-6549-4c1b-a82c-01af95a12e10"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"ClearAll", "[", "\"\<Global`*\>\"", "]"}], "\n"}]], "Input",
+ CellChangeTimes->{{3.95093487333435*^9, 3.95093488837948*^9}, {
+   3.950934950837085*^9, 3.950934955929429*^9}, {3.950935144287784*^9, 
+   3.950935153364821*^9}, {3.9509351975005836`*^9, 3.9509351987602882`*^9}, {
+   3.9509386958045187`*^9, 3.950938699418377*^9}, 3.950939459918994*^9},
+ CellLabel->
+  "In[243]:=",ExpressionUUID->"7ece7560-9339-40da-b893-4fe96dcd6047"],
+
+Cell[TextData[{
+ StyleBox["Proof for the proposition which finds weird G-summand in low \
+homological degrees of T4:",
+  FontWeight->"Bold"],
+ "\n"
+}], "Text",
+ CellChangeTimes->{{3.9509362762494087`*^9, 3.950936365320174*^9}, 
+   3.950936535612266*^9, {3.950938788821986*^9, 3.9509388200315247`*^9}, {
+   3.9509441703093023`*^9, 
+   3.950944189682962*^9}},ExpressionUUID->"9b7cd749-84a7-4d2c-ba5c-\
+2ef1470d9417"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ineq1", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"n", ">=", "34"}], ",", 
+     RowBox[{"t", "==", 
+      RowBox[{
+       RowBox[{"2", "*", "n"}], "+", "1"}]}], ",", 
+     RowBox[{"i", "<=", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"-", "4"}], "n"}], "+", "1"}]}], ",", 
+     RowBox[{
+      RowBox[{"g", "[", 
+       RowBox[{"t", ",", "i", ",", "j"}], "]"}], ">=", 
+      RowBox[{"-", "6"}]}], ",", 
+     RowBox[{
+      RowBox[{"f", "[", 
+       RowBox[{
+        RowBox[{"t", "-", "4"}], ",", 
+        RowBox[{"i", "+", "8"}], ",", 
+        RowBox[{"j", "+", "24"}]}], "]"}], "<", "41"}]}], "}"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Reduce", "[", 
+  RowBox[{"ineq1", ",", 
+   RowBox[{"{", 
+    RowBox[{"n", ",", "t", ",", "i", ",", "j"}], "}"}], ",", "Reals"}], 
+  "]"}]}], "Input",
+ CellChangeTimes->{
+  3.9509363683581667`*^9, {3.950937347690043*^9, 3.950937578457282*^9}, {
+   3.950937613341029*^9, 3.950937614183729*^9}, {3.9509376502625837`*^9, 
+   3.950937651102004*^9}, {3.950937684630953*^9, 3.950937692291294*^9}, {
+   3.9509378245160017`*^9, 3.950937836776423*^9}, {3.950937915259117*^9, 
+   3.950937927510006*^9}, {3.950938290766789*^9, 3.950938381744116*^9}, {
+   3.950938427740119*^9, 3.9509384320031967`*^9}, {3.950938463103511*^9, 
+   3.9509385384158087`*^9}, {3.950938719561709*^9, 3.950938740333132*^9}, 
+   3.950939271533366*^9, 3.950939356073224*^9, {3.950939395375209*^9, 
+   3.950939395513929*^9}, {3.950939453623115*^9, 3.95093945433807*^9}, {
+   3.950939530656782*^9, 3.9509395526578817`*^9}, {3.950939593462474*^9, 
+   3.950939615460664*^9}, {3.950939756030882*^9, 3.950939757922902*^9}, {
+   3.950939823174449*^9, 3.9509398684345217`*^9}, {3.9509399287108*^9, 
+   3.950940000203504*^9}, {3.950940145022053*^9, 3.9509402486860867`*^9}},
+ CellLabel->
+  "In[250]:=",ExpressionUUID->"18fe387e-00d9-46ba-8111-8c6d72ff4679"],
+
+Cell[BoxData["False"], "Output",
+ CellChangeTimes->{
+  3.950939465970368*^9, {3.950939537838052*^9, 3.950939623241234*^9}, 
+   3.950939770761997*^9, {3.9509398372728367`*^9, 3.950939881469942*^9}, {
+   3.950939940293253*^9, 3.950939951879238*^9}, {3.9509399852048388`*^9, 
+   3.950939992591896*^9}, {3.950940155214429*^9, 3.9509402510876207`*^9}},
+ CellLabel->
+  "Out[251]=",ExpressionUUID->"f3fab97c-4da4-4890-90c2-92372e9f5e9a"]
+}, Open  ]],
+
+Cell[TextData[{
+ "\n",
+ StyleBox["Proof of Theorem 1:",
+  FontWeight->"Bold"],
+ "\nHomological degrees [-41,0]. We show that given n>=51, either the group \
+is zero or it can be obtained from 4 twists ago with recursion. "
+}], "Text",
+ CellChangeTimes->{
+  3.9509387430984592`*^9, {3.950943185962166*^9, 3.9509431998501387`*^9}, {
+   3.950943362408189*^9, 3.950943428051762*^9}, {3.950944862589531*^9, 
+   3.950944924126861*^9}},ExpressionUUID->"9f467133-1e63-479a-a8ac-\
+35283a3cc948"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ineq2", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"n", ">=", "51"}], ",", 
+     RowBox[{"i", ">=", 
+      RowBox[{"-", "41"}]}], ",", 
+     RowBox[{
+      RowBox[{"f", "[", 
+       RowBox[{"n", ",", "i", ",", "j"}], "]"}], ">=", 
+      RowBox[{"-", "17"}]}], ",", 
+     RowBox[{
+      RowBox[{"g", "[", 
+       RowBox[{
+        RowBox[{"n", "-", "4"}], ",", "i", ",", 
+        RowBox[{"j", "+", "12"}]}], "]"}], "<", "14"}]}], "}"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Reduce", "[", 
+  RowBox[{"ineq2", ",", 
+   RowBox[{"{", 
+    RowBox[{"n", ",", "t", ",", "i", ",", "j"}], "}"}], ",", "Reals"}], 
+  "]"}]}], "Input",
+ CellChangeTimes->{{3.9509434393133783`*^9, 3.950943622400955*^9}, {
+  3.950943751632555*^9, 3.950943765051937*^9}, {3.950943912550997*^9, 
+  3.9509439370725937`*^9}},
+ CellLabel->
+  "In[270]:=",ExpressionUUID->"499942f6-e9f3-4797-9f8f-e7cf46f1e9a9"],
+
+Cell[BoxData["False"], "Output",
+ CellChangeTimes->{{3.9509439326119547`*^9, 3.950943937824946*^9}},
+ CellLabel->
+  "Out[271]=",ExpressionUUID->"5c082070-8421-4fa6-b6cf-2a6898250786"]
+}, Open  ]],
+
+Cell["\<\
+Middle homological degrees, middle bulk, n even. We show that given n>=42, \
+the group can be obtained from 4 twists ago with either recursion. Here \
+t=twists=2n\
+\>", "Text",
+ CellChangeTimes->{{3.9509442135634203`*^9, 3.950944249145054*^9}, {
+  3.950944828248459*^9, 3.950944858602085*^9}, {3.950944937597809*^9, 
+  3.950944957810741*^9}, {3.950945420473055*^9, 3.9509454499115753`*^9}, {
+  3.950946283953187*^9, 
+  3.950946291941248*^9}},ExpressionUUID->"34763463-c22c-41e3-a938-\
+a12c959fc481"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ineq3", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"n", ">=", "42"}], ",", 
+     RowBox[{"t", "==", 
+      RowBox[{"2", "*", "n"}]}], ",", 
+     RowBox[{
+      RowBox[{
+       RowBox[{
+        RowBox[{"-", "4"}], "*", "n"}], "+", "11"}], "<=", "i", "<=", 
+      RowBox[{"-", "42"}]}], ",", 
+     RowBox[{"j", "<=", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"3", "/", "2"}], ")"}], "*", "i"}], "-", 
+       RowBox[{"6", "*", "n"}], "+", "5"}]}], ",", 
+     RowBox[{
+      RowBox[{"f", "[", 
+       RowBox[{
+        RowBox[{"t", "-", "4"}], ",", 
+        RowBox[{"i", "+", "8"}], ",", 
+        RowBox[{"j", "+", "24"}]}], "]"}], "<", "41"}], ",", 
+     RowBox[{
+      RowBox[{"g", "[", 
+       RowBox[{
+        RowBox[{"t", "-", "4"}], ",", "i", ",", 
+        RowBox[{"j", "+", "12"}]}], "]"}], "<", "14"}]}], "}"}]}], 
+  ";"}], "\n", 
+ RowBox[{"Reduce", "[", 
+  RowBox[{"ineq3", ",", 
+   RowBox[{"{", 
+    RowBox[{"n", ",", "t", ",", "i", ",", "j"}], "}"}], ",", "Reals"}], 
+  "]"}]}], "Input",
+ CellChangeTimes->{{3.9509442700213614`*^9, 3.950944341117597*^9}, {
+  3.950944506643169*^9, 3.950944542289152*^9}, {3.9509447519674463`*^9, 
+  3.950944801847055*^9}, {3.950945237526649*^9, 3.950945268996439*^9}, {
+  3.950945307036684*^9, 3.950945410662291*^9}, {3.950946891187899*^9, 
+  3.950946903381885*^9}},
+ CellLabel->
+  "In[313]:=",ExpressionUUID->"37c78b89-a2f6-4cc1-b137-07d85d32e986"],
+
+Cell[BoxData["False"], "Output",
+ CellChangeTimes->{
+  3.950945281722912*^9, {3.9509453182380342`*^9, 3.950945415439908*^9}, {
+   3.950946896084231*^9, 3.95094690562267*^9}},
+ CellLabel->
+  "Out[314]=",ExpressionUUID->"dfb17ef5-ac3e-4c3e-bc01-10f164a4aa2d"]
+}, Open  ]],
+
+Cell["\<\
+Middle homological degrees, lowest bulk, n even. We show that given n>=35, \
+the group can be obtained from 4 twists ago c-recursion. Here t=twists=2n\
+\>", "Text",
+ CellChangeTimes->{{3.9509463059520197`*^9, 3.9509463200924873`*^9}, {
+  3.950946399562484*^9, 3.950946400186928*^9}, {3.950946556811489*^9, 
+  3.950946562080649*^9}},ExpressionUUID->"f5c9d597-4e65-4ff9-bd8e-\
+9462c3a74ef8"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ineq4", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"n", ">=", "35"}], ",", 
+     RowBox[{"t", "==", 
+      RowBox[{"2", "*", "n"}]}], ",", 
+     RowBox[{
+      RowBox[{
+       RowBox[{
+        RowBox[{"-", "4"}], "*", "n"}], "+", "11"}], "<=", "i", "<=", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"-", "4"}], "*", "n"}], "+", "15"}]}], ",", 
+     RowBox[{"j", "<=", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"3", "/", "2"}], ")"}], "*", "i"}], "-", 
+       RowBox[{"6", "*", "n"}], "+", "5"}]}], ",", 
+     RowBox[{
+      RowBox[{"f", "[", 
+       RowBox[{
+        RowBox[{"t", "-", "4"}], ",", 
+        RowBox[{"i", "+", "8"}], ",", 
+        RowBox[{"j", "+", "24"}]}], "]"}], "<", "41"}]}], "}"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Reduce", "[", 
+  RowBox[{"ineq4", ",", 
+   RowBox[{"{", 
+    RowBox[{"n", ",", "t", ",", "i", ",", "j"}], "}"}], ",", "Reals"}], 
+  "]"}]}], "Input",
+ CellChangeTimes->{{3.95094633218996*^9, 3.950946392818879*^9}, {
+  3.950946913173278*^9, 3.9509469237033577`*^9}},
+ CellLabel->
+  "In[317]:=",ExpressionUUID->"3951a359-6b99-4109-a977-816ff13203bb"],
+
+Cell[BoxData["False"], "Output",
+ CellChangeTimes->{{3.950946920261182*^9, 3.9509469244495173`*^9}},
+ CellLabel->
+  "Out[318]=",ExpressionUUID->"dccda5db-4067-4b60-99c4-5eecef6c1ada"]
+}, Open  ]],
+
+Cell["\<\
+Middle homological degrees, highest bulk, n even . We show that given n >= \
+23, the group can be obtained from 4 twists ago with a-recursion . Here t = \
+twists = 2 n\
+\>", "Text",
+ CellChangeTimes->{{3.950946429385179*^9, 3.950946442788538*^9}, {
+  3.950946475001176*^9, 3.950946475986734*^9}, {3.950946530324703*^9, 
+  3.9509465312535467`*^9}, {3.950946566332356*^9, 
+  3.950946571049081*^9}},ExpressionUUID->"504cba64-363a-4a13-bb58-\
+67576c6cb1aa"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ineq5", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"n", ">=", "23"}], ",", 
+     RowBox[{"t", "==", 
+      RowBox[{"2", "*", "n"}]}], ",", 
+     RowBox[{
+      RowBox[{"-", "45"}], "<=", "i", "<=", 
+      RowBox[{"-", "42"}]}], ",", 
+     RowBox[{"j", "<=", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"3", "/", "2"}], ")"}], "*", "i"}], "-", 
+       RowBox[{"6", "*", "n"}], "+", "5"}]}], ",", 
+     RowBox[{
+      RowBox[{"g", "[", 
+       RowBox[{
+        RowBox[{"t", "-", "4"}], ",", "i", ",", 
+        RowBox[{"j", "+", "12"}]}], "]"}], "<", "14"}]}], "}"}]}], 
+  ";"}], "\n", 
+ RowBox[{"Reduce", "[", 
+  RowBox[{"ineq5", ",", 
+   RowBox[{"{", 
+    RowBox[{"n", ",", "t", ",", "i", ",", "j"}], "}"}], ",", "Reals"}], 
+  "]"}]}], "Input",
+ CellChangeTimes->{{3.950946458142311*^9, 3.950946525633369*^9}},
+ CellLabel->
+  "In[303]:=",ExpressionUUID->"c6706aa9-17b9-4571-be39-1cc6c67ca6dd"],
+
+Cell[BoxData["False"], "Output",
+ CellChangeTimes->{{3.950946513823628*^9, 3.950946527821014*^9}},
+ CellLabel->
+  "Out[304]=",ExpressionUUID->"4b96ba86-fa3d-4df2-a6a5-481ab2674710"]
+}, Open  ]],
+
+Cell["\<\
+Middle homological degrees, middle bulk, n odd. We show that given n>=42, the \
+group can be obtained from 4 twists ago with either recursion. Here \
+t=twists=2n+1\
+\>", "Text",
+ CellChangeTimes->{
+  3.9509466545288467`*^9, {3.950946697397209*^9, 
+   3.950946711517469*^9}},ExpressionUUID->"16b219de-9327-4a78-8045-\
+2f549168644f"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ineq6", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"n", ">=", "42"}], ",", 
+     RowBox[{"t", "==", 
+      RowBox[{
+       RowBox[{"2", "*", "n"}], "+", "1"}]}], ",", 
+     RowBox[{
+      RowBox[{
+       RowBox[{
+        RowBox[{"-", "4"}], "*", "n"}], "+", "7"}], "<=", "i", "<=", 
+      RowBox[{"-", "42"}]}], ",", 
+     RowBox[{"j", "<=", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"3", "/", "2"}], ")"}], "*", "i"}], "-", 
+       RowBox[{"6", "*", "n"}], "+", "2"}]}], ",", 
+     RowBox[{
+      RowBox[{"f", "[", 
+       RowBox[{
+        RowBox[{"t", "-", "4"}], ",", 
+        RowBox[{"i", "+", "8"}], ",", 
+        RowBox[{"j", "+", "24"}]}], "]"}], "<", "41"}], ",", 
+     RowBox[{
+      RowBox[{"g", "[", 
+       RowBox[{
+        RowBox[{"t", "-", "4"}], ",", "i", ",", 
+        RowBox[{"j", "+", "12"}]}], "]"}], "<", "14"}]}], "}"}]}], 
+  ";"}], "\n", 
+ RowBox[{"Reduce", "[", 
+  RowBox[{"ineq6", ",", 
+   RowBox[{"{", 
+    RowBox[{"n", ",", "t", ",", "i", ",", "j"}], "}"}], ",", "Reals"}], 
+  "]"}]}], "Input",
+ CellChangeTimes->{{3.9509465997205067`*^9, 3.950946674825445*^9}, {
+  3.9509467205192842`*^9, 3.950946743570694*^9}, {3.9509467819238*^9, 
+  3.950946782937892*^9}, {3.950946843822983*^9, 3.950946844616487*^9}, {
+  3.950947087840166*^9, 3.950947094213049*^9}},
+ CellLabel->
+  "In[327]:=",ExpressionUUID->"79d51a6e-2e35-42b7-bbaf-a3606c40daff"],
+
+Cell["\<\
+Middle homological degrees, lowest bulk, n odd. We show that given n>=35, the \
+group can be obtained from 4 twists ago with c recursion. Here t=twists=2n+1\
+\>", "Text",
+ CellChangeTimes->{{3.950947415344881*^9, 3.9509474333003283`*^9}, {
+  3.950947510596834*^9, 3.950947513149881*^9}, {3.950947543957567*^9, 
+  3.950947545080838*^9}},ExpressionUUID->"d833bf91-19fe-4978-86ae-\
+828235c51ce9"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ineq7", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"n", ">=", "35"}], ",", 
+     RowBox[{"t", "==", 
+      RowBox[{
+       RowBox[{"2", "*", "n"}], "+", "1"}]}], ",", 
+     RowBox[{
+      RowBox[{
+       RowBox[{
+        RowBox[{"-", "4"}], "*", "n"}], "+", "7"}], "<=", "i", "<=", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"-", "4"}], "*", "n"}], "+", "10"}]}], ",", 
+     RowBox[{"j", "<=", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"3", "/", "2"}], ")"}], "*", "i"}], "-", 
+       RowBox[{"6", "*", "n"}], "+", "2"}]}], ",", 
+     RowBox[{
+      RowBox[{"f", "[", 
+       RowBox[{
+        RowBox[{"t", "-", "4"}], ",", 
+        RowBox[{"i", "+", "8"}], ",", 
+        RowBox[{"j", "+", "24"}]}], "]"}], "<", "41"}]}], "}"}]}], 
+  ";"}], "\n", 
+ RowBox[{"Reduce", "[", 
+  RowBox[{"ineq7", ",", 
+   RowBox[{"{", 
+    RowBox[{"n", ",", "t", ",", "i", ",", "j"}], "}"}], ",", "Reals"}], 
+  "]"}]}], "Input",
+ CellChangeTimes->{{3.950947447387412*^9, 3.950947505576573*^9}},
+ CellLabel->
+  "In[335]:=",ExpressionUUID->"6fb9b881-7111-42fa-bff5-6a4963dbd1ea"],
+
+Cell[BoxData["False"], "Output",
+ CellChangeTimes->{{3.9509474938412437`*^9, 3.950947515430971*^9}},
+ CellLabel->
+  "Out[336]=",ExpressionUUID->"58cd5818-0aef-444d-b655-801ac19bf01e"]
+}, Open  ]],
+
+Cell["\<\
+Middle homological degrees, highest bulk, n odd . We show that given n >= 23, \
+the group can be obtained from 4 twists ago with a-recursion . Here t = \
+twists = 2 n+1\
+\>", "Text",
+ CellChangeTimes->{{3.950947520416546*^9, 3.950947554738132*^9}, {
+  3.950947612888115*^9, 
+  3.950947614784481*^9}},ExpressionUUID->"41dafdcf-2aaf-42c8-af57-\
+dd890cf5a5a6"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ineq8", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"n", ">=", "23"}], ",", 
+     RowBox[{"t", "==", 
+      RowBox[{
+       RowBox[{"2", "*", "n"}], "+", "1"}]}], ",", 
+     RowBox[{
+      RowBox[{"-", "45"}], "<=", "i", "<=", 
+      RowBox[{"-", "42"}]}], ",", 
+     RowBox[{"j", "<=", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"3", "/", "2"}], ")"}], "*", "i"}], "-", 
+       RowBox[{"6", "*", "n"}], "+", "2"}]}], ",", 
+     RowBox[{
+      RowBox[{"g", "[", 
+       RowBox[{
+        RowBox[{"t", "-", "4"}], ",", "i", ",", 
+        RowBox[{"j", "+", "12"}]}], "]"}], "<", "14"}]}], "}"}]}], 
+  ";"}], "\n", 
+ RowBox[{"Reduce", "[", 
+  RowBox[{"ineq8", ",", 
+   RowBox[{"{", 
+    RowBox[{"n", ",", "t", ",", "i", ",", "j"}], "}"}], ",", "Reals"}], "]"}]}
+], "Input",
+ CellChangeTimes->{{3.950947353891573*^9, 3.950947366189131*^9}, {
+  3.950947564202207*^9, 3.9509476052767963`*^9}},
+ CellLabel->
+  "In[341]:=",ExpressionUUID->"b49512d5-9af6-4990-ab2a-93a5e40e2281"],
+
+Cell[BoxData["False"], "Output",
+ CellChangeTimes->{3.950948314085095*^9},
+ CellLabel->
+  "Out[342]=",ExpressionUUID->"a03ec47f-dc98-4a06-b0b9-e07125d343a7"]
+}, Open  ]],
+
+Cell["\<\
+Lowest homological degrees n=0mod4. We show that given n>=18 the group \
+vanishes or can be obtained with c-recursion. Here t=4n\
+\>", "Text",
+ CellChangeTimes->{{3.950948219077825*^9, 3.950948280934435*^9}, {
+  3.950948755150193*^9, 
+  3.950948756189069*^9}},ExpressionUUID->"61cf952a-67d5-4010-959a-\
+ce22fda08eba"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ineq9", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"n", ">=", "18"}], ",", 
+     RowBox[{"t", "==", 
+      RowBox[{"4", "*", "n"}]}], ",", 
+     RowBox[{"i", "<=", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"-", "8"}], "*", "n"}], "+", "10"}]}], ",", 
+     RowBox[{
+      RowBox[{"f", "[", 
+       RowBox[{
+        RowBox[{"t", "-", "4"}], ",", 
+        RowBox[{"i", "+", "8"}], ",", 
+        RowBox[{"j", "+", "24"}]}], "]"}], "<", "41"}], ",", 
+     RowBox[{
+      RowBox[{"g", "[", 
+       RowBox[{
+        RowBox[{"t", "-", "4"}], ",", "i", ",", 
+        RowBox[{"j", "+", "12"}]}], "]"}], ">=", 
+      RowBox[{"-", "6"}]}]}], "}"}]}], ";"}], "\n", 
+ RowBox[{"Reduce", "[", 
+  RowBox[{"ineq9", ",", 
+   RowBox[{"{", 
+    RowBox[{"n", ",", "t", ",", "i", ",", "j"}], "}"}], ",", "Reals"}], 
+  "]"}], "\[IndentingNewLine]"}], "Input",
+ CellChangeTimes->{
+  3.950948291515326*^9, {3.950948352941696*^9, 3.9509484167469177`*^9}, {
+   3.950948485232953*^9, 3.950948489231921*^9}, {3.950948552872059*^9, 
+   3.9509485610699673`*^9}, 3.950948651022119*^9, {3.950948727625333*^9, 
+   3.950948747409555*^9}},
+ CellLabel->
+  "In[353]:=",ExpressionUUID->"3bfad610-78be-47ee-a524-3e6d2b046fd1"],
+
+Cell[BoxData["False"], "Output",
+ CellChangeTimes->{
+  3.950948580220571*^9, 3.950948678452681*^9, {3.950948730228813*^9, 
+   3.9509487523401213`*^9}},
+ CellLabel->
+  "Out[354]=",ExpressionUUID->"b636d8a4-5d1d-491a-8f4a-a46376970224"]
+}, Open  ]],
+
+Cell["\<\
+Lowest homological degrees n=2mod4. We show that given n>=20 the group \
+vanishes or can be obtained with c-recursion. Here t=4n+2\
+\>", "Text",
+ CellChangeTimes->{{3.950952684309065*^9, 3.950952692199424*^9}, {
+  3.950952907262998*^9, 
+  3.9509529127526503`*^9}},ExpressionUUID->"d5b7a417-0258-4678-bc8a-\
+49df5d2630cf"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ineq10", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"n", ">=", "20"}], ",", 
+     RowBox[{"t", "==", 
+      RowBox[{
+       RowBox[{"4", "*", "n"}], "+", "2"}]}], ",", 
+     RowBox[{"i", "<=", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"-", "8"}], "*", "n"}], "+", "8"}]}], ",", 
+     RowBox[{
+      RowBox[{"f", "[", 
+       RowBox[{
+        RowBox[{"t", "-", "4"}], ",", 
+        RowBox[{"i", "+", "8"}], ",", 
+        RowBox[{"j", "+", "24"}]}], "]"}], "<", "41"}], ",", 
+     RowBox[{
+      RowBox[{"g", "[", 
+       RowBox[{
+        RowBox[{"t", "-", "4"}], ",", "i", ",", 
+        RowBox[{"j", "+", "12"}]}], "]"}], ">=", 
+      RowBox[{"-", "6"}]}]}], "}"}]}], ";"}], "\n", 
+ RowBox[{"Reduce", "[", 
+  RowBox[{"ineq10", ",", 
+   RowBox[{"{", 
+    RowBox[{"n", ",", "t", ",", "i", ",", "j"}], "}"}], ",", "Reals"}], 
+  "]"}]}], "Input",
+ CellChangeTimes->{{3.950952707830859*^9, 3.950952720239777*^9}, {
+  3.950952765675301*^9, 3.950952798888916*^9}},
+ CellLabel->
+  "In[361]:=",ExpressionUUID->"37fab1d6-7d81-4175-b4e7-482439567313"],
+
+Cell[BoxData["False"], "Output",
+ CellChangeTimes->{3.9509529260925283`*^9},
+ CellLabel->
+  "Out[362]=",ExpressionUUID->"3e668eba-928a-4888-951f-3059d03b220b"]
+}, Open  ]],
+
+Cell["\<\
+Lowest homological degrees n=1mod2. We show that given n>=34 the group \
+vanishes or can be obtained with c-recursion. Here t=2n+1\
+\>", "Text",
+ CellChangeTimes->{{3.950952932042762*^9, 3.9509529526286716`*^9}, {
+  3.950953010991317*^9, 
+  3.95095301227066*^9}},ExpressionUUID->"4ca3e200-55c6-4a04-aee8-\
+c45d0d5d50a0"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ineq11", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"n", ">=", "34"}], ",", 
+     RowBox[{"t", "==", 
+      RowBox[{
+       RowBox[{"2", "*", "n"}], "+", "1"}]}], ",", 
+     RowBox[{"i", "<=", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"-", "4"}], "*", "n"}], "+", "6"}]}], ",", 
+     RowBox[{
+      RowBox[{"f", "[", 
+       RowBox[{
+        RowBox[{"t", "-", "4"}], ",", 
+        RowBox[{"i", "+", "8"}], ",", 
+        RowBox[{"j", "+", "24"}]}], "]"}], "<", "41"}], ",", 
+     RowBox[{
+      RowBox[{"g", "[", 
+       RowBox[{
+        RowBox[{"t", "-", "4"}], ",", "i", ",", 
+        RowBox[{"j", "+", "12"}]}], "]"}], ">=", 
+      RowBox[{"-", "6"}]}]}], "}"}]}], ";"}], "\n", 
+ RowBox[{"Reduce", "[", 
+  RowBox[{"ineq11", ",", 
+   RowBox[{"{", 
+    RowBox[{"n", ",", "t", ",", "i", ",", "j"}], "}"}], ",", "Reals"}], 
+  "]"}]}], "Input",
+ CellChangeTimes->{{3.950952970638289*^9, 3.950953005712234*^9}},
+ CellLabel->
+  "In[367]:=",ExpressionUUID->"0f1aef6c-6d7d-4163-a788-b490446104bb"],
+
+Cell[BoxData["False"], "Output",
+ CellChangeTimes->{{3.950953000612418*^9, 3.950953016123095*^9}},
+ CellLabel->
+  "Out[368]=",ExpressionUUID->"6ec158dd-8350-48a2-8fde-f4ccee5b1016"]
+}, Open  ]]
+},
+WindowSize->{1386, 762},
+WindowMargins->{{0, Automatic}, {0, Automatic}},
+FrontEndVersion->"13.1 for Linux x86 (64-bit) (June 16, 2022)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"5c38e3cc-67ad-46f7-9b6a-adbe27da3355"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 881, 19, 173, "Text",ExpressionUUID->"433fb53f-95e9-4b99-9f76-21b640d6c210"],
+Cell[1442, 41, 833, 22, 53, "Input",ExpressionUUID->"786f915d-6549-4c1b-a82c-01af95a12e10"],
+Cell[2278, 65, 466, 8, 51, "Input",ExpressionUUID->"7ece7560-9339-40da-b893-4fe96dcd6047"],
+Cell[2747, 75, 414, 10, 58, "Text",ExpressionUUID->"9b7cd749-84a7-4d2c-ba5c-2ef1470d9417"],
+Cell[CellGroupData[{
+Cell[3186, 89, 1904, 44, 54, "Input",ExpressionUUID->"18fe387e-00d9-46ba-8111-8c6d72ff4679"],
+Cell[5093, 135, 430, 7, 48, "Output",ExpressionUUID->"f3fab97c-4da4-4890-90c2-92372e9f5e9a"]
+}, Open  ]],
+Cell[5538, 145, 486, 11, 81, "Text",ExpressionUUID->"9f467133-1e63-479a-a8ac-35283a3cc948"],
+Cell[CellGroupData[{
+Cell[6049, 160, 923, 27, 51, "Input",ExpressionUUID->"499942f6-e9f3-4797-9f8f-e7cf46f1e9a9"],
+Cell[6975, 189, 183, 3, 48, "Output",ExpressionUUID->"5c082070-8421-4fa6-b6cf-2a6898250786"]
+}, Open  ]],
+Cell[7173, 195, 509, 10, 35, "Text",ExpressionUUID->"34763463-c22c-41e3-a938-a12c959fc481"],
+Cell[CellGroupData[{
+Cell[7707, 209, 1459, 42, 51, "Input",ExpressionUUID->"37c78b89-a2f6-4cc1-b137-07d85d32e986"],
+Cell[9169, 253, 257, 5, 48, "Output",ExpressionUUID->"dfb17ef5-ac3e-4c3e-bc01-10f164a4aa2d"]
+}, Open  ]],
+Cell[9441, 261, 399, 7, 35, "Text",ExpressionUUID->"f5c9d597-4e65-4ff9-bd8e-9462c3a74ef8"],
+Cell[CellGroupData[{
+Cell[9865, 272, 1171, 36, 51, "Input",ExpressionUUID->"3951a359-6b99-4109-a977-816ff13203bb"],
+Cell[11039, 310, 183, 3, 48, "Output",ExpressionUUID->"dccda5db-4067-4b60-99c4-5eecef6c1ada"]
+}, Open  ]],
+Cell[11237, 316, 463, 9, 35, "Text",ExpressionUUID->"504cba64-363a-4a13-bb58-67576c6cb1aa"],
+Cell[CellGroupData[{
+Cell[11725, 329, 961, 30, 51, "Input",ExpressionUUID->"c6706aa9-17b9-4571-be39-1cc6c67ca6dd"],
+Cell[12689, 361, 181, 3, 48, "Output",ExpressionUUID->"4b96ba86-fa3d-4df2-a6a5-481ab2674710"]
+}, Open  ]],
+Cell[12885, 367, 341, 8, 35, "Text",ExpressionUUID->"16b219de-9327-4a78-8045-2f549168644f"],
+Cell[13229, 377, 1435, 42, 51, "Input",ExpressionUUID->"79d51a6e-2e35-42b7-bbaf-a3606c40daff"],
+Cell[14667, 421, 403, 7, 35, "Text",ExpressionUUID->"d833bf91-19fe-4978-86ae-828235c51ce9"],
+Cell[CellGroupData[{
+Cell[15095, 432, 1131, 36, 51, "Input",ExpressionUUID->"6fb9b881-7111-42fa-bff5-6a4963dbd1ea"],
+Cell[16229, 470, 183, 3, 48, "Output",ExpressionUUID->"58cd5818-0aef-444d-b655-801ac19bf01e"]
+}, Open  ]],
+Cell[16427, 476, 367, 8, 35, "Text",ExpressionUUID->"41dafdcf-2aaf-42c8-af57-dd890cf5a5a6"],
+Cell[CellGroupData[{
+Cell[16819, 488, 1038, 32, 51, InheritFromParent,ExpressionUUID->"b49512d5-9af6-4990-ab2a-93a5e40e2281"],
+Cell[17860, 522, 157, 3, 48, "Output",ExpressionUUID->"a03ec47f-dc98-4a06-b0b9-e07125d343a7"]
+}, Open  ]],
+Cell[18032, 528, 327, 7, 35, "Text",ExpressionUUID->"61cf952a-67d5-4010-959a-ce22fda08eba"],
+Cell[CellGroupData[{
+Cell[18384, 539, 1233, 35, 71, "Input",ExpressionUUID->"3bfad610-78be-47ee-a524-3e6d2b046fd1"],
+Cell[19620, 576, 234, 5, 48, "Output",ExpressionUUID->"b636d8a4-5d1d-491a-8f4a-a46376970224"]
+}, Open  ]],
+Cell[19869, 584, 331, 7, 35, "Text",ExpressionUUID->"d5b7a417-0258-4678-bc8a-49df5d2630cf"],
+Cell[CellGroupData[{
+Cell[20225, 595, 1087, 33, 51, "Input",ExpressionUUID->"37fab1d6-7d81-4175-b4e7-482439567313"],
+Cell[21315, 630, 159, 3, 48, "Output",ExpressionUUID->"3e668eba-928a-4888-951f-3059d03b220b"]
+}, Open  ]],
+Cell[21489, 636, 330, 7, 35, "Text",ExpressionUUID->"4ca3e200-55c6-4a04-aee8-c45d0d5d50a0"],
+Cell[CellGroupData[{
+Cell[21844, 647, 1038, 32, 51, "Input",ExpressionUUID->"0f1aef6c-6d7d-4163-a788-b490446104bb"],
+Cell[22885, 681, 181, 3, 48, "Output",ExpressionUUID->"6ec158dd-8350-48a2-8fde-f4ccee5b1016"]
+}, Open  ]]
+}
+]
+*)
+

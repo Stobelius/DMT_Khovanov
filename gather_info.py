@@ -2,9 +2,7 @@ from khtfilegenerator import knotinfo_string_to_integer_array
 from outputcomparer import khtfile_parser
 import os, pickle
 
-f=open("knotinfo_braids13.csv", "r")
 
-f.readline() #discard 1st line
 
 
 

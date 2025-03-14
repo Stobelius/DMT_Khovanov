@@ -1,0 +1,7 @@
+These files contain Khovanov homology of 4 strand k twist links for k=1...100. They have been calculated with Lukas Lewark's khoca program. The file "t4-100raw.txt" contains raw output of khoca. From this one needs to substitute q -> -q in order to obtain our convention for Khovanov homology. The 2 json files contain the reduced and unreduced data in a more computer readable format. 
+
+T4_100_reduced.pdf and T4_100_unred.pdf contain the homologies in a visualized table format. (Corresponding tex-files generated the pdf:s.)
+
+Finally the T4_100_red_visual_inequalities.pdf and T4_100_unred_visual_inequalities.pdf contain the same data as the above pdf:s. Additionally, they demonstrate the index bounds mentioned in Theorem X and Proposition Y. In particular, "n" means that the particular homology group is zero by one of the conditions of Proposition Y and "nn" means that it is zero by both of them. The mark "a" means that the particular homology group could be obtained with the first isomorphism of Theorem X from a homology group of a link with 4 less twists. Consequently "c" means that it could be obtained by the second isomorphism.  (Corresponding tex-files generated the pdf:s.)
+
+Inequalityvisualizer.py is a python script made to get the tex files from the jsons. It includes hardcoded paths. 

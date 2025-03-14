@@ -603,14 +603,17 @@ def generate_next_unmatched_words(set_of_enh_words, concatenated_braid_word):
     u=len(concatenated_braid_word) -1
     
     for L in range(u,-1,-1):
-        #print(L)
-
-        # uncomment this to try for lexicographic match
-        #if L<u:
-        #    continue
         
 
+        #uncomment this to try for lexicographic match
+        #if not( L==u or L==u-1 or L==u-4):
+        #    continue
+        #print("")
+        #print(L)
+
+        #print(len(new_words))
         new_words=remove_L_u_matched_words_from_set(new_words,concatenated_braid_word,L,u)
+        #print(len(new_words))
     return new_words
 
 #This is obsolate, since I will be using generate unmatched cell history in order to check paths    
@@ -1483,7 +1486,17 @@ def calc_and_save_T4_paths(twistnumber):
 
 def calc_and_save_T5_cells(twistnumber):
     braid=twistnumber*"abcd"
-    file_path="Torus5braids/5string"+str(twistnumber)+"twist.pkl"
+    file_path="Torus5braids/5string"+str(twistnumber)+"twistLhack.pkl"
+    if os.path.exists(file_path):
+        pass
+    else:      
+        history=generate_unmatched_cell_history(braid)
+        with open(file_path, 'wb') as file:
+            pickle.dump(history, file)
+
+def calc_and_save_T6_cells(twistnumber):
+    braid=twistnumber*"abcde"
+    file_path="Torus6braids/6string"+str(twistnumber)+"twistLhack.pkl"
     if os.path.exists(file_path):
         pass
     else:      
@@ -1590,6 +1603,8 @@ def main():
     
     #print(matching_a_cell(sys.argv[1],"11101Y",5,5))
     
+    #calc_and_save_T5_cells(60)
+    calc_and_save_T6_cells(36)
     
 
 
