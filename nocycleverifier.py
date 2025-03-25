@@ -92,7 +92,7 @@ print(a)
 
 
 
-csv_file_path = 'braid_reps_from_ki/knots_up_to_10.csv'
+csv_file_path = 'braid_reps_from_ki/knots_up_to_12.csv'
 #csv_file_path = 'knotinfo_braids13.csv'
 
 # Open the CSV file
