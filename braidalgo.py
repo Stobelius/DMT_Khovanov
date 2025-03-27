@@ -606,7 +606,7 @@ def generate_next_unmatched_words(set_of_enh_words, concatenated_braid_word):
         
 
         #uncomment this to try for lexicographic match
-        #if not( L==u or L==u-1 or L==u-4):
+        #if not( L==u):
         #    continue
         #print("")
         #print(L)
@@ -632,6 +632,26 @@ def generate_unmatched_cell_history(braid_word):
         #print(len(history[len(history)-1]))
     return history
 
+def generate_lex_unmatched_words(braid_word):
+    
+    def generate_next_lex_words(set_of_enh_words, concatenated_braid_word):
+        if(len(concatenated_braid_word)==1):
+            return {"0","1"}
+        new_words=generate_next_enhanced_words(set_of_enh_words,concatenated_braid_word)
+
+        u=len(concatenated_braid_word) -1
+
+        new_words=remove_L_u_matched_words_from_set(new_words,concatenated_braid_word,u,u)
+        return new_words
+
+    lex_unmatched={}
+
+    for i in range(len(braid_word)):
+        lex_unmatched=generate_next_lex_words(lex_unmatched,braid_word[:(i+1)])  
+        print(braid_word[:i+1]) #THIS WORKS AS A PROGRESS BAR 
+    
+    return lex_unmatched
+    
 
 
 ####################### Optimisation which did not make it faster here

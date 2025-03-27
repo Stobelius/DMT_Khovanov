@@ -1,4 +1,4 @@
-from braidalgo import generate_unmatched_words_with_degs, generate_next_unmatched_words,connectivity_tuple_of_cell,generate_all_enhanced_words,generate_next_enhanced_words
+from braidalgo import generate_unmatched_words_with_degs, generate_next_unmatched_words,connectivity_tuple_of_cell,generate_all_enhanced_words,generate_next_enhanced_words, generate_lex_unmatched_words, generate_unmatched_cell_history
 from khtfilegenerator import knotinfo_string_to_integer_array
 import os.path
 import pickle
@@ -261,16 +261,16 @@ def main():
 
     
     
-    f=open("knotinfo_braids13.csv", "r")
+    f=open("braid_reps_from_ki/knots_up_to_12.csv", "r")
     f.readline() #discard 1st line
 
     DMT_cell_amounts=0
     kht_cell_amounts=0
 
-    testamount=50
+    testamount=1000000
     testcount=0
 
-    tot_cell_count=0
+    tot_cell_amounts=0
     
     total_number_of_braids=0
     minimality_obtained=0
@@ -290,11 +290,51 @@ def main():
         ki_braid=knotinfo_string_to_integer_array(line[1].strip())
         ks_braid=integer_array_to_knotscape_string(ki_braid)
 
-        
+        #if braid_name!="9_32":
+        #    continue
+
         print(braid_name)
         print(ks_braid)
         #total_cell_counting_fails(ks_braid)
 
+
+        filepath='braid_data/'+braid_name+'/gr_lex_tot_counts.txt'
+
+        #if file is not found
+        if os.path.exists(filepath):
+           continue 
+
+
+        gr_cell_count=0
+        lex_cell_count=0
+        tot_cell_count=0
+
+        #calculate the counts here
+        gr_cells=generate_unmatched_cell_history(ks_braid)
+        gr_cells=gr_cells[-1]
+        gr_cell_count=len(gr_cells)
+
+        lex_cells=generate_lex_unmatched_words(ks_braid)
+        lex_cell_count=len(lex_cells)
+
+        tot_cell_count=total_number_of_cells(ks_braid)
+
+        
+        #write lines to file
+        firstline="knot name, braid representative, gr cell count, lex cell count, tot cell count"
+        secondline=braid_name+"," +ks_braid+","+str(gr_cell_count)+","+str(lex_cell_count)+","+str(tot_cell_count)
+
+        print(firstline)
+        print(secondline)
+
+        resultfile = open(filepath, 'w')
+        resultfile.write(firstline+ "\n")
+        resultfile.write(secondline)
+        resultfile.close
+
+        continue
+
+        
         
         #Load or calculate total number of cells in the complex
         cell_count=None
@@ -309,27 +349,37 @@ def main():
             ffff.write(str(cell_count))
             ffff.close()
         print(cell_count)
-        tot_cell_count+=cell_count
-        #print(tot_cell_count)
+        tot_cell_amounts+=cell_count
+        #print(tot_cell_amounts)
         
 
         #Load or calculate unmatched cells of the braid 
         unmatched_words=None
-        unmatched_words_path='braid_data/'+braid_name+'/unmatched_cells.pkl'
+        #unmatched_words_path='braid_data/'+braid_name+'/unmatched_cells.pkl'
         #unmatched_words_path='braid_data/'+braid_name+'/lex_cells.pkl'
-        
+        unmatched_words_path='khtfiles/'+braid_name+'/unmatched_words.pkl'
+
         if os.path.exists(unmatched_words_path):
             with open(unmatched_words_path, 'rb') as file:
                 unmatched_words = pickle.load(file)
-        else:      
-            unmatched_words=generate_unmatched_words_with_degs(ks_braid)
-            with open(unmatched_words_path, 'wb') as file:
-                pickle.dump(unmatched_words, file)
+        
+        #else:      
+        #    unmatched_words=generate_unmatched_words_with_degs(ks_braid)
+        #    with open(unmatched_words_path, 'wb') as file:
+        #        pickle.dump(unmatched_words, file)
+
+        
 
         #Reformat the DMT-calculated data into a dictionary
         DMT_degs=unmatched_words_with_degs_into_degs_dictionary(unmatched_words)  #TOGGLE CONNECTIVITY CHECK HERE
         #DMT_degs=unmatched_words_with_degs_into_degs_dictionary2(ks_braid,unmatched_words)
         
+
+
+
+
+        
+
 
         #Recover the cells calculated by kht++ from a file and read them into a dictionary
         two_string_braid=True
@@ -406,12 +456,14 @@ def main():
         #print(unmatched_words)
     
 
+    return
+
     #Print some results
     print("#cells in Morse complexes: " + str(DMT_cell_amounts))
     print("#cells in minimal complexes: " + str(kht_cell_amounts))
     print("ratio of Morse to minimal: "+str(DMT_cell_amounts/kht_cell_amounts))
-    print("#cells in total complexes: "+ str(tot_cell_count))
-    print("ratio of total to minimal: "+str(tot_cell_count/kht_cell_amounts))
+    print("#cells in total complexes: "+ str(tot_cell_amounts))
+    print("ratio of total to minimal: "+str(tot_cell_amounts/kht_cell_amounts))
     
 
     print("total number of braids: "+str(total_number_of_braids))
