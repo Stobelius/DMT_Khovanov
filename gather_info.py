@@ -23,33 +23,46 @@ while True:
         break
     
     braid=line[1].strip()
-    braid_name=line[0].strip()
+    knot_name=line[0].strip()
 
-    #folderpath="braid_data/"+braid_name+"/"
+    #folderpath="braid_data/"+knot_name+"/"
 
-
+    """
     #get unmatched cell count
-    unm_filepath="khtfiles/"+braid_name+"/unmatched_words.pkl"
+    unm_filepath="khtfiles/"+knot_name+"/unmatched_words.pkl"
     unmcount=None
     with open(unm_filepath, 'rb') as file:
         unmcount=len(pickle.load(file))
     
-    """
+    
     #get lex cell count
     lex_filepath=folderpath+"lex_cells.pkl"
     lexcount=0
     with open(lex_filepath, 'rb') as file:
         lexcount=len(pickle.load(file))
-    """
+    
 
     #get total cell count
-    tot_filepath="khtfiles/"+braid_name+"cellcount.txt"
+    tot_filepath="khtfiles/"+knot_name+"cellcount.txt"
     tot=open(tot_filepath)
     totcount=int(tot.readline())
     
     lexcount=-1
     #totcount=-1
 
+    """
+
+    #get gr/lex/tot cell counts
+    file_path="braid_data/"+knot_name+"/gr_lex_tot_counts.txt"
+    fff=open(file_path, "r")
+    fff.readline() #discard 1st line
+    data=fff.readline()
+    print("asdadsdasdsa")
+    print(data)
+    data=data.split(",")
+    unmcount=int(data[2])
+    lexcount=int(data[3])
+    totcount=int(data[4])
 
     #get stringcount
     
@@ -60,25 +73,27 @@ while True:
     if stringcount==2:
         khtcount=unmcount
     elif stringcount<7:
-        kht_filepath="khtfiles/"+braid_name+"/cx-c2"
+        kht_filepath="braid_data/"+knot_name+"/"+knot_name+"/cx-c2"
         kht_dict=khtfile_parser(kht_filepath)
 
         for key in kht_dict:
             khtcount+=kht_dict[key]
     else:
         pass
-        #print(braid_name)
+        #print(knot_name)
         #print(stringcount)
 
     ki_braid=braid.split(";{")
     ki_braid=ki_braid[0]
+    #print(khtcount)
+    print((knot_name,ki_braid,khtcount,unmcount,lexcount, totcount))
     
-    output_csv_data.append((braid_name,ki_braid,khtcount,unmcount,lexcount, totcount))
+    output_csv_data.append((knot_name,ki_braid,khtcount,unmcount,lexcount, totcount))
         
 
 
 """
-    print(braid_name)
+    print(knot_name)
     print(stringcount)
     print(khtcount)
     print(unmcount)
