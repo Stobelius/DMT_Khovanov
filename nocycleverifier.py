@@ -13,7 +13,8 @@ import csv
 #RecursionError: maximum recursion depth exceeded in comparison 
 #
 #which of course could be evoked by a number of things in python.
-#This error was not obtained with any real braid representative, but with some artificial testing.
+#
+#A cycle was found in "ADBcbDccbbADcb" and similar cycle in the smaller braid "ADcbccbbAD".
 
 def updown_next_steps(braid,cell,history):
     fake_previous_u=-1
@@ -62,14 +63,20 @@ def singlebraid(braid):
         N=updown_next_steps(braid,cell,history)
 
         for v in N:
+            #print(v)
             to_be_verified=verify(to_be_verified,v)
         to_be_verified.discard(cell)
 
         return to_be_verified
 
     verified=all_words
+    #verify(verified,"110011100y1110")
+
+
     while(len(verified)!=0):
         cell=verified.pop()
+        #print(cell)
+
         verified.add(cell)
         verified=verify(verified,cell)
 
@@ -86,9 +93,78 @@ print("")
 a=updown_next_steps(braid,"0yxx",history)   
 print(a)
 """
-    
+def explicit_cycle_from(braid,cell):
+
+    def continue_path(braid,path,history):
+
+        #print("assda")
+        vertex=path[-1]
+
+        fake_previous_u=len(braid)
+        for i in range(1,len(braid)+1):    
+            if not vertex[:i] in history[i]:
+                fake_previous_u=i-1         
+                break
+         
+        
+        steps_up=next_steps_up(braid, vertex, fake_previous_u)
+        #print(steps_up)
 
 
+        up_down_steps=[]
+        qdeg=qdeg_of_word(braid,vertex)
+
+        for step_pair in steps_up:
+            if step_pair[0] in history[-1]:
+                continue
+            down=next_step_down(braid,step_pair[0],step_pair[1],history)
+            if down!=-1 and down!=-2 and down[0]!=vertex:
+                
+                up_down_steps.append((step_pair[0],down[0]))
+        
+        for pair in up_down_steps:
+            path_copy=path.copy()
+            print(path_copy)
+            print(pair[1])
+            print("")
+
+            if pair[1] in path_copy:
+                path_copy.append(pair[0])
+                path_copy.append(pair[1])
+                print("Found a cycle!")
+                print(path_copy)
+                return (path_copy)
+            else:
+                path_copy.append(pair[0])
+                path_copy.append(pair[1])
+                continue_path(braid,path_copy,history)
+
+    history=generate_unmatched_cell_history(braid)
+
+
+
+    path=[cell]
+
+    cycle=continue_path(braid,path,history)
+    return cycle
+
+
+
+
+
+#singlebraid("ADBcbDccbbADcb")
+
+mincounterexbraid="ADcbccbbAD"
+mincell="11110x1011"
+mincell2="111010101Y"
+
+cyc=explicit_cycle_from(mincounterexbraid,mincell2)
+print(cyc)
+
+"""
+
+singlebraid("ADBcbDccbbAD")
+startComputing=False
 
 
 
@@ -110,7 +186,12 @@ with open(csv_file_path, mode='r', newline='', encoding='utf-8') as file:
         ki_braid=knotinfo_string_to_integer_array(line[1].strip())
         ks_braid=integer_array_to_knotscape_string(ki_braid)
 
-        #if braid_name=="9_35":
+        if braid_name=="12n_785":
+            startComputing=True
+        
+        if not startComputing:
+            continue
+        
         singlebraid(ks_braid)
 
 
@@ -118,3 +199,4 @@ with open(csv_file_path, mode='r', newline='', encoding='utf-8') as file:
         print(ks_braid)
 
         
+"""

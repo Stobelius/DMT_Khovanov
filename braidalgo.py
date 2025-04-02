@@ -30,7 +30,6 @@ def crossing_is_negative(braid_word,y_pos):
     return False
         
 def smoothing_northeast_is_Vert(position,braid_word,enhanced_word):
-
     xcoord=x_position_of_crossing(braid_word, position[1])
     negative_crossing=crossing_is_negative(braid_word,position[1])
     
@@ -41,8 +40,8 @@ def smoothing_northeast_is_Vert(position,braid_word,enhanced_word):
     
     if(xcoord==position[0] and zero_smoothing and negative_crossing):
         return True
-    if(xcoord==position[0] and not zero_smoothing and not negative_crossing):
-    	return True
+    if(xcoord==position[0] and (not zero_smoothing) and (not negative_crossing)):
+        return True
     return False
 
 def out_of_bounds(position, braid_word):
@@ -1470,6 +1469,7 @@ def generate_all_zig_zag_paths(braid):
 
     total_path_count=0
     for word in unmatched_words:
+        print(word)
         
         zig_zags[word]=zig_zag_paths_from2(braid,word,history,hdeg_to_max_qdeg,hdeg_to_max_ones)
         total_path_count+=len(zig_zags[word])
@@ -1624,7 +1624,7 @@ def main():
     #print(matching_a_cell(sys.argv[1],"11101Y",5,5))
     
     #calc_and_save_T5_cells(60)
-    calc_and_save_T6_cells(36)
+    #calc_and_save_T6_cells(36)
     
 
 
@@ -1640,19 +1640,19 @@ def main():
     """
 
     
-    crit_cells=generate_all_unmatched_words(braid)
-    for cell in crit_cells:
-        print(cell)
+    #crit_cells=generate_all_unmatched_words(braid)
+    #for cell in crit_cells:
+    #    print(cell)
 
 
 
-    """
+    
     zig_zags=generate_all_zig_zag_paths(braid)
     #print(zig_zags)
-    for cell in zig_zags:
-        print(cell)
-        print(zig_zags[cell])
-    """
+    #for cell in zig_zags:
+    #    print(cell)
+    #    print(zig_zags[cell])
+    
 
 
 
