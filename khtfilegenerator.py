@@ -51,7 +51,7 @@ def main():
         print(f"Directory '{folder_name}' already exists")    
     
     
-    f=open("knotinfo_braids13.csv", "r")
+    f=open("braid_reps_from_ki/knots_up_to_12.csv", "r")
     
     f.readline() #discard 1st line
     
@@ -79,6 +79,9 @@ def main():
   
         stringarray=convert_numbers_to_kht(braid)
         number_of_strands=max([max(braid), -min(braid)])+1
+        if number_of_strands<7:
+            continue
+
         khtstring=generate_output(stringarray,number_of_strands)
 
 
@@ -111,7 +114,7 @@ def main():
 
 
         #run the kht++ program on the generated file
-        subprocess.run(["../kht/khtpp/./kht++", "/"+folder_name+"/"+braid_name+"/"+braid_name+"/"])
+        subprocess.run(["../../kht_oldv2/khtpp/./kht++", "/"+folder_name+"/"+braid_name+"/"+braid_name+"/"])
         
         if os.path.exists(folder_name+"/"+braid_name+".html"):
             os.remove(folder_name+"/"+braid_name+".html")

@@ -1,4 +1,4 @@
-#import argparse
+import argparse
 from braidalgo import *
 #from path_and_cell_analysis_forT4 import dom_cod_first_L_to_paths_dict, load_new_T4_paths, list_of_Ls_from_path
 
@@ -316,7 +316,7 @@ def draw_smoothing(braid, smoothing):
     """
 
     # File name
-    file_name = "tikz_plots/tikz_example.tex"
+    file_name = "tikz_plots/"+ braid+smoothing+".tex"
 
     PRINT_COMMANDS=False
 
@@ -370,7 +370,7 @@ def draw_smoothing(braid, smoothing):
 
 
 def main(braid, smoothing):
-    #draw_smoothing(braid, smoothing)
+    draw_smoothing(braid, smoothing)
 
 
     #print(tikz_of_smoothing(braid, smoothing))
@@ -399,11 +399,12 @@ def main(braid, smoothing):
 
     #cycle?
     #cyc=["11010Y11yx1010","11100Y11yx1010","11000111yx1Y10","11010011yx1Y10","11100011yx1Y10","111010y10x1Y10","1111y0010x1Y10","1110110y0x1Y10","1111yY0y0x1X10","1111yX0y0x1Y10","11000111yy1X10","11010011yy1X10","11100011yy1X10","111010y10y1X10","1111y0010y1X10","1110110y0y1X10","1111yX0y0y1X10","1100001011Y110","110010yy11X110","110010yx11Y110","11000011y11110","110010y1011110","1100110y011110","1101100y011110","1111y00y011X10","110011100y1110","110110100y1110","1111y0100y1X10","11000110101Y10","11010010101Y10","11100010101Y10","111010yy101X10","1111y00y101X10","111010yx101Y10","1111y00x101Y10","11010Y10101010","11100Y10101010","11010Y11yx1010"]
+    
     cyc=['111010101Y', '1110101111', '11001011Y1', '1100111111', '110011y111', '1101110111', '1101y10111', '1111010111', '11110y0111', '1111100111', '1111100y11', '1111101011', '111010101Y']
 
-    print("asd")
-    draw_path_in_a_file("ADcbccbbAD",cyc,1)
-
+    #print("asd")
+    #draw_path_in_a_file("ADcbccbbAD",cyc,1)
+    #draw_paths_as_separate_files("ADcbccbbAD",cyc)
     """
     #Write a milloin paths in separate files
     
@@ -431,8 +432,8 @@ def main(braid, smoothing):
 
 
 if __name__ == "__main__":
-    print("asd")
-    main("a","a")
+    #print("asd")
+    #main("a","a")
 
     # Set up the argument parser
     parser = argparse.ArgumentParser(description="A simple command line program that accepts two parameters.")

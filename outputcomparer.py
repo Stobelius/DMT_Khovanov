@@ -332,7 +332,7 @@ def main():
         resultfile.write(secondline)
         resultfile.close
 
-        continue
+        
 
         
         

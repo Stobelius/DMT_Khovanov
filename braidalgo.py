@@ -1469,7 +1469,6 @@ def generate_all_zig_zag_paths(braid):
 
     total_path_count=0
     for word in unmatched_words:
-        print(word)
         
         zig_zags[word]=zig_zag_paths_from2(braid,word,history,hdeg_to_max_qdeg,hdeg_to_max_ones)
         total_path_count+=len(zig_zags[word])
@@ -1649,9 +1648,9 @@ def main():
     
     zig_zags=generate_all_zig_zag_paths(braid)
     #print(zig_zags)
-    #for cell in zig_zags:
-    #    print(cell)
-    #    print(zig_zags[cell])
+    for cell in zig_zags:
+        print(cell)
+        print(zig_zags[cell])
     
 
 

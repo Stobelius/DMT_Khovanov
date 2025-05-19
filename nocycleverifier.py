@@ -64,6 +64,9 @@ def singlebraid(braid):
 
         for v in N:
             #print(v)
+            #if v=="111010101Y":
+            #    continue
+
             to_be_verified=verify(to_be_verified,v)
         to_be_verified.discard(cell)
 
@@ -79,6 +82,40 @@ def singlebraid(braid):
 
         verified.add(cell)
         verified=verify(verified,cell)
+
+
+def finding_cycles_up_to_10_edges(braid):
+    all_words=generate_all_enhanced_words(braid)
+    print(len(all_words))
+    
+    history=generate_unmatched_cell_history(braid)
+
+    def cyc_10_from(braid,word,history,path):
+        if len(path)==7:
+            #for 6 this gives no cycles
+            #for 7 this gives a cycle
+            return
+        
+        next_steps=updown_next_steps(braid,word,history)
+        
+        for n in next_steps:
+            if n in path:
+                print("CYCLEEE")
+                print(path)
+                #print(n)
+        
+        for n in next_steps:
+            newpath=path.copy()
+            newpath.append(n)
+            cyc_10_from(braid,n,history,newpath)       
+        
+
+    for word in all_words:
+        cyc_10_from(braid,word,history,[word])
+
+
+
+    return None
 
 
 """
@@ -149,8 +186,11 @@ def explicit_cycle_from(braid,cell):
     return cycle
 
 
+#finding_cycles_up_to_10_edges("ADBcbDccbbADcb")
 
+singlebraid("ADcbccbbAD")
 
+"""
 
 #singlebraid("ADBcbDccbbADcb")
 
@@ -163,7 +203,10 @@ print(cyc)
 
 """
 
-singlebraid("ADBcbDccbbAD")
+
+
+"""
+#singlebraid("ADBcbDccbbAD")
 startComputing=False
 
 

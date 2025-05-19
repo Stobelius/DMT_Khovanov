@@ -52,41 +52,49 @@ while True:
 
     """
 
+    
     #get gr/lex/tot cell counts
-    file_path="braid_data/"+knot_name+"/gr_lex_tot_counts.txt"
+    file_path="../../vanhan_koneen_tikku/braid_data/"+knot_name+"/gr_lex_tot_counts.txt"
     fff=open(file_path, "r")
     fff.readline() #discard 1st line
     data=fff.readline()
-    print("asdadsdasdsa")
-    print(data)
+    #print("asdadsdasdsa")
+    #print(data)
     data=data.split(",")
     unmcount=int(data[2])
     lexcount=int(data[3])
     totcount=int(data[4])
+    
 
     #get stringcount
     
     stringcount=max(max(knotinfo_string_to_integer_array(braid)),-min(knotinfo_string_to_integer_array(braid)))+1
     
     #get kht cell count
-    khtcount=-2
-    if stringcount==2:
-        khtcount=unmcount
-    elif stringcount<7:
-        kht_filepath="braid_data/"+knot_name+"/"+knot_name+"/cx-c2"
+    khtcount=-222222222
+    #if stringcount==2:
+    #    khtcount=unmcount
+    print(knot_name)
+    if 2<stringcount<7:
+        kht_filepath="../../vanhan_koneen_tikku/braid_data/"+knot_name+"/"+knot_name+"/cx-c2"
         kht_dict=khtfile_parser(kht_filepath)
+        #print(kht_dict)
+        khtcount=0
 
         for key in kht_dict:
             khtcount+=kht_dict[key]
-    else:
-        pass
+        
+        #print(knot_name,khtcount)
+    elif stringcount==2:
+        khtcount=unmcount
         #print(knot_name)
         #print(stringcount)
+    
 
     ki_braid=braid.split(";{")
     ki_braid=ki_braid[0]
     #print(khtcount)
-    print((knot_name,ki_braid,khtcount,unmcount,lexcount, totcount))
+    #print((knot_name,ki_braid,khtcount,unmcount,lexcount, totcount))
     
     output_csv_data.append((knot_name,ki_braid,khtcount,unmcount,lexcount, totcount))
         
