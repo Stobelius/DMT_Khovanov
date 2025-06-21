@@ -11,7 +11,7 @@ lemma lemma_6_2_case_two (n : ℚ) (h₁ h₂ q₁ q₂ : ℚ)
     (htC₁ : (-3/2) ≤ tC n h₁ q₁)
     (htA₂ : (-3/2) ≤ tA n h₂ q₂)
     (htC₂ : (-3/2) ≤ tC n h₂ q₂) (htC₂' : tC n h₂ q₂ < 2)
-    (hh : h₁ + 1 = h₂) (hn : 83 ≤ n) (hq : q₁ ≤ q₂) :
+    (hh : h₁ + 1 = h₂) (hn : 83 ≤ n) :
     2 ≤ tB n h₁ q₁ := by
   rw [tA, tB, tC] at *
   linarith
@@ -21,7 +21,7 @@ lemma lemma_6_2_case_two' (n : ℚ) (h₁ h₂ q₁ q₂ : ℚ)
     (htC₁ : (-3/2) ≤ tC n h₁ q₁)
     (htA₂ : (-3/2) ≤ tA n h₂ q₂)
     (htC₂ : (-3/2) ≤ tC n h₂ q₂) (htC₂' : tC n h₂ q₂ < 2)
-    (hh : h₁ + 1 = h₂) (hn : 83 ≤ n) (hq : q₁ ≤ q₂) :
+    (hh : h₁ + 1 = h₂) (hn : 83 ≤ n):
     2 ≤ tB n h₂ q₂ := by
   rw [tA, tB, tC] at *
   linarith

@@ -1503,6 +1503,17 @@ def calc_and_save_T4_paths(twistnumber):
         with open(file_path, 'wb') as file:
             pickle.dump(zig_zags, file)
 
+
+def calc_and_save_T4_cells(twistnumber):
+    braid=twistnumber*"abc"
+    file_path="Torusbraid_cell_dumps/4string"+str(twistnumber)+"twist.pkl"
+    if os.path.exists(file_path):
+        pass
+    else:      
+        history=generate_unmatched_cell_history(braid)
+        with open(file_path, 'wb') as file:
+            pickle.dump(history, file)
+
 def calc_and_save_T5_cells(twistnumber):
     braid=twistnumber*"abcd"
     file_path="Torus5braids/5string"+str(twistnumber)+"twistLhack.pkl"
@@ -1515,7 +1526,7 @@ def calc_and_save_T5_cells(twistnumber):
 
 def calc_and_save_T6_cells(twistnumber):
     braid=twistnumber*"abcde"
-    file_path="Torus6braids/6string"+str(twistnumber)+"twistLhack.pkl"
+    file_path="Torus6braids/6string"+str(twistnumber)+".pkl"
     if os.path.exists(file_path):
         pass
     else:      
@@ -1623,7 +1634,8 @@ def main():
     #print(matching_a_cell(sys.argv[1],"11101Y",5,5))
     
     #calc_and_save_T5_cells(60)
-    #calc_and_save_T6_cells(36)
+    #calc_and_save_T6_cells(20)
+    calc_and_save_T4_cells(50)
     
 
 
