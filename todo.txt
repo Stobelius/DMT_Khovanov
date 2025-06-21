@@ -1,11 +1,5 @@
-Coding things in order to finish the article.
 
-Extend dimension checking from 12 braids to 13 braids without 7 or more strands. Collect dimensions and compare them to max and min.
-
-Ask Claudius about running thick braids
-
-Do acyclicity checking for 11 (or more) braids.
-
+Possible performance improvement for finding cells of Mgr
 Try to improve efficiency of unmatched cell generation. When generating the next level of potential unmatched cells, assigning a set/list of potential $L$-values for these. Do this based on the crossings of which a closed circles it hits. When killing pairs of cells, match only on values based on this list. 
 Using this improvement, try to get a conjecture on Torus links, specifically 5 strand. Run reasonably high values in jumps of 5 and plug the number of cells into OEIS.
 If this is succesful, conjecture that the torus braid T(n,m) with m strands fixed has O(x^(floor(n/2))) cells for large n.
@@ -16,46 +10,6 @@ Clean up code
 
 Do the required results for the paper
 
-
-jos keksit tähän jotain
-git push
-pelleile red khovanov softalla
-
-
-   
-testings
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-SOME TRASH
 
 get statistics while running:
 python3 -m cProfile -s time braidalgo.py abcabcabcabcabcabc
@@ -68,22 +22,10 @@ s_1^2s_2^2s_1^3s_2^2s_1s_3s_2^2s_4^2s_3s_1^2s_2^2s_1^3s_2^3s_1^2s_3s_2^2s_4^3s_3
 
 
 
+cli käliin
+vaihtoehtoja:
 
-
-
-s_1^2s_2^2s_1^3s_2^2s_1
-aabbaaabba
-
-s_3s_2^2s_4^2s_3
-caaddc
-s_1^2s_2^2s_1^3
-aabbaaa
-s_2^3s_1^2s_3
-bbbaac
-s_2^2s_4^3s_3^2
-bbdddcc
-
-
-
-aabbaaabbacaaddcaabbaaabbbaacbbdddcc
-aabbaaabbacaaddcaabbaaabbbaacbbdddcc
+- flagiksi --output "file"
+- syklisyys --acyclic
+- solut --cells
+- polut --paths
