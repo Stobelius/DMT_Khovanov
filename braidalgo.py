@@ -1152,17 +1152,17 @@ def zig_zag_paths_from2(braid_word,enh_word,unmatched_cells_history,hdeg_max_qde
     
 
             
-def generate_all_zig_zag_paths(braid):
-    time1=time.time()
+def generate_all_zig_zag_paths(braid, history):
+    #time1=time.time()
     
-    history=generate_unmatched_cell_history(braid)
+    #history=generate_unmatched_cell_history(braid)
     unmatched_words=history[len(history)-1]
     size=len(unmatched_words)   
 
     time2=time.time()
 
-    print("unmatched cells found: " + str(size))
-    print("time elapsed in generating unmatched cells: " + str(time2-time1))
+    #print("unmatched cells found: " + str(size))
+    #print("time elapsed in generating unmatched cells: " + str(time2-time1))
 
     hdeg_to_max_qdeg=hdeg_to_maximal_qdeg(braid,unmatched_words)
     hdeg_to_max_ones=hdeg_to_maximal_ones(braid,unmatched_words)
@@ -1171,7 +1171,6 @@ def generate_all_zig_zag_paths(braid):
     paths_done=0
 
     print("Negative braid optimizations are on: "+str(negative_braid))
-    print("")
 
 
     total_path_count=0
@@ -1233,12 +1232,13 @@ def updown_next_steps(braid,cell,history):
 
     return steps_down
 
-def verify_acyclicity(braid):
+def verify_acyclicity(braid, history):
 
+    print("Generating all cells of the graph:")
     all_words=generate_all_enhanced_words(braid)
-    print(len(all_words))
+    print("total number of cells in the graph: "+str(len(all_words)))
     
-    history=generate_unmatched_cell_history(braid)
+    print("verifying acyclicity...")
 
     def verify(to_be_verified, cell):
         
@@ -1375,11 +1375,10 @@ parser = argparse.ArgumentParser()
 
 def main():
 
-    global negative_braid
+    #Parsing user arguments
 
-    parser.add_argument("braid",  default = "aaa")
-
-    parser.add_argument("-o", "--output", dest = "outputfile", default = None)
+    parser.add_argument("braid")
+    parser.add_argument("-o", "--output", dest = "outputfile", default = False)
     parser.add_argument('-a', '--acyclicity', action='store_true') 
     parser.add_argument('-c', '--cells', action='store_true') 
     parser.add_argument('-p', '--paths', action='store_true')
@@ -1388,34 +1387,109 @@ def main():
 
     outputfile=args.outputfile
     braid= args.braid
-    if(braid==braid.lower()):
-        print("asdasdasd")
-        negative_braid=True
 
     calc_acyclicity=args.acyclicity
     calc_cells=args.cells
     calc_paths=args.paths
 
+    global negative_braid
+    if(braid==braid.lower()):
+        negative_braid=True
 
 
 
+    #Computing stuff and displaying progress bars etc
+    
+    print("Cells")
+    print("Generating unmatched cells:")
 
-    print(braid)
-    print("ac"+str(calc_acyclicity))
-    print("cells"+str(calc_cells))
-    print("paths"+str(calc_paths))
-    print("file"+str(outputfile))
+    time1=time.time()
 
+    history=generate_unmatched_cell_history(braid)
 
+    unmatched_words=history[len(history)-1]
+    size=len(unmatched_words)   
+    time2=time.time()
+    print("unmatched cells found: " + str(size))
+    print("time elapsed in generating unmatched cells: " + str(time2-time1))
 
+    acyclicity_verified=False
+    if( calc_acyclicity):
+        print("")
+        print("Acyclicity")
+        verify_acyclicity(braid, history)
+        acyclicity_verified=True
+        print("Greedy matching is acyclic for the braid!")
+        time_acyc=time.time()
+        print("time elapsed in verifying acyclicity: " + str(time_acyc-time1))
+
+    sorted_cells=None
+    if calc_cells or calc_paths:
+        sorted_cells=sort_by_hdeg(add_degs(braid,history[-1]))
+        
+    zig_zags=None
+    if(calc_paths):
+        print("")
+        print("Paths")
+        zig_zags=generate_all_zig_zag_paths(braid, history)
 
     
-    zig_zags=generate_all_zig_zag_paths(braid)
-    #print(zig_zags)
-    for cell in zig_zags:
-        print(cell)
-        print(zig_zags[cell])
+
+
+    #Writing results to console or to given outputfile
+    summary_strings=[]
+    summary_strings.append("Results summary")
+    summary_strings.append("Braid: "+ braid)
+    summary_strings.append("Number of cells in the greedy matching: "+ str(size))
+    if calc_paths:
+        path_count=0
+        for cell in zig_zags:
+            path_count+=len(zig_zags[cell])
+        
+        summary_strings.append("Number of paths between unmatched cells: "+ str(path_count))
+    else:
+        summary_strings.append("Number of paths between unmatched cells: paths not computed")
     
+    if acyclicity_verified:
+        summary_strings.append("Acyclicity verified: Greedy matching is acyclic for the braid!")
+    else:
+        summary_strings.append("Acyclicity not verified")
+    summary_strings.append("")
+
+    
+    if outputfile:
+        with open(outputfile, 'w') as f:
+            for s in summary_strings:
+                f.writelines(s+"\n")
+            if calc_cells or calc_paths:
+                f.write("Cells: \n")
+                for triple in sorted_cells:
+                    f.write("hdeg: "+ str(triple[1])+ " qdeg: "+ str(triple[2])+ " cell: "+triple[0]+"\n")
+            if calc_paths:
+                f.write(""+ "\n")
+                f.write("Paths:"+ "\n")
+                for cell in zig_zags:
+                    f.write(str(cell) +";" +str(zig_zags[cell])+"\n")
+
+            
+
+        print("Results written in file:"+ outputfile)
+
+    else:
+        print("")
+        for s in summary_strings:
+            print(s)
+        if calc_cells or calc_paths:
+            print("Cells:")
+            for triple in sorted_cells:
+                print("hdeg: "+ str(triple[1])+ " qdeg: "+ str(triple[2])+ " cell: "+triple[0])
+        if calc_paths:
+            print("")
+            print("Paths:")
+            for cell in zig_zags:
+                print(str(cell) +";" +str(zig_zags[cell]))
+
+        
 
 if __name__ == "__main__":
 
