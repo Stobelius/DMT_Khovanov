@@ -35,8 +35,6 @@ lemma corollary_4_2 (n h q : ℚ)
   linarith
 
 --Proof of Theorem 1.2
-
-
 --the functions f and g appear in both Proposition 4.6 and Theorem 1.1
 
 def f (n i j : ℚ) : ℚ := -9*n+4*i-3*j
@@ -46,61 +44,159 @@ def g (n i j : ℚ) : ℚ := -2*n+2*i-j
 /-
 We use the following variables:
 n  - this is the n which appers in the captions
-t  - number of twists. Often t =2n +1 or similar
+t  - number of twists. Possible values for t: n, 2n, 2n+1, 4n, 4n+2
 i  - homological degree
 j  - quantum degree
 
 With the first isomorphism of Theorem 1.1, we pull Kh^{i,j}(T(4,-t))
-from Kh^{i',j'}(T(4,-t')) where
-t'=t-4
-i'=i
-j'=j+12
-This is possible when g(t',i',j') ≥ 14.
+from Kh^{i,j+12}(T(4,-(t-4))) where
+This is possible when g(t-4,i,j+12) ≥ 14.
 
 With the second isomorphism of Theorem 1.1, we pull Kh^{i,j}(T(4,-t))
-from Kh^{i',j'}(T(4,-t')) where
-t''=t-4
-i''=i+8
-j''=j+24
-This is possible when f(t'',i'',j'') ≥ 41.
+from Kh^{i+8,j+24}(T(4,-(t-4)))
+This is possible when f(t-4,i+8,j+24) ≥ 41.
 
 Otherwise we show that the group vanishes when
 g(t,i,j) < -6 or f(t,i,j) < -17
+
+For t≥ 83 we show that every group displayed in Figures 1, 17, 18
+either one of the isomorphisms theorems or one of the vasnishing result applies.
 -/
 
+-- HIGHEST DEGREES: Figure 17
 
--- highest degrees: Figure 16
-
-
-lemma theorem_1_2_highest_degrees'' (n t i j t' i' j' t'' j'' i'' : ℚ)
-    (H₁ : t'=t-4) (H₂ : i'=i) (H₃ : j'=j+12)(H₄ : t''=t-4)(H₅ : i''=i+8) (H₆ : j''=j+24)(H₇ : t≥ 83)
-    (h₁ : n=t) (h₂ : -41 ≤ i) (h₃ : -17 ≤ f t i j):
-    ( g t' i' j'  ≥ 14):= by
-    rw [f] at *
+-- For every i,j with i≥ -41 either first recursion result or second vanishing result applies
+lemma theorem_1_2_highest_either (n i j t: ℚ)
+    (Hₜ : t≥ 83)(H₁ : t=n) (H₂ : i≥ -41):
+    (g (t-4) i (j+12) ≥ 14) ∨ (f t i j < -17):= by
+    by_cases P : g (t-4) i (j+12)  ≥ 14
+    · left
+      exact P
+    · right
+      rw [f] at *
+      rw [g] at P
+      linarith
+-- For every nontrivial group with i≥ -41 the first recursion result applies.
+-- The nontrivial group with lowest g value is at hdeg -40 and qdeg -3n-50
+lemma theorem_1_2_highest_nontrivials (n i j t: ℚ)
+    (Hₜ : t≥ 83)(H₁ : t=n) (H₂ : i≥ -41)(H₃ : i=-40)(H₄ : j=-3*n-50):
+    (g (t-4) i (j+12) ≥ 14):= by
     rw [g]
     linarith
 
-lemma theorem_1_2_highest_degrees''' (n t i j t' i' j' t'' j'' i'' : ℚ)
-    (H₁ : t'=t-4) (H₂ : i'=i) (H₃ : j'=j+12)(H₄ : t''=t-4)(H₅ : i''=i+8) (H₆ : j''=j+24)(H₇ : t≥ 83)
-    (h₁ : n=t) (h₂ : -41 ≤ i):
-    ( (g t' i' j'  ≥ 14) ∨  (-17 > f t i j)):= by
-    rw [f] at *
+-- MIDDLE DEGREES: Figure 1
+-- t even: t = 2n
+
+-- in -49 ≤ i ≤ -42 the first recursion result applies
+lemma theorem_1_2_t_even_middle_i_highest (n i j t: ℚ)
+    (Hₜ : t≥ 83) (H₁ : t= 2*n)(H₂ : -49 ≤ i) (H₃ : i ≤ -42)(H₄ : j≤ (3/2)*i-6*n+5) :
+    (g (t-4) i (j+12) ≥ 14):= by
     rw [g]
-    sorry
-
-
-
-
-
-
-
-
-
-
-/-
-lemma theorem_1_2_highest_degrees (n i j : ℚ)
-    (h_1 : 51 ≤ n) (h_2 : -41 ≤ i) (h_3 : -17 ≤ f n i j)(h_4 : i≤ 0) (h_5 : j<=0) :
-    (g (n-4) i (j+12) ≥ 14):= by
-    rw [f] at *
     linarith
--/
+-- in -4n+19 ≤ i ≤ -50 either of two recursion results apply
+lemma theorem_1_2_t_even_middle_i_middle (n i j t: ℚ)
+    (Hₜ : t≥ 83) (H₁ : t= 2*n)(H₂ : -4*n+19 ≤ i) (H₃ : i ≤ -50)(H₄ : j≤ (3/2)*i-6*n+5) :
+    (g (t-4) i (j+12) ≥ 14) ∨ (f (t-4) (i+8) (j+24)) ≥ 41 := by
+    by_cases P : g (t-4) i (j+12)  ≥ 14
+    · left
+      exact P
+    · right
+      rw [f] at *
+      rw [g] at P
+      linarith
+-- in -4n+11 ≤ i ≤ --4n+18 the first recursion result applies
+lemma theorem_1_2_t_even_middle_i_lowest (n i j t: ℚ)
+    (Hₜ : t≥ 83) (H₁ : t= 2*n)(H₂ : -4*n+11 ≤ i) (H₃ : i ≤ -4*n+18)(H₄ : j≤ (3/2)*i-6*n+5) :
+    (f (t-4) (i+8) (j+24)) ≥ 41:= by
+    rw [f]
+    linarith
+
+-- t odd: t = 2n +1
+
+-- in -49 ≤ i ≤ -42 the first recursion result applies
+lemma theorem_1_2_t_odd_middle_i_highest (n i j t: ℚ)
+    (Hₜ : t≥ 83) (H₁ : t= 2*n+1)(H₂ : -49 ≤ i) (H₃ : i ≤ -42)(H₄ : j≤ (3/2)*i-6*n+2) :
+    (g (t-4) i (j+12) ≥ 14):= by
+    rw [g]
+    linarith
+-- in -4n+15 ≤ i ≤ -50 either of two recursion results apply
+lemma theorem_1_2_t_odd_middle_i_middle (n i j t: ℚ)
+    (Hₜ : t≥ 83) (H₁ : t= 2*n+1)(H₂ : -4*n+15 ≤ i) (H₃ : i ≤ -50)(H₄ : j≤ (3/2)*i-6*n+2) :
+    (g (t-4) i (j+12) ≥ 14) ∨ (f (t-4) (i+8) (j+24)) ≥ 41 := by
+    by_cases P : g (t-4) i (j+12)  ≥ 14
+    · left
+      exact P
+    · right
+      rw [f] at *
+      rw [g] at P
+      linarith
+-- in -4n+7 ≤ i ≤ --4n+14 the first recursion result applies
+lemma theorem_1_2_t_odd_middle_i_lowest (n i j t: ℚ)
+    (Hₜ : t≥ 83) (H₁ : t= 2*n+1)(H₂ : -4*n+7 ≤ i) (H₃ : i ≤ -4*n+14)(H₄ : j≤ (3/2)*i-6*n+2) :
+    (f (t-4) (i+8) (j+24)) ≥ 41:= by
+    rw [f]
+    linarith
+
+-- LOWEST DEGREES: Figure 18
+-- t is 0 mod 4: t = 4n
+
+-- For every i,j with i ≤  -8n + 10 either the second recursion result or the first vanishing result applies.
+lemma theorem_1_2_t0_i_lowest_either (n i j t: ℚ)
+    (Hₜ : t≥ 83) (H₁ : t= 4*n)(H₂ : i ≤ -8*n+10):
+    (f (t-4) (i+8) (j+24) ≥ 41) ∨ g t i j < -6:= by
+    by_cases P : g t i j  < -6
+    · right
+      exact P
+    · left
+      rw [f] at *
+      rw [g] at P
+      linarith
+-- For every nontrivial group with i ≤  -8n + 10 the second recursion result applies.
+-- The nontrivial group with lowest f value is at hdeg -8n+10 and qdeg -24n+24
+lemma theorem_1_2_t0_i_lowest_nontrivials (n i j t: ℚ)
+    (Hₜ : t≥ 83) (H₁ : t= 4*n)(H₂ : i ≤ -8*n+10)(H₃ : i = -8*n+10) (H₄: j=-24*n+24):
+    f (t-4) (i+8) (j+24) ≥ 41:= by
+    rewrite [f]
+    linarith
+
+-- t is 2 mod 4: t = 4n+2
+
+-- For every i,j with i ≤  -8n + 6 either the second recursion result or the first vanishing result applies.
+lemma theorem_1_2_t2_i_lowest_either (n i j t: ℚ)
+    (Hₜ : t≥ 83) (H₁ : t= 4*n+2)(H₂ : i ≤ -8*n+6):
+    (f (t-4) (i+8) (j+24) ≥ 41) ∨ g t i j < -6:= by
+    by_cases P : g t i j  < -6
+    · right
+      exact P
+    · left
+      rw [f] at *
+      rw [g] at P
+      linarith
+-- For every nontrivial group with i ≤  -8n + 6 the second recursion result applies.
+-- The nontrivial group with lowest f value is at hdeg -8n+6 and qdeg -24n+10
+lemma theorem_1_2_t2_i_lowest_nontrivials (n i j t: ℚ)
+    (Hₜ : t≥ 83) (H₁ : t= 4*n+2)(H₂ : i ≤ -8*n+6)(H₃ : i = -8*n+6) (H₄: j=-24*n+10):
+    f (t-4) (i+8) (j+24) ≥ 41:= by
+    rewrite [f]
+    linarith
+
+-- t is 1 mod 2: t = 2n+1
+
+-- For every i,j with i ≤  -8n + 6 either the second recursion result or the first vanishing result applies.
+lemma theorem_1_2_t1_i_lowest_either (n i j t: ℚ)
+    (Hₜ : t≥ 83) (H₁ : t= 2*n+1)(H₂ : i ≤ -4*n+6):
+    (f (t-4) (i+8) (j+24) ≥ 41) ∨ g t i j < -6:= by
+    by_cases P : g t i j  < -6
+    · right
+      exact P
+    · left
+      rw [f] at *
+      rw [g] at P
+      linarith
+-- For every nontrivial group with i ≤  -4n + 6 the second recursion result applies.
+-- The nontrivial group with lowest f value is at hdeg -4n+6 and qdeg -12n+13
+lemma theorem_1_2_t1_i_lowest_nontrivials (n i j t: ℚ)
+    (Hₜ : t≥ 83) (H₁ : t= 2*n+1)(H₂ : i ≤ -4*n+6)(H₃ : i = -4*n+6) (H₄: j=-12*n+13):
+    f (t-4) (i+8) (j+24) ≥ 41:= by
+    rewrite [f]
+    linarith
