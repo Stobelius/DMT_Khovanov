@@ -42,4 +42,4 @@ to verify the base cases for the induction in Lemmas. Running it took around 10 
 #### **lin_ineq_implications.lean** and **GOR-comparison.nb** 
 These should be self-explanatory once you have Lean and Mathematica installed on your system. 
 
-(In order not to flood github with lean-packages, I added to **.gitignore** the **.lake** folder. I do not know the best practices of sharing Lean-code, so this might break some things. As of 27.6.2025, the contents of **lin_ineq_implications.lean** can be copy-pasted to https://live.lean-lang.org/ to verify them if you prefer not to install Lean on your system.)
+(In order not to flood github with lean-packages, I added to **.gitignore** the **.lake** folder. I do not know the best practices of sharing Lean-code, so this might break some things. As of 27.6.2025, the contents of **lin_ineq_implications.lean** can also be copy-pasted to https://live.lean-lang.org/ to verify them if you prefer not to install Lean on your system.)
