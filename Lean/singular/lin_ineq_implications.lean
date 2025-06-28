@@ -7,24 +7,15 @@ def tB (n : ℚ) (h q : ℚ) : ℚ := 3 * n - 3/2 * h + q - 5/2
 def tC (n : ℚ) (h q : ℚ) : ℚ := (-9/4) * n + h - 3/4 * q - 1/4
 
 lemma lemma_6_2_case_two (n : ℚ) (h₁ h₂ q₁ q₂ : ℚ)
-    (htA₁ : (-3/2) ≤ tA n h₁ q₁) (htA₁' : tA n h₁ q₁ < 2)
-    (htC₁ : (-3/2) ≤ tC n h₁ q₁)
-    (htA₂ : (-3/2) ≤ tA n h₂ q₂)
-    (htC₂ : (-3/2) ≤ tC n h₂ q₂) (htC₂' : tC n h₂ q₂ < 2)
+    (htA₁' : tA n h₁ q₁ < 2) (htC₁ : (-3/2) ≤ tC n h₁ q₁)
+    (htA₂ : (-3/2) ≤ tA n h₂ q₂) (htC₂' : tC n h₂ q₂ < 2)
     (hh : h₁ + 1 = h₂) (hn : 83 ≤ n) :
-    2 ≤ tB n h₁ q₁ := by
-  rw [tA, tB, tC] at *
-  linarith
-
-lemma lemma_6_2_case_two' (n : ℚ) (h₁ h₂ q₁ q₂ : ℚ)
-    (htA₁ : (-3/2) ≤ tA n h₁ q₁) (htA₁' : tA n h₁ q₁ < 2)
-    (htC₁ : (-3/2) ≤ tC n h₁ q₁)
-    (htA₂ : (-3/2) ≤ tA n h₂ q₂)
-    (htC₂ : (-3/2) ≤ tC n h₂ q₂) (htC₂' : tC n h₂ q₂ < 2)
-    (hh : h₁ + 1 = h₂) (hn : 83 ≤ n):
-    2 ≤ tB n h₂ q₂ := by
-  rw [tA, tB, tC] at *
-  linarith
+    (2 ≤ tB n h₁ q₁) ∧ (2 ≤ tB n h₂ q₂) := by
+  constructor
+  · rw [tA, tB, tC] at *
+    linarith
+  · rw [tA, tB, tC] at *
+    linarith
 
 lemma corollary_4_2 (n h q : ℚ)
     (htA : tA n h q < 2)
@@ -34,7 +25,7 @@ lemma corollary_4_2 (n h q : ℚ)
   rw [tA, tB, tC] at *
   linarith
 
---Proof of Theorem 1.2
+--PROOF OF THEOREM 1.2
 --the functions f and g appear in both Proposition 4.6 and Theorem 1.1
 
 def f (n i j : ℚ) : ℚ := -9*n+4*i-3*j
@@ -56,7 +47,7 @@ With the second isomorphism of Theorem 1.1, we pull Kh^{i,j}(T(4,-t))
 from Kh^{i+8,j+24}(T(4,-(t-4)))
 This is possible when f(t-4,i+8,j+24) ≥ 41.
 
-Otherwise we show that the group vanishes when
+Otherwise Proposition 4.6 shows that the group vanishes when
 g(t,i,j) < -6 or f(t,i,j) < -17
 
 For t≥ 83 we show that every group displayed in Figures 1, 17, 18
@@ -197,6 +188,28 @@ lemma theorem_1_2_t1_i_lowest_either (n i j t: ℚ)
 -- The nontrivial group with lowest f value is at hdeg -4n+6 and qdeg -12n+13
 lemma theorem_1_2_t1_i_lowest_nontrivials (n i j t: ℚ)
     (Hₜ : t≥ 83) (H₁ : t= 2*n+1)(H₂ : i ≤ -4*n+6)(H₃ : i = -4*n+6) (H₄: j=-12*n+13):
+    f (t-4) (i+8) (j+24) ≥ 41:= by
+    rewrite [f]
+    linarith
+
+-- PROOF OF PROPOSITION 4.10
+
+-- t is odd: t = 2n + 1
+-- For every i,j with i ≤  -4n +1 either the second recursion result or the first vanishing result applies.
+lemma proposition_4_10_either (n i j t: ℚ)
+    (Hₜ : t≥ 83) (H₁ : t= 2*n+1)(H₂ : i ≤ -4*n +1):
+    (f (t-4) (i+8) (j+24) ≥ 41) ∨ g t i j < -6:= by
+    by_cases P : g t i j  < -6
+    · right
+      exact P
+    · left
+      rw [f] at *
+      rw [g] at P
+      linarith
+-- For every nontrivial group with i ≤  -4n +1 the second recursion result applies.
+-- The nontrivial group with lowest f value is at hdeg -4n+1 and qdeg -12n+2
+lemma proposition_4_10_nontrivials (n i j t: ℚ)
+    (Hₜ : t≥ 83) (H₁ : t= 2*n+1)(H₂ : i ≤ -4*n +1)(H₃ : i = -4*n+1) (H₄: j=-12*n+2):
     f (t-4) (i+8) (j+24) ≥ 41:= by
     rewrite [f]
     linarith
