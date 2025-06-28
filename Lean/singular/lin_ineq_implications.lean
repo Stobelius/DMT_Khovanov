@@ -197,7 +197,7 @@ lemma theorem_1_2_t1_i_lowest_nontrivials (n i j t: ℚ)
 -- t is odd: t = 2n + 1
 -- For every i,j with i ≤  -4n +1 either the second recursion result or the first vanishing result applies.
 lemma proposition_4_10_either (n i j t: ℚ)
-    (Hₜ : t≥ 83) (H₁ : t= 2*n+1)(H₂ : i ≤ -4*n +1):
+    (Hₜ : t≥ 69) (H₁ : t= 2*n+1)(H₂ : i ≤ -4*n +1):
     (f (t-4) (i+8) (j+24) ≥ 41) ∨ g t i j < -6:= by
     by_cases P : g t i j  < -6
     · right
@@ -209,7 +209,7 @@ lemma proposition_4_10_either (n i j t: ℚ)
 -- For every nontrivial group with i ≤  -4n +1 the second recursion result applies.
 -- The nontrivial group with lowest f value is at hdeg -4n+1 and qdeg -12n+2
 lemma proposition_4_10_nontrivials (n i j t: ℚ)
-    (Hₜ : t≥ 83) (H₁ : t= 2*n+1)(H₂ : i ≤ -4*n +1)(H₃ : i = -4*n+1) (H₄: j=-12*n+2):
+    (Hₜ : t≥ 69) (H₁ : t= 2*n+1)(H₂ : i ≤ -4*n +1)(H₃ : i = -4*n+1) (H₄: j=-12*n+2):
     f (t-4) (i+8) (j+24) ≥ 41:= by
     rewrite [f]
     linarith
